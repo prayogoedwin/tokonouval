@@ -31,6 +31,13 @@ class RolePermissionSeeder extends Seeder
             'edit-permissions',
             'download-permissions',
             'delete-permissions',
+
+            'view-tokos',
+            'show-tokos',
+            'create-tokos',
+            'edit-tokos',
+            'download-tokos',
+            'delete-tokos',
         ];
 
         foreach ($permissions as $permissionName) {
@@ -41,15 +48,23 @@ class RolePermissionSeeder extends Seeder
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $editorRole = Role::firstOrCreate(['name' => 'editor']);
         $userRole = Role::firstOrCreate(['name' => 'user']);
+        $kasirRole = Role::firstOrCreate(['name' => 'kasir']);
 
         $superAdminRole->permissions()->sync(Permission::all());
         $adminRole->permissions()->sync(Permission::all());
 
+        //TODO : !
+        $adminRole->permissions()->sync(Permission::all());
+
+
         $editorRole->permissions()->sync(
             Permission::whereIn('name', [
-                'view-users', 'show-users',
-                'view-roles', 'show-roles',
-                'view-permissions', 'show-permissions'
+                'view-users',
+                'show-users',
+                'view-roles',
+                'show-roles',
+                'view-permissions',
+                'show-permissions'
             ])->pluck('id')
         );
 
@@ -58,6 +73,7 @@ class RolePermissionSeeder extends Seeder
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('password'),
+                'toko_id' => 1
             ]
         );
 
@@ -68,6 +84,7 @@ class RolePermissionSeeder extends Seeder
             [
                 'name' => 'Admin User',
                 'password' => Hash::make('password'),
+                'toko_id' => 1,
             ]
         );
 
@@ -78,6 +95,8 @@ class RolePermissionSeeder extends Seeder
             [
                 'name' => 'Editor User',
                 'password' => Hash::make('password'),
+                'toko_id' => 1,
+
             ]
         );
 
@@ -88,9 +107,23 @@ class RolePermissionSeeder extends Seeder
             [
                 'name' => 'Regular User',
                 'password' => Hash::make('password'),
+                'toko_id' => 1,
+
             ]
         );
 
         $user->roles()->sync([$userRole->id]);
+
+        $kasir = User::firstOrCreate(
+            ['email' => 'kasir@example.com'],
+            [
+                'name' => 'example Kasir',
+                'password' => Hash::make('password'),
+                'toko_id' => 1,
+
+            ]
+        );
+
+        $kasir->roles()->sync([$kasirRole->id]);
     }
 }
