@@ -27,7 +27,7 @@ class StokController extends Controller
             'columns' => [
                 ['name' => 'kategori_id', 'value' => 'kategori', 'title' => 'Kategori', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
                     // Ambil data kategori dari database
-                    ['value' => '', 'label' => 'Pilih Toko'],
+                    // ['value' => '', 'label' => 'Pilih Toko'],
                     ...$produks->map(function ($produk) {
                         return ['value' => $produk->id, 'label' => $produk->name];
                     })->toArray(),

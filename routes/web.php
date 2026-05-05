@@ -6,6 +6,7 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\Settings;
+use App\Http\Controllers\StokController;
 use App\Http\Controllers\TokoController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -96,6 +97,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('kategories/{kategori}/edit', [KategoriController::class, 'edit'])->name('kategories.edit')->middleware('permission:edit-kategories');
     Route::put('kategories/{kategori}', [KategoriController::class, 'update'])->name('kategories.update')->middleware('permission:edit-kategories');
     Route::delete('kategories/{kategori}', [KategoriController::class, 'destroy'])->name('kategories.destroy')->middleware('permission:delete-kategories');
+
+    // Stok Management - dengan permission check
+    Route::get('stoks', [StokController::class, 'index'])->name('stoks.index')->middleware('permission:view-stoks');
+    Route::get('stoks/export', [StokController::class, 'export'])->name('stoks.export')->middleware('permission:download-stoks');
+    Route::get('stoks/create', [StokController::class, 'create'])->name('stoks.create')->middleware('permission:create-stoks');
+    Route::post('stoks', [StokController::class, 'store'])->name('stoks.store')->middleware('permission:create-stoks');
+    Route::get('stoks/{kategori}', [StokController::class, 'show'])->name('stoks.show')->middleware('permission:show-stoks');
+    Route::get('stoks/{stok}/edit', [StokController::class, 'edit'])->name('stoks.edit')->middleware('permission:edit-stoks');
+    Route::put('stoks/{stok}', [StokController::class, 'update'])->name('stoks.update')->middleware('permission:edit-stoks');
+    Route::delete('stoks/{stok}', [StokController::class, 'destroy'])->name('stoks.destroy')->middleware('permission:delete-stoks');
 
 
 });

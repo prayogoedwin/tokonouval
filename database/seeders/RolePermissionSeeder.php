@@ -63,6 +63,14 @@ class RolePermissionSeeder extends Seeder
             'edit-kategories',
             'download-kategories',
             'delete-kategories',
+
+            //stok
+            'view-stoks',
+            'show-stoks',
+            'create-stoks',
+            'edit-stoks',
+            'download-stoks',
+            'delete-stoks',
         ];
 
         foreach ($permissions as $permissionName) {

@@ -36,6 +36,10 @@
 
                             </x-layouts.sidebar-two-level-link-parent>
 
+                            <x-layouts.sidebar-link href="{{ route('stoks.index') }}" icon='fas-boxes-packing'
+                                :active="request()->routeIs('stoks*')">Stok
+                            </x-layouts.sidebar-link>
+
                             <x-layouts.sidebar-two-level-link-parent title="Example two level" icon="fas-house"
                                 :active="request()->routeIs('two-level*')">
                                 <x-layouts.sidebar-two-level-link href="#" icon='fas-house'
