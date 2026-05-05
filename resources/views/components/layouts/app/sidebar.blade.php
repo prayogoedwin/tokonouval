@@ -18,6 +18,20 @@
                                     :active="request()->routeIs('permissions*')">Permissions</x-layouts.sidebar-two-level-link>
                             </x-layouts.sidebar-two-level-link-parent>
 
+                            <x-layouts.sidebar-link href="{{ route('tokos.index') }}" icon='fas-house'
+                                :active="request()->routeIs('tokos*')">Toko Management
+                            </x-layouts.sidebar-link>
+
+                            <x-layouts.sidebar-two-level-link-parent title="Produk Management" icon="fas-users"
+                                :active="request()->routeIs('users*') || request()->routeIs('roles*') || request()->routeIs('permissions*')">
+                                <x-layouts.sidebar-two-level-link href="{{ route('produks.index') }}" icon='fas-user'
+                                    :active="request()->routeIs('users*')">Produk</x-layouts.sidebar-two-level-link>
+                                <x-layouts.sidebar-two-level-link href="{{ route('kategories.index') }}" icon='fas-shield'
+                                    :active="request()->routeIs('roles*')">Kategori</x-layouts.sidebar-two-level-link>
+                                <x-layouts.sidebar-two-level-link href="{{ route('satuans.index') }}" icon='fas-key'
+                                    :active="request()->routeIs('permissions*')">Satuan</x-layouts.sidebar-two-level-link>
+                            </x-layouts.sidebar-two-level-link-parent>
+
                             <x-layouts.sidebar-two-level-link-parent title="Example two level" icon="fas-house"
                                 :active="request()->routeIs('two-level*')">
                                 <x-layouts.sidebar-two-level-link href="#" icon='fas-house'

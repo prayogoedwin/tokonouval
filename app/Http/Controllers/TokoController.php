@@ -17,14 +17,34 @@ class TokoController extends Controller
     private function getPagedata()
     {
 
+        // protected $fillable = [
+        //     'name',
+        //     'kode_toko',
+        //     'pass_toko',
+        //     'alamat',
+        //     'status_toko',
+        //     'created_by',
+        //     'updated_by',
+        //     'deleted_by'
+        // ];
+
         $pagedata = [
             'title' => 'Toko',
             'tablename' => 'tokos',
             'tableaction' => true,
+            'canCreate' => false,
+            'canDelete' => false,
             'columns' => [
-                ['name' => 'nama', 'value' => 'nama',  'title' => 'Nama Toko', 'type' => 'text', 'inform' => true, 'intable' => true],
-                ['name' => 'kontak', 'value' => 'kontak', 'title' => 'Kontak', 'type' => 'text', 'inform' => true, 'intable' => true],
+                ['name' => 'kode_toko', 'value' => 'kode_toko',  'title' => 'Kode Toko', 'type' => 'text', 'inform' => true, 'intable' => true],
+                ['name' => 'name', 'value' => 'name',  'title' => 'Nama Toko', 'type' => 'text', 'inform' => true, 'intable' => true],
+                ['name' => 'pass_toko', 'value' => 'pass_toko', 'title' => 'Password Toko', 'type' => 'password', 'inform' => true, 'intable' => false],
                 ['name' => 'alamat', 'value' => 'alamat', 'title' => 'Alamat', 'type' => 'text', 'inform' => true, 'intable' => true],
+                ['name' => 'status_toko', 'value' => 'status_toko', 'title' => 'Status', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
+
+                    ['value' => 'Pusat', 'label' => 'Pusat'],
+                    ['value' => 'Cabang', 'label' => 'Cabang'],
+
+                ]]
 
             ],
         ];
@@ -37,17 +57,12 @@ class TokoController extends Controller
         // dd($request->headers->all());
         if ($request->ajax()) {
             // dd('masuk ajax');
-            $tokos = Toko::where('tokos.isactive', true)
+            $tokos = Toko::where('tokos.deleted_at', null)
                 ->get();
             // dd($tokos);
 
             return DataTables::of($tokos)
-                // ->filterColumn('name', function ($query, $keyword) {
-                //     $query->where('tokos.nama_Toko', 'like', "%{$keyword}%");
-                // })
-                // ->filterColumn('kategori', function ($query, $keyword) {
-                //     $query->where('kategori_tokos.nama', 'like', "%{$keyword}%");
-                // })
+                
 
 
 
@@ -62,12 +77,12 @@ class TokoController extends Controller
                         $actions .= '<a href="' . route('tokos.edit', $Toko) . '" class="text-blue-600 dark:text-blue-400 hover:underline mr-3">Edit</a>';
                     }
 
-                    if (auth()->user()->hasPermission('delete-tokos')) {
-                        $actions .= '<form action="' . route('tokos.destroy', $Toko) . '" method="POST" class="inline" onsubmit="return confirm(\'Are you sure?\')">
-                            ' . csrf_field() . method_field('DELETE') . '
-                            <button type="submit" class="text-red-600 dark:text-red-400 hover:underline">Delete</button>
-                        </form>';
-                    }
+                    // if (auth()->user()->hasPermission('delete-tokos')) {
+                    //     $actions .= '<form action="' . route('tokos.destroy', $Toko) . '" method="POST" class="inline" onsubmit="return confirm(\'Are you sure?\')">
+                    //         ' . csrf_field() . method_field('DELETE') . '
+                    //         <button type="submit" class="text-red-600 dark:text-red-400 hover:underline">Delete</button>
+                    //     </form>';
+                    // }
 
                     return $actions;
                 })
@@ -102,7 +117,8 @@ class TokoController extends Controller
         $store_data = [
             'name' => $request->input('name'),
             'kode_toko' => $request->input('kode_toko'),
-            'pass_toko' => $request->input('alamat'),
+            'pass_toko' => $request->input('pass_toko'),
+            'alamat' => $request->input('alamat'),
             'status_toko' => $request->input('status_toko'),
 
             'created_by' => auth()->id(),
@@ -113,6 +129,7 @@ class TokoController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'kode_toko' => ['required'],
             'pass_toko' => ['required', 'string', 'max:50'],
+            'alamat' => ['required', 'string'],
             'status' => ['required', 'string'],
 
             'created_by' => ['required', 'integer']
@@ -126,7 +143,7 @@ class TokoController extends Controller
 
 
         $Toko = Toko::create($store_data);
-        
+
 
         return to_route('tokos.index')->with('status', 'Toko updated successfully.');
     }
@@ -164,7 +181,8 @@ class TokoController extends Controller
         $store_data = [
             'name' => $request->input('name'),
             'kode_toko' => $request->input('kode_toko'),
-            'pass_toko' => $request->input('alamat'),
+            'pass_toko' => $request->input('pass_toko'),
+            'alamat' => $request->input('alamat'),
             'status_toko' => $request->input('status_toko'),
 
             'updated_by' => auth()->id(),
@@ -175,6 +193,7 @@ class TokoController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'kode_toko' => ['required'],
             'pass_toko' => ['required', 'string', 'max:50'],
+            'alamat' => ['required', 'string'],
             'status' => ['required', 'string'],
 
             'updated_by' => ['required', 'integer']

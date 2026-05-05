@@ -101,9 +101,9 @@ class KategoriController extends Controller
     {
         $store_data = [
             'name' => $request->input('name'),
-            'kode_kategorie' => $request->input('kode_kategorie'),
-            'pass_kategorie' => $request->input('alamat'),
-            'status_kategorie' => $request->input('status_kategorie'),
+            'kode_kategori' => $request->input('kode_kategori'),
+            'pass_kategori' => $request->input('alamat'),
+            'status_kategori' => $request->input('status_kategori'),
 
             'created_by' => auth()->id(),
         ];
@@ -111,8 +111,8 @@ class KategoriController extends Controller
 
         $validate = Validator::make($store_data, [
             'name' => ['required', 'string', 'max:255'],
-            'kode_kategorie' => ['required'],
-            'pass_kategorie' => ['required', 'string', 'max:50'],
+            'kode_kategori' => ['required'],
+            'pass_kategori' => ['required', 'string', 'max:50'],
             'status' => ['required', 'string'],
 
             'created_by' => ['required', 'integer']
@@ -128,7 +128,7 @@ class KategoriController extends Controller
         $Kategori = Kategori::create($store_data);
         
 
-        return to_route('kategories.index')->with('status', 'Kategori updated successfully.');
+        return to_route('kategoris.index')->with('status', 'Kategori updated successfully.');
     }
 
     public function show(Kategori $Kategori): View
@@ -163,9 +163,9 @@ class KategoriController extends Controller
         // dd("current user id: " . $current_user_id);
         $store_data = [
             'name' => $request->input('name'),
-            'kode_kategorie' => $request->input('kode_kategorie'),
-            'pass_kategorie' => $request->input('alamat'),
-            'status_kategorie' => $request->input('status_kategorie'),
+            'kode_kategori' => $request->input('kode_kategori'),
+            'pass_kategori' => $request->input('alamat'),
+            'status_kategori' => $request->input('status_kategori'),
 
             'updated_by' => auth()->id(),
         ];
@@ -173,8 +173,8 @@ class KategoriController extends Controller
 
         $validate = Validator::make($store_data, [
             'name' => ['required', 'string', 'max:255'],
-            'kode_kategorie' => ['required'],
-            'pass_kategorie' => ['required', 'string', 'max:50'],
+            'kode_kategori' => ['required'],
+            'pass_kategori' => ['required', 'string', 'max:50'],
             'status' => ['required', 'string'],
 
             'updated_by' => ['required', 'integer']

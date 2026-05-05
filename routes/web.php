@@ -1,13 +1,17 @@
 <?php
 
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\Settings;
+use App\Http\Controllers\TokoController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('dashboard');
 })->name('home');
 
 Route::view('dashboard', 'dashboard')
@@ -52,6 +56,48 @@ Route::middleware(['auth'])->group(function () {
     Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit')->middleware('permission:edit-users');
     Route::put('users/{user}', [UserController::class, 'update'])->name('users.update')->middleware('permission:edit-users');
     Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy')->middleware('permission:delete-users');
+
+    // Tokos Management - dengan permission check
+    Route::get('tokos', [TokoController::class, 'index'])->name('tokos.index')->middleware('permission:view-tokos');
+    Route::get('tokos/export', [TokoController::class, 'export'])->name('tokos.export')->middleware('permission:download-tokos');
+    Route::get('tokos/create', [TokoController::class, 'create'])->name('tokos.create')->middleware('permission:create-tokos');
+    Route::post('tokos', [TokoController::class, 'store'])->name('tokos.store')->middleware('permission:create-tokos');
+    Route::get('tokos/{toko}', [TokoController::class, 'show'])->name('tokos.show')->middleware('permission:show-tokos');
+    Route::get('tokos/{toko}/edit', [TokoController::class, 'edit'])->name('tokos.edit')->middleware('permission:edit-tokos');
+    Route::put('tokos/{toko}', [TokoController::class, 'update'])->name('tokos.update')->middleware('permission:edit-tokos');
+    Route::delete('tokos/{toko}', [TokoController::class, 'destroy'])->name('tokos.destroy')->middleware('permission:delete-tokos');
+
+    // Produk Management - dengan permission check
+    Route::get('produks', [ProdukController::class, 'index'])->name('produks.index')->middleware('permission:view-produks');
+    Route::get('produks/export', [ProdukController::class, 'export'])->name('produks.export')->middleware('permission:download-produks');
+    Route::get('produks/create', [ProdukController::class, 'create'])->name('produks.create')->middleware('permission:create-produks');
+    Route::post('produks', [ProdukController::class, 'store'])->name('produks.store')->middleware('permission:create-produks');
+    Route::get('produks/{produk}', [ProdukController::class, 'show'])->name('produks.show')->middleware('permission:show-produks');
+    Route::get('produks/{produk}/edit', [ProdukController::class, 'edit'])->name('produks.edit')->middleware('permission:edit-produks');
+    Route::put('produks/{produk}', [ProdukController::class, 'update'])->name('produks.update')->middleware('permission:edit-produks');
+    Route::delete('produks/{produk}', [ProdukController::class, 'destroy'])->name('produks.destroy')->middleware('permission:delete-produks');
+
+    // Satuan Management - dengan permission check
+    Route::get('satuans', [SatuanController::class, 'index'])->name('satuans.index')->middleware('permission:view-satuans');
+    Route::get('satuans/export', [SatuanController::class, 'export'])->name('satuans.export')->middleware('permission:download-satuans');
+    Route::get('satuans/create', [SatuanController::class, 'create'])->name('satuans.create')->middleware('permission:create-satuans');
+    Route::post('satuans', [SatuanController::class, 'store'])->name('satuans.store')->middleware('permission:create-satuans');
+    Route::get('satuans/{satuan}', [SatuanController::class, 'show'])->name('satuans.show')->middleware('permission:show-satuans');
+    Route::get('satuans/{satuan}/edit', [SatuanController::class, 'edit'])->name('satuans.edit')->middleware('permission:edit-satuans');
+    Route::put('satuans/{satuan}', [SatuanController::class, 'update'])->name('satuans.update')->middleware('permission:edit-satuans');
+    Route::delete('satuans/{satuan}', [SatuanController::class, 'destroy'])->name('satuans.destroy')->middleware('permission:delete-satuans');
+
+    // Kategori Management - dengan permission check
+    Route::get('kategories', [KategoriController::class, 'index'])->name('kategories.index')->middleware('permission:view-kategories');
+    Route::get('kategories/export', [KategoriController::class, 'export'])->name('kategories.export')->middleware('permission:download-kategories');
+    Route::get('kategories/create', [KategoriController::class, 'create'])->name('kategories.create')->middleware('permission:create-kategories');
+    Route::post('kategories', [KategoriController::class, 'store'])->name('kategories.store')->middleware('permission:create-kategories');
+    Route::get('kategories/{kategori}', [KategoriController::class, 'show'])->name('kategories.show')->middleware('permission:show-kategories');
+    Route::get('kategories/{kategori}/edit', [KategoriController::class, 'edit'])->name('kategories.edit')->middleware('permission:edit-kategories');
+    Route::put('kategories/{kategori}', [KategoriController::class, 'update'])->name('kategories.update')->middleware('permission:edit-kategories');
+    Route::delete('kategories/{kategori}', [KategoriController::class, 'destroy'])->name('kategories.destroy')->middleware('permission:delete-kategories');
+
+
 });
 
 require __DIR__.'/auth.php';
