@@ -23,8 +23,7 @@ class SatuanController extends Controller
             'tableaction' => true,
             'columns' => [
                 ['name' => 'name', 'value' => 'name',  'title' => 'Nama Satuan', 'type' => 'text', 'inform' => true, 'intable' => true],
-                ['name' => 'kontak', 'value' => 'kontak', 'title' => 'Kontak', 'type' => 'text', 'inform' => true, 'intable' => true],
-                ['name' => 'alamat', 'value' => 'alamat', 'title' => 'Alamat', 'type' => 'text', 'inform' => true, 'intable' => true],
+                
 
             ],
         ];
@@ -37,8 +36,7 @@ class SatuanController extends Controller
         // dd($request->headers->all());
         if ($request->ajax()) {
             // dd('masuk ajax');
-            $satuans = Satuan::where('satuans.deleted_at', null)
-                ->get();
+            $satuans = Satuan::get();
             // dd($satuans);
 
             return DataTables::of($satuans)
@@ -101,9 +99,7 @@ class SatuanController extends Controller
     {
         $store_data = [
             'name' => $request->input('name'),
-            'kode_satuane' => $request->input('kode_satuane'),
-            'pass_satuane' => $request->input('alamat'),
-            'status_satuane' => $request->input('status_satuane'),
+            
 
             'created_by' => auth()->id(),
         ];
@@ -111,9 +107,7 @@ class SatuanController extends Controller
 
         $validate = Validator::make($store_data, [
             'name' => ['required', 'string', 'max:255'],
-            'kode_satuane' => ['required'],
-            'pass_satuane' => ['required', 'string', 'max:50'],
-            'status' => ['required', 'string'],
+            
 
             'created_by' => ['required', 'integer']
         ]);
@@ -163,9 +157,7 @@ class SatuanController extends Controller
         // dd("current user id: " . $current_user_id);
         $store_data = [
             'name' => $request->input('name'),
-            'kode_satuane' => $request->input('kode_satuane'),
-            'pass_satuane' => $request->input('alamat'),
-            'status_satuane' => $request->input('status_satuane'),
+           
 
             'updated_by' => auth()->id(),
         ];
@@ -173,9 +165,7 @@ class SatuanController extends Controller
 
         $validate = Validator::make($store_data, [
             'name' => ['required', 'string', 'max:255'],
-            'kode_satuane' => ['required'],
-            'pass_satuane' => ['required', 'string', 'max:50'],
-            'status' => ['required', 'string'],
+            
 
             'updated_by' => ['required', 'integer']
         ]);
@@ -206,7 +196,8 @@ class SatuanController extends Controller
     //soft delete
     public function destroy(Satuan $Satuan): RedirectResponse
     {
-        $Satuan->update(['deleted_by' => auth()->id(), 'deleted_at' => now()]);
+        // $Satuan->update(['deleted_by' => auth()->id(), 'deleted_at' => now()]);
+        $Satuan->delete();
 
 
         return to_route('satuans.index')->with('status', 'Satuan deleted successfully.');

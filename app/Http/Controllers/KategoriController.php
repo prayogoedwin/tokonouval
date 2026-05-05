@@ -16,6 +16,12 @@ class KategoriController extends Controller
 {
     private function getPagedata()
     {
+        //     protected $fillable = [
+        //     'id_parent',
+        //     'name'
+        // ];
+        $kategories = Kategori::get();
+
 
         $pagedata = [
             'title' => 'Kategori',
@@ -23,8 +29,15 @@ class KategoriController extends Controller
             'tableaction' => true,
             'columns' => [
                 ['name' => 'name', 'value' => 'name',  'title' => 'Nama Kategori', 'type' => 'text', 'inform' => true, 'intable' => true],
-                ['name' => 'kontak', 'value' => 'kontak', 'title' => 'Kontak', 'type' => 'text', 'inform' => true, 'intable' => true],
-                ['name' => 'alamat', 'value' => 'alamat', 'title' => 'Alamat', 'type' => 'text', 'inform' => true, 'intable' => true],
+                ['name' => 'id_parent', 'value' => 'id_parent',  'title' => 'Kategori Parent', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
+                    // Ambil data kategori dari database
+                    ['value' => '', 'label' => 'Tanpa Parent'],
+                    ...$kategories->map(function ($kategori) {
+                        return ['value' => $kategori->id, 'label' => $kategori->name];
+                    })->toArray(),
+                    
+                ]],
+                
 
             ],
         ];
@@ -35,10 +48,10 @@ class KategoriController extends Controller
     public function index(Request $request)
     {
         // dd($request->headers->all());
+        
         if ($request->ajax()) {
             // dd('masuk ajax');
-            $kategories = Kategori::where('kategories.deleted_at', null)
-                ->get();
+            $kategories = Kategori::get();
             // dd($kategories);
 
             return DataTables::of($kategories)
@@ -101,9 +114,7 @@ class KategoriController extends Controller
     {
         $store_data = [
             'name' => $request->input('name'),
-            'kode_kategori' => $request->input('kode_kategori'),
-            'pass_kategori' => $request->input('alamat'),
-            'status_kategori' => $request->input('status_kategori'),
+            'id_parent' => $request->input('id_parent'),
 
             'created_by' => auth()->id(),
         ];
@@ -111,9 +122,7 @@ class KategoriController extends Controller
 
         $validate = Validator::make($store_data, [
             'name' => ['required', 'string', 'max:255'],
-            'kode_kategori' => ['required'],
-            'pass_kategori' => ['required', 'string', 'max:50'],
-            'status' => ['required', 'string'],
+            'id_parent' => [],
 
             'created_by' => ['required', 'integer']
         ]);
@@ -126,9 +135,9 @@ class KategoriController extends Controller
 
 
         $Kategori = Kategori::create($store_data);
-        
 
-        return to_route('kategoris.index')->with('status', 'Kategori updated successfully.');
+
+        return to_route('kategories.index')->with('status', 'Kategori updated successfully.');
     }
 
     public function show(Kategori $Kategori): View
@@ -163,9 +172,7 @@ class KategoriController extends Controller
         // dd("current user id: " . $current_user_id);
         $store_data = [
             'name' => $request->input('name'),
-            'kode_kategori' => $request->input('kode_kategori'),
-            'pass_kategori' => $request->input('alamat'),
-            'status_kategori' => $request->input('status_kategori'),
+            'id_parent' => $request->input('id_parent'),
 
             'updated_by' => auth()->id(),
         ];
@@ -173,9 +180,7 @@ class KategoriController extends Controller
 
         $validate = Validator::make($store_data, [
             'name' => ['required', 'string', 'max:255'],
-            'kode_kategori' => ['required'],
-            'pass_kategori' => ['required', 'string', 'max:50'],
-            'status' => ['required', 'string'],
+            'id_parent' => [],
 
             'updated_by' => ['required', 'integer']
         ]);
@@ -206,7 +211,8 @@ class KategoriController extends Controller
     //soft delete
     public function destroy(Kategori $Kategori): RedirectResponse
     {
-        $Kategori->update(['deleted_by' => auth()->id(), 'deleted_at' => now()]);
+        // $Kategori->update(['deleted_by' => auth()->id(), 'deleted_at' => now()]);
+        $Kategori->delete();
 
 
         return to_route('kategories.index')->with('status', 'Kategori deleted successfully.');

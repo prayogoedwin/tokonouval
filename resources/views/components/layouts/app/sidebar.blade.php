@@ -18,18 +18,22 @@
                                     :active="request()->routeIs('permissions*')">Permissions</x-layouts.sidebar-two-level-link>
                             </x-layouts.sidebar-two-level-link-parent>
 
-                            <x-layouts.sidebar-link href="{{ route('tokos.index') }}" icon='fas-house'
+                            <x-layouts.sidebar-link href="{{ route('tokos.index') }}" icon='fas-store'
                                 :active="request()->routeIs('tokos*')">Toko Management
                             </x-layouts.sidebar-link>
 
-                            <x-layouts.sidebar-two-level-link-parent title="Produk Management" icon="fas-users"
-                                :active="request()->routeIs('users*') || request()->routeIs('roles*') || request()->routeIs('permissions*')">
-                                <x-layouts.sidebar-two-level-link href="{{ route('produks.index') }}" icon='fas-user'
-                                    :active="request()->routeIs('users*')">Produk</x-layouts.sidebar-two-level-link>
-                                <x-layouts.sidebar-two-level-link href="{{ route('kategories.index') }}" icon='fas-shield'
-                                    :active="request()->routeIs('roles*')">Kategori</x-layouts.sidebar-two-level-link>
-                                <x-layouts.sidebar-two-level-link href="{{ route('satuans.index') }}" icon='fas-key'
-                                    :active="request()->routeIs('permissions*')">Satuan</x-layouts.sidebar-two-level-link>
+                            <x-layouts.sidebar-two-level-link-parent title="Produk Management" icon="fas-boxes-stacked"
+                                :active="request()->routeIs('produks*') || request()->routeIs('kategories*') || request()->routeIs('satuans*')">
+
+                                <x-layouts.sidebar-two-level-link href="{{ route('produks.index') }}" icon='fas-box'
+                                    :active="request()->routeIs('produks*')">Produk</x-layouts.sidebar-two-level-link>
+
+                                <x-layouts.sidebar-two-level-link href="{{ route('kategories.index') }}" icon='fas-tags'
+                                    :active="request()->routeIs('kategories*')">Kategori</x-layouts.sidebar-two-level-link>
+
+                                <x-layouts.sidebar-two-level-link href="{{ route('satuans.index') }}" icon='fas-scale-balanced'
+                                    :active="request()->routeIs('satuans*')">Satuan</x-layouts.sidebar-two-level-link>
+
                             </x-layouts.sidebar-two-level-link-parent>
 
                             <x-layouts.sidebar-two-level-link-parent title="Example two level" icon="fas-house"

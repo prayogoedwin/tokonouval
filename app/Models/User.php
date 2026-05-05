@@ -62,6 +62,10 @@ class User extends Authenticatable
             ->implode('');
     }
 
+    public function toko(){
+        return $this->belongsTo(Toko::class);
+    }
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);

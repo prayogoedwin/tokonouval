@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ProdukExport;
+use App\Models\kategori;
 use App\Models\Produk;
+use App\Models\Toko;
 use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +18,20 @@ class ProdukController extends Controller
 {
     private function getPagedata()
     {
+        $tokos = Toko::get();
+        $kategories = Kategori::get();
+
+    //     protected $fillable = [
+    //     'toko_id',
+    //     'kategori_id',
+    //     'name',
+    //     'harga_beli',
+    //     'harga_jual',
+    //     'created_by',
+    //     'updated_by',
+    //     'deleted_by',
+        
+    // ];
 
         $pagedata = [
             'title' => 'Produk',
@@ -23,8 +39,25 @@ class ProdukController extends Controller
             'tableaction' => true,
             'columns' => [
                 ['name' => 'name', 'value' => 'name',  'title' => 'Nama Produk', 'type' => 'text', 'inform' => true, 'intable' => true],
-                ['name' => 'kontak', 'value' => 'kontak', 'title' => 'Kontak', 'type' => 'text', 'inform' => true, 'intable' => true],
-                ['name' => 'alamat', 'value' => 'alamat', 'title' => 'Alamat', 'type' => 'text', 'inform' => true, 'intable' => true],
+                ['name' => 'toko_id', 'value' => 'toko', 'title' => 'Toko', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
+                    // Ambil data kategori dari database
+                    ['value' => '', 'label' => 'Pilih Toko'],
+                    ...$tokos->map(function ($toko) {
+                        return ['value' => $toko->id, 'label' => $toko->name];
+                    })->toArray(),
+                    
+                ]],
+
+                ['name' => 'kategori_id', 'value' => 'kategori', 'title' => 'Kategori', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
+                    // Ambil data kategori dari database
+                    ['value' => '', 'label' => 'Pilih Toko'],
+                    ...$kategories->map(function ($kategori) {
+                        return ['value' => $kategori->id, 'label' => $kategori->name];
+                    })->toArray(),
+                    
+                ]],
+                ['name' => 'harga_beli', 'value' => 'harga_beli', 'title' => 'Harga Beli', 'type' => 'number', 'inform' => true, 'intable' => true],
+                ['name' => 'harga_jual', 'value' => 'harga_jual', 'title' => 'Harga Jual', 'type' => 'number', 'inform' => true, 'intable' => true],
 
             ],
         ];
@@ -35,10 +68,18 @@ class ProdukController extends Controller
     public function index(Request $request)
     {
         // dd($request->headers->all());
+        
         if ($request->ajax()) {
             // dd('masuk ajax');
             $produks = Produk::where('produks.deleted_at', null)
-                ->get();
+            ->join('kategories', 'produks.kategori_id', '=', 'kategories.id')
+            ->join('tokos', 'produks.toko_id', '=', 'tokos.id')
+            ->select(
+                    'produks.*',
+                    'kategories.name as kategori',
+                    'tokos.name as toko'
+                )
+            ->get();
             // dd($produks);
 
             return DataTables::of($produks)
@@ -101,9 +142,10 @@ class ProdukController extends Controller
     {
         $store_data = [
             'name' => $request->input('name'),
-            'kode_produke' => $request->input('kode_produke'),
-            'pass_produke' => $request->input('alamat'),
-            'status_produke' => $request->input('status_produke'),
+            'toko_id' => $request->input('toko_id'),
+            'kategori_id' => $request->input('kategori_id'),
+            'harga_beli' => $request->input('harga_beli'),
+            'harga_jual' => $request->input('harga_jual'),
 
             'created_by' => auth()->id(),
         ];
@@ -111,9 +153,10 @@ class ProdukController extends Controller
 
         $validate = Validator::make($store_data, [
             'name' => ['required', 'string', 'max:255'],
-            'kode_produke' => ['required'],
-            'pass_produke' => ['required', 'string', 'max:50'],
-            'status' => ['required', 'string'],
+            'toko_id' => ['required', 'integer'],
+            'kategori_id' => ['required', 'integer'],
+            'harga_beli' => ['required', 'integer'],
+            'harga_jual' => ['required', 'integer'],
 
             'created_by' => ['required', 'integer']
         ]);
@@ -163,9 +206,10 @@ class ProdukController extends Controller
         // dd("current user id: " . $current_user_id);
         $store_data = [
             'name' => $request->input('name'),
-            'kode_produke' => $request->input('kode_produke'),
-            'pass_produke' => $request->input('alamat'),
-            'status_produke' => $request->input('status_produke'),
+            'toko_id' => $request->input('toko_id'),
+            'kategori_id' => $request->input('kategori_id'),
+            'harga_beli' => $request->input('harga_beli'),
+            'harga_jual' => $request->input('harga_jual'),
 
             'updated_by' => auth()->id(),
         ];
@@ -173,9 +217,10 @@ class ProdukController extends Controller
 
         $validate = Validator::make($store_data, [
             'name' => ['required', 'string', 'max:255'],
-            'kode_produke' => ['required'],
-            'pass_produke' => ['required', 'string', 'max:50'],
-            'status' => ['required', 'string'],
+            'toko_id' => ['required', 'integer'],
+            'kategori_id' => ['required', 'integer'],
+            'harga_beli' => ['required', 'integer'],
+            'harga_jual' => ['required', 'integer'],
 
             'updated_by' => ['required', 'integer']
         ]);
