@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ProdukExport;
-use App\Models\kategori;
+use App\Models\Kategori;
 use App\Models\Produk;
 use App\Models\Toko;
 use Illuminate\Http\Request;
@@ -178,13 +178,14 @@ class ProdukController extends Controller
     {
 
         $data = $Produk;
-
+        $data->kategori = Kategori::find($Produk->kategori_id)->name;
+        $data->toko = Toko::find($Produk->toko_id)->name;
 
         $pagedata = $this->getPagedata();
 
         //TO DO: asdfasdfwe
 
-
+        // dd($data, $pagedata);
 
         return view('dynamiccrud.show', compact('data'), $pagedata);
     }

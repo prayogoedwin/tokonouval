@@ -13,5 +13,19 @@ class KategoriSeeder extends Seeder
     public function run(): void
     {
         //
+        $data = [
+            ['name' => 'Makanan & Minuman'],
+            ['name' => 'Minuman', 'id_parent' => 1],
+            ['name' => 'Rokok & Tembakau'],
+            ['name' => 'Perlengkapan Mandi'],
+            ['name' => 'Makanan Instan', 'id_parent' => 1],
+            ['name' => 'Minuman Kemasan'],
+            ['name' => 'Bumbu Dapur'],
+            ['name' => 'Snack Sehat', 'id_parent' => 1],
+        ];
+
+        foreach ($data as $item) {
+            \App\Models\Kategori::create($item);
+        }
     }
 }
