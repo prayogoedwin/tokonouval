@@ -22,6 +22,22 @@
                                 :active="request()->routeIs('tokos*')">Toko Management
                             </x-layouts.sidebar-link>
 
+                            <x-layouts.sidebar-link href="{{ route('kasir.pilihtoko') }}" icon='fas-boxes-packing'
+                                :active="request()->routeIs('kasir*')">Kasir
+                            </x-layouts.sidebar-link>
+
+                            @if(session()->has('selected_toko_id'))
+                            <div class="text-xs text-gray-500 px-4 py-2">
+                                Toko Aktif: <strong>{{ session('selected_toko_nama') }}</strong>
+                                <form action="{{ route('kasir.exittoko') }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="text-red-500 hover:text-red-700 ml-2">
+                                        <i class="fas fa-sign-out-alt"></i> Exit
+                                    </button>
+                                </form>
+                            </div>
+                            @endif
+
                             <x-layouts.sidebar-two-level-link-parent title="Produk Management" icon="fas-boxes-stacked"
                                 :active="request()->routeIs('produks*') || request()->routeIs('kategories*') || request()->routeIs('satuans*')">
 

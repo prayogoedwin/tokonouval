@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\KasirController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProdukController;
@@ -37,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit')->middleware('permission:edit-roles');
     Route::put('roles/{role}', [RoleController::class, 'update'])->name('roles.update')->middleware('permission:edit-roles');
     Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('permission:delete-roles');
-    
+
     // Permissions Management - dengan permission check
     Route::get('permissions', [PermissionController::class, 'index'])->name('permissions.index')->middleware('permission:view-permissions');
     Route::get('permissions/export', [PermissionController::class, 'export'])->name('permissions.export')->middleware('permission:download-permissions');
@@ -47,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('permissions/{permission}/edit', [PermissionController::class, 'edit'])->name('permissions.edit')->middleware('permission:edit-permissions');
     Route::put('permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update')->middleware('permission:edit-permissions');
     Route::delete('permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy')->middleware('permission:delete-permissions');
-    
+
     // Users Management - dengan permission check
     Route::get('users', [UserController::class, 'index'])->name('users.index')->middleware('permission:view-users');
     Route::get('users/export', [UserController::class, 'export'])->name('users.export')->middleware('permission:download-users');
@@ -109,6 +110,18 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('stoks/{stok}', [StokController::class, 'destroy'])->name('stoks.destroy')->middleware('permission:delete-stoks');
 
 
+    // Route untuk kasir tanpa middleware (untuk pilih toko)
+    Route::get('/kasir/pilihtoko', [KasirController::class, 'pilihToko'])->name('kasir.pilihtoko');
+    Route::post('/kasir/simpantoko', [KasirController::class, 'simpanPilihanToko'])->name('kasir.simpantoko');
+
+    // Route untuk kasir yang sudah punya session toko
+    Route::middleware(['checkSelectedToko'])->group(function () {
+        Route::get('/kasir/dashboard', [KasirController::class, 'dashboard'])->name('kasir.dashboard');
+        Route::post('/kasir/exittoko', [KasirController::class, 'exitToko'])->name('kasir.exittoko');
+
+        // Route kasir lainnya (transaksi, dll)
+        // Route::get('/kasir/transaksi', ...);
+    });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

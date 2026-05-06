@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'permission' => \App\Http\Middleware\PermissionMiddleware::class,
+            'checkSelectedToko' => \App\Http\Middleware\CheckSelectedToko::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
