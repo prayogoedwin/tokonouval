@@ -119,6 +119,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/kasir/dashboard', [KasirController::class, 'dashboard'])->name('kasir.dashboard');
         Route::post('/kasir/exittoko', [KasirController::class, 'exitToko'])->name('kasir.exittoko');
 
+        Route::post('/kasir/process-payment', [KasirController::class, 'processPayment'])->name('kasir.processpayment');
+
         // Route kasir lainnya (transaksi, dll)
         // Route::get('/kasir/transaksi', ...);
     });

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Penjualan;
+use App\Models\PenjualanDetail;
 use App\Models\Produk;
+use App\Models\TipePembayaran;
 use App\Models\Toko;
 use Illuminate\Http\Request;
 
@@ -22,7 +25,7 @@ class KasirController extends Controller
     // Halaman pilih toko
     public function pilihToko()
     {
-        
+
         $tokos = Toko::all(); // Ambil semua toko
         return view('kasir.pilihtoko', compact('tokos'));
     }
@@ -43,7 +46,7 @@ class KasirController extends Controller
             'selected_toko_data' => $toko
         ]);
 
-        
+
 
         return redirect()->route('kasir.dashboard')
             ->with('success', 'Berhasil memilih toko: ' . $toko->name);
@@ -57,12 +60,96 @@ class KasirController extends Controller
         $tokoNama = session('selected_toko_nama');
 
         // Load data yang diperlukan untuk kasir
-        $produks = Produk::where('produks.toko_id', $tokoId )
-        ->get();
+        $produks = Produk::where('produks.toko_id', $tokoId)
+            ->get();
+
+        $tipe_pembayarans = TipePembayaran::get();
 
         // dd()
 
-        return view('kasir.dashboard', compact('tokoId', 'tokoNama', 'produks'));
+        return view('kasir.dashboard', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
+    }
+
+    public function processPayment(Request $request)
+    {
+        // dd($request->all()); 
+
+        $validated = $request->validate([
+            'cart_items' => 'required|json',
+            'subtotal_before_discount' => 'required|numeric',
+            'discount_percent' => 'required|numeric',
+            'discount_amount' => 'required|numeric',
+            'payment_method_id' => 'required|numeric',
+            'total_payment' => 'required|numeric',
+            'payment_amount' => 'required|numeric',
+            'change_amount' => 'required|numeric',
+            // 'transaction_id' => 'required|string'
+        ]);
+        $cartItems = json_decode($request->cart_items, true);
+
+        // $fillable = [
+        //     'customer_id',
+        //     'toko_id',
+        //     'no_invoice',
+        //     'tipe_pembayaran_id',
+        //     'total_pembelian',
+        //     'diskon_percentage',
+        //     'diskon_nominal',
+        //     'total_harus_dibayar',
+        //     'dibayar',
+        //     'kembalian',
+        //     'keterangan',
+
+        //     'created_by',
+        //     'updated_by',
+        //     'deleted_by',
+        // ];
+        // dd("here");
+
+        // Create penjualan record
+        $penjualan = Penjualan::create([
+            'toko_id' =>  session('selected_toko_id'),
+            // 'no_invoice' => nanti di model
+            // 'tipe_pembayaran_id' => $validated['discount_percent'],
+            'tipe_pembayaran_id' => $validated['payment_method_id'],
+            'diskon_percentage' => $validated['discount_percent'],
+            'diskon_nominal' => $validated['discount_amount'],
+            'total_pembelian' => $validated['subtotal_before_discount'],
+            'total_harus_dibayar' => $validated['total_payment'],
+            'dibayar' => $validated['payment_amount'],
+            'kembalian' => $validated['change_amount'],
+            'keterangan' => 'completed'
+        ]);
+
+        // dd($penjualan);
+
+        // $fillable = [
+        //     'penjualan_id',
+        //     'produk_id',
+        //     'harga_beli',
+        //     'harga_jual',
+        //     'jumlah',
+        //     'satuan',
+        //     'sub_total',
+        //     'created_by',
+        //     'updated_by',
+        //     'deleted_by',
+        // ];
+        // Create penjualan details
+        foreach ($cartItems as $item) {
+            PenjualanDetail::create([
+                'penjualan_id' => $penjualan->id,
+                'produk_id' => $item['id'],
+                'harga_jual' => $item['price'],
+                'harga_beli' => $item['harga_beli'],
+                'jumlah' => $item['quantity'],
+                'satuan' => $item['unit'],
+                'sub_total' => $item['total']
+            ]);
+        }
+
+        return redirect()->route('kasir.dashboard')
+            ->with('success', 'Berhasil Melakukan Transaksi: ');
     }
 
     // Fitur exit toko (clear session tapi tidak logout)

@@ -10,7 +10,7 @@
     </div>
 
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Cashier POS') }}</h1>
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Cashier {{ $tokoNama }}</h1>
         <p class="text-gray-600 dark:text-gray-400 mt-1">{{ __('Transaction and invoice management') }}</p>
     </div>
 
@@ -54,12 +54,27 @@
 
                 <!-- Rest of the payment section remains the same -->
                 <div class="mt-4 space-y-2">
+                    {{-- Payment Method Select --}}
+                    <div class="flex justify-between items-center gap-2">
+                        <span class="text-gray-600 dark:text-gray-400 text-sm">{{ __('Payment Method') }}</span>
+                        <select id="paymentMethod"
+                            class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                            <option value="">{{ __('Select payment method') }}</option>
+                            @foreach($tipe_pembayarans as $tipe_pembayaran)
+                            <option value="{{ $tipe_pembayaran->id }}" data-name="{{ $tipe_pembayaran->name }}">
+                                {{ $tipe_pembayaran->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="flex gap-2">
                         <input type="number" id="paymentAmount" placeholder="Payment amount"
                             class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                         <button id="calculateChangeBtn"
                             class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 text-sm font-medium transition">{{ __('Change') }}</button>
                     </div>
+
                     <div class="flex justify-between items-center text-sm">
                         <span class="text-gray-600 dark:text-gray-400">{{ __('Change') }}</span>
                         <span class="font-bold text-green-600 dark:text-green-400" id="changeAmount">Rp 0</span>
@@ -90,8 +105,10 @@
                     @forelse($produks as $produk)
                     <button type="button"
                         class="product-item text-left p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200"
+                        data-id="{{ $produk->id }}"
                         data-name="{{ $produk->name }}"
                         data-price="{{ $produk->harga_jual }}"
+                        data-harga_beli="{{ $produk->harga_beli }}"
                         data-unit="{{ $produk->satuan }}"
                         data-id="{{ $loop->index }}">
                         <div class="font-medium text-gray-800 dark:text-gray-200 text-sm">{{ $produk->name }}</div>
@@ -109,26 +126,7 @@
 
     </div>
 
-    {{-- INVOICE MODAL --}}
-    <div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">{{ __('INVOICE') }}</h3>
-                <button onclick="closeInvoiceModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-6 space-y-4" id="invoiceContent">
-                {{-- Dynamic invoice content will be inserted here --}}
-            </div>
-            <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex gap-2">
-                <button onclick="printInvoice()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-md transition">Print</button>
-                <button onclick="closeInvoiceModal()" class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium py-2 rounded-md transition">Close</button>
-            </div>
-        </div>
-    </div>
+
 
 
     <script>
@@ -247,14 +245,16 @@
         });
 
         // Add product to cart
-        function addToCart(name, price, unit) {
+        function addToCart(id, name, price, harga_beli, unit) {
             const existing = cart.find(item => item.name === name && item.price === price);
             if (existing) {
                 existing.quantity++;
             } else {
                 cart.push({
+                    id: id,
                     name: name,
                     price: price,
+                    harga_beli: harga_beli,
                     unit: unit,
                     quantity: 1
                 });
@@ -265,10 +265,12 @@
         // Product button click listeners
         document.querySelectorAll('.product-item').forEach(btn => {
             btn.addEventListener('click', function() {
+                const id = this.dataset.id;
                 const name = this.dataset.name;
                 const price = parseInt(this.dataset.price);
+                const harga_beli = parseInt(this.dataset.harga_beli);
                 const unit = this.dataset.unit;
-                addToCart(name, price, unit);
+                addToCart(id, name, price, harga_beli, unit);
             });
         });
 
@@ -293,8 +295,8 @@
             }
         });
 
-        // Process payment and show invoice
-        document.getElementById('processPaymentBtn').addEventListener('click', () => {
+        // Process payment and clean cart
+        document.getElementById('processPaymentBtn').addEventListener('click', async () => {
             if (cart.length === 0) {
                 alert('Cart is empty. Add some products first.');
                 return;
@@ -314,102 +316,57 @@
             const subtotal = parseInt(subtotalText) || 0;
             const discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0;
             const discountAmount = subtotal * (discountPercent / 100);
+            const totalAfterDiscount = subtotal - discountAmount;
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+            const paymentMethodId = paymentMethodSelect.value;
 
-            // Generate invoice data
-            const invoiceData = {
-                transaction_id: 'INV-' + Date.now(),
-                date: new Date().toLocaleString(),
-                items: [...cart],
-                subtotal: subtotal,
-                discountPercent: discountPercent,
-                discountAmount: discountAmount,
-                total: total,
-                payment: payment,
-                change: change,
-                cashier: '{{ auth()->user()->name ?? "Cashier" }}'
+
+
+            // Create a form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("kasir.processpayment") }}';
+
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = '{{ csrf_token() }}';
+            form.appendChild(csrfInput);
+
+            // Add form data
+            const formData = {
+                subtotal_before_discount: subtotal,
+                subtotal_after_discount: totalAfterDiscount,
+                discount_percent: discountPercent,
+                discount_amount: discountAmount,
+                total_payment: totalAfterDiscount,
+                payment_method_id: paymentMethodId,
+                payment_amount: payment,
+                change_amount: change,
+                cart_items: JSON.stringify(cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    harga_beli: item.harga_beli,
+                    quantity: item.quantity,
+                    unit: item.unit,
+                    total: item.price * item.quantity
+                })))
             };
 
-            showInvoice(invoiceData);
-        })
+            for (const [key, value] of Object.entries(formData)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                form.appendChild(input);
+            }
 
-        // Show invoice modal
-        function showInvoice(data) {
-            let itemsHtml = '';
-            data.items.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                itemsHtml += `
-                    <tr class="border-b border-gray-200 dark:border-gray-700">
-                        <td class="py-2 text-sm">${escapeHtml(item.name)}</td>
-                        <td class="py-2 text-sm text-center">${item.quantity}</td>
-                        <td class="py-2 text-sm text-right">${formatRupiah(item.price)}</td>
-                        <td class="py-2 text-sm text-right">${formatRupiah(itemTotal)}</td>
-                    </tr>
-                `;
-            });
+            document.body.appendChild(form);
+            form.submit();
+        });
 
-            const invoiceHtml = `
-                <div class="text-center border-b border-gray-200 dark:border-gray-700 pb-4">
-                    <h2 class="text-xl font-bold">STORE NAME</h2>
-                    <p class="text-xs text-gray-500">Jl. Example No. 123, City</p>
-                    <p class="text-xs text-gray-500">Tel: (021) 1234567</p>
-                </div>
-                <div class="flex justify-between text-xs text-gray-500 pt-2">
-                    <span>Invoice: ${data.transaction_id}</span>
-                    <span>${data.date}</span>
-                </div>
-                <div class="text-xs text-gray-500">Cashier: ${data.cashier}</div>
-                <table class="w-full text-sm mt-4">
-                    <thead class="border-b border-gray-300 dark:border-gray-600">
-                        <tr><th class="text-left py-1">Item</th><th class="text-center py-1">Qty</th><th class="text-right py-1">Price</th><th class="text-right py-1">Total</th></tr>
-                    </thead>
-                    <tbody>
-                        ${itemsHtml}
-                    </tbody>
-                </table>
-                <div class="border-t border-gray-200 dark:border-gray-700 mt-4 pt-3 space-y-1 text-sm">
-                    <div class="flex justify-between"><span>Subtotal</span><span>${formatRupiah(data.subtotal)}</span></div>
-                    <div class="flex justify-between"><span>Tax (10%)</span><span>${formatRupiah(data.tax)}</span></div>
-                    <div class="flex justify-between font-bold text-base pt-1"><span>TOTAL</span><span>${formatRupiah(data.total)}</span></div>
-                    <div class="flex justify-between"><span>Payment</span><span>${formatRupiah(data.payment)}</span></div>
-                    <div class="flex justify-between text-green-600"><span>Change</span><span>${formatRupiah(data.change)}</span></div>
-                </div>
-                <div class="text-center text-xs text-gray-400 mt-6 pt-3 border-t border-gray-200 dark:border-gray-700">
-                    Thank you for shopping with us!
-                </div>
-            `;
-
-            document.getElementById('invoiceContent').innerHTML = invoiceHtml;
-            document.getElementById('invoiceModal').classList.remove('hidden');
-            document.getElementById('invoiceModal').classList.add('flex');
-        }
-
-        window.closeInvoiceModal = function() {
-            document.getElementById('invoiceModal').classList.add('hidden');
-            document.getElementById('invoiceModal').classList.remove('flex');
-        };
-
-        window.printInvoice = function() {
-            const printContent = document.getElementById('invoiceContent').innerHTML;
-            const originalTitle = document.title;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                <head><title>Print Invoice</title>
-                <style>
-                    body { font-family: monospace; padding: 20px; max-width: 400px; margin: 0 auto; }
-                    .text-center { text-align: center; }
-                    .text-right { text-align: right; }
-                    table { width: 100%; border-collapse: collapse; }
-                    td, th { padding: 8px 4px; }
-                </style>
-                </head>
-                <body>${printContent}</body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
-            printWindow.close();
-        };
 
         // Simple escape to prevent XSS
         function escapeHtml(str) {
