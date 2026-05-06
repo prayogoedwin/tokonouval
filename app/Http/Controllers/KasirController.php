@@ -65,7 +65,12 @@ class KasirController extends Controller
 
         $tipe_pembayarans = TipePembayaran::get();
 
-        // dd()
+        // dd($produks);
+
+        // TODO: ganti nextnya
+        if($tokoId == 1){
+            return view('kasir.dashboard', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
+        }
 
         return view('kasir.tipe2', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
     }
@@ -158,7 +163,7 @@ class KasirController extends Controller
         // Hapus session toko
         session()->forget(['selected_toko_id', 'selected_toko_nama', 'selected_toko_data']);
 
-        return redirect()->route('kasir.pilih-toko')
+        return redirect()->route('kasir.pilihtoko')
             ->with('success', 'Berhasil keluar dari toko');
     }
 }

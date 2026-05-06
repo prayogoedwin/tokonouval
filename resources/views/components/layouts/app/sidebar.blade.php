@@ -22,7 +22,7 @@
                                 :active="request()->routeIs('tokos*')">Toko Management
                             </x-layouts.sidebar-link>
 
-                            <x-layouts.sidebar-link href="{{ route('kasir.pilihtoko') }}" icon='fas-boxes-packing'
+                            <x-layouts.sidebar-link href="{{ route('kasir.dashboard') }}" icon='fas-boxes-packing'
                                 :active="request()->routeIs('kasir*')">Kasir
                             </x-layouts.sidebar-link>
 

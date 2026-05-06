@@ -29,8 +29,9 @@
                         data-id="{{ $produk->id }}"
                         data-name="{{ $produk->name }}"
                         data-price="{{ $produk->harga_jual }}"
-                        data-harga_beli="{{ $produk->harga_beli }}
-                        data-unit="{{ $produk->satuan }}">
+                        data-harga_beli="{{ $produk->harga_beli }}"
+                        data-unit="{{ $produk->satuan }}"
+                        >
                         {{ $produk->name }} - {{ $produk->satuan }} (Rp {{ number_format($produk->harga_jual, 0, ',', '.') }})
                     </option>
                     @endforeach
@@ -170,26 +171,6 @@
         </div>
     </div>
 
-    {{-- INVOICE MODAL (same as before) --}}
-    <div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">{{ __('INVOICE') }}</h3>
-                <button onclick="closeInvoiceModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-6 space-y-4" id="invoiceContent">
-                {{-- Dynamic invoice content will be inserted here --}}
-            </div>
-            <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex gap-2">
-                <button onclick="printInvoice()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-md transition">Print</button>
-                <button onclick="closeInvoiceModal()" class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium py-2 rounded-md transition">Close</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         // Cart state
@@ -264,13 +245,15 @@
                 return;
             }
 
+            console.log(cart);
+
             let html = '';
             cart.forEach((item, index) => {
                 const subTotal = item.price * item.quantity;
                 html += `
                     <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
                         <td class="px-4 py-3 text-gray-600 dark:text-gray-400">${index + 1}</td>
-                        <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-200">${escapeHtml(item.name)}</td>
+                        <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-200">${item.name}</td>
                         <td class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">${formatRupiah(item.price)}</td>
                         <td class="px-4 py-3 text-center">
                             <div class="flex items-center justify-center gap-2">
@@ -351,12 +334,13 @@
             const unit = selectedOption.dataset.unit;
             let qty = parseInt(productQty.value);
 
+
             if (isNaN(qty) || qty < 1) {
                 qty = 1;
             }
 
             for (let i = 0; i < qty; i++) {
-                addToCart(name, price, unit);
+                addToCart(id, name, price, harga_beli, unit);
             }
 
             productSelect.value = '';
@@ -388,6 +372,9 @@
                 return;
             }
 
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+
+
             const paymentMethodId = paymentMethodSelect.value;
             const paymentMethodName = paymentMethodSelect.options[paymentMethodSelect.selectedIndex]?.dataset.name || '';
 
@@ -412,7 +399,6 @@
             const discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0;
             const discountAmount = subtotal * (discountPercent / 100);
             const totalAfterDiscount = subtotal - discountAmount;
-            const paymentMethodSelect = document.getElementById('paymentMethod');
 
             // Create a form and submit
             const form = document.createElement('form');
@@ -461,93 +447,7 @@
 
         });
 
-        // Show invoice modal
-        function showInvoice(data) {
-            let itemsHtml = '';
-            data.items.forEach((item, idx) => {
-                const itemTotal = item.price * item.quantity;
-                itemsHtml += `
-                    <tr class="border-b border-gray-200 dark:border-gray-700">
-                        <td class="py-2 text-sm">${idx + 1}</td>
-                        <td class="py-2 text-sm">${escapeHtml(item.name)}</td>
-                        <td class="py-2 text-sm text-center">${item.quantity}</td>
-                        <td class="py-2 text-sm text-right">${formatRupiah(item.price)}</td>
-                        <td class="py-2 text-sm text-right">${formatRupiah(itemTotal)}</td>
-                    </tr>
-                `;
-            });
-
-            const invoiceHtml = `
-                <div class="text-center border-b border-gray-200 dark:border-gray-700 pb-4">
-                    <h2 class="text-xl font-bold">STORE NAME</h2>
-                    <p class="text-xs text-gray-500">Jl. Example No. 123, City</p>
-                    <p class="text-xs text-gray-500">Tel: (021) 1234567</p>
-                </div>
-                <div class="flex justify-between text-xs text-gray-500 pt-2">
-                    <span>Invoice: ${data.transaction_id}</span>
-                    <span>${data.date}</span>
-                </div>
-                <div class="flex justify-between text-xs text-gray-500">
-                    <span>Cashier: ${data.cashier}</span>
-                    <span>Payment: ${data.payment_method_name}</span>
-                </div>
-                <table class="w-full text-sm mt-4">
-                    <thead class="border-b border-gray-300 dark:border-gray-600">
-                        <tr>
-                            <th class="text-left py-1">#</th>
-                            <th class="text-left py-1">Item</th>
-                            <th class="text-center py-1">Qty</th>
-                            <th class="text-right py-1">Price</th>
-                            <th class="text-right py-1">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${itemsHtml}
-                    </tbody>
-                </table>
-                <div class="border-t border-gray-200 dark:border-gray-700 mt-4 pt-3 space-y-1 text-sm">
-                    <div class="flex justify-between"><span>Subtotal</span><span>${formatRupiah(data.subtotal)}</span></div>
-                    <div class="flex justify-between"><span>Discount (${data.discountPercent}%)</span><span>- ${formatRupiah(data.discountAmount)}</span></div>
-                    <div class="flex justify-between font-bold text-base pt-1"><span>TOTAL</span><span>${formatRupiah(data.total)}</span></div>
-                    <div class="flex justify-between"><span>Payment (${data.payment_method_name})</span><span>${formatRupiah(data.payment)}</span></div>
-                    <div class="flex justify-between text-green-600"><span>Change</span><span>${formatRupiah(data.change)}</span></div>
-                </div>
-                <div class="text-center text-xs text-gray-400 mt-6 pt-3 border-t border-gray-200 dark:border-gray-700">
-                    Thank you for shopping with us!
-                </div>
-            `;
-
-            document.getElementById('invoiceContent').innerHTML = invoiceHtml;
-            document.getElementById('invoiceModal').classList.remove('hidden');
-            document.getElementById('invoiceModal').classList.add('flex');
-        }
-
-        window.closeInvoiceModal = function() {
-            document.getElementById('invoiceModal').classList.add('hidden');
-            document.getElementById('invoiceModal').classList.remove('flex');
-        };
-
-        window.printInvoice = function() {
-            const printContent = document.getElementById('invoiceContent').innerHTML;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                <head><title>Print Invoice</title>
-                <style>
-                    body { font-family: monospace; padding: 20px; max-width: 400px; margin: 0 auto; }
-                    .text-center { text-align: center; }
-                    .text-right { text-align: right; }
-                    table { width: 100%; border-collapse: collapse; }
-                    td, th { padding: 8px 4px; }
-                </style>
-                </head>
-                <body>${printContent}</body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
-            printWindow.close();
-        };
+        
 
         function escapeHtml(str) {
             if (!str) return '';
