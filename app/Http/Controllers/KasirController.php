@@ -67,7 +67,7 @@ class KasirController extends Controller
 
         // dd()
 
-        return view('kasir.dashboard', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
+        return view('kasir.tipe2', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
     }
 
     public function processPayment(Request $request)
