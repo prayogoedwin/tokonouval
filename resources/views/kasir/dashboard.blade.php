@@ -9,10 +9,25 @@
         <span class="text-gray-500 dark:text-gray-400">{{ __('Cashier') }}</span>
     </div>
 
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Cashier {{ $tokoNama }}</h1>
-        <p class="text-gray-600 dark:text-gray-400 mt-1">{{ __('Transaction and invoice management') }}</p>
+    <div class="grid grid-cols-2 mb-6">
+        <div class="col-lg-6">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Cashier {{ $tokoNama }}</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">{{ __('Transaction') }}</p>
+
+        </div>
+        <div class="col-lg-6 text-xs text-gray-500 px-4 py-2 text-right">
+
+            <form action="{{ route('kasir.exittoko') }}" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="text-red-500 hover:text-red-700 ml-2" style="font-size: large;">
+                    <i class="fas fa-sign-out-alt" ></i> Exit
+                </button>
+            </form>
+        </div>
     </div>
+
+
+
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
