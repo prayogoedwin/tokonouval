@@ -22,8 +22,12 @@
                                 :active="request()->routeIs('tokos*')">Toko Management
                             </x-layouts.sidebar-link>
 
-                            <x-layouts.sidebar-link href="{{ route('kasir.dashboard') }}" icon='fas-boxes-packing'
+                            <x-layouts.sidebar-link href="{{ route('kasir.dashboard') }}" icon='fas-cash-register'
                                 :active="request()->routeIs('kasir*')">Kasir
+                            </x-layouts.sidebar-link>
+
+                            <x-layouts.sidebar-link href="{{ route('penjualans.index') }}" icon='fas-chart-line'
+                                :active="request()->routeIs('penjualans*')">Penjualan Management
                             </x-layouts.sidebar-link>
 
                             

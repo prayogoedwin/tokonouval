@@ -71,6 +71,14 @@ class RolePermissionSeeder extends Seeder
             'edit-stoks',
             'download-stoks',
             'delete-stoks',
+
+            //penjualan
+            'view-penjualans',
+            'show-penjualans',
+            'create-penjualans',
+            'edit-penjualans',
+            'download-penjualans',
+            'delete-penjualans',
         ];
 
         foreach ($permissions as $permissionName) {
@@ -86,7 +94,7 @@ class RolePermissionSeeder extends Seeder
         $superAdminRole->permissions()->sync(Permission::all());
         $adminRole->permissions()->sync(Permission::all());
 
-        //TODO : !
+        //TODO: !
         $adminRole->permissions()->sync(Permission::all());
 
 

@@ -48,8 +48,7 @@ class KasirController extends Controller
 
 
 
-        return redirect()->route('kasir.dashboard')
-            ->with('success', 'Berhasil memilih toko: ' . $toko->name);
+        return to_route('kasir.dashboard')->with('status', 'Berhasil memilih toko: ' . $toko->name);
     }
 
     // Halaman utama kasir (setelah pilih toko)
@@ -153,8 +152,8 @@ class KasirController extends Controller
             ]);
         }
 
-        return redirect()->route('kasir.dashboard')
-            ->with('success', 'Berhasil Melakukan Transaksi: ');
+        return to_route('kasir.dashboard')
+            ->with('status', 'Berhasil Melakukan Transaksi: ');
     }
 
     // Fitur exit toko (clear session tapi tidak logout)

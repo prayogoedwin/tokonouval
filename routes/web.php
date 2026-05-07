@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\RoleController;
@@ -104,7 +105,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('stoks/export', [StokController::class, 'export'])->name('stoks.export')->middleware('permission:download-stoks');
     Route::get('stoks/create', [StokController::class, 'create'])->name('stoks.create')->middleware('permission:create-stoks');
     Route::post('stoks', [StokController::class, 'store'])->name('stoks.store')->middleware('permission:create-stoks');
-    Route::get('stoks/{kategori}', [StokController::class, 'show'])->name('stoks.show')->middleware('permission:show-stoks');
+    Route::get('stoks/{stok}', [StokController::class, 'show'])->name('stoks.show')->middleware('permission:show-stoks');
     Route::get('stoks/{stok}/edit', [StokController::class, 'edit'])->name('stoks.edit')->middleware('permission:edit-stoks');
     Route::put('stoks/{stok}', [StokController::class, 'update'])->name('stoks.update')->middleware('permission:edit-stoks');
     Route::delete('stoks/{stok}', [StokController::class, 'destroy'])->name('stoks.destroy')->middleware('permission:delete-stoks');
@@ -124,6 +125,16 @@ Route::middleware(['auth'])->group(function () {
         // Route kasir lainnya (transaksi, dll)
         // Route::get('/kasir/transaksi', ...);
     });
+
+    // Stok Management - dengan permission check
+    Route::get('penjualans', [PenjualanController::class, 'index'])->name('penjualans.index')->middleware('permission:view-penjualans');
+    Route::get('penjualans/export', [PenjualanController::class, 'export'])->name('penjualans.export')->middleware('permission:download-penjualans');
+    Route::get('penjualans/create', [PenjualanController::class, 'create'])->name('penjualans.create')->middleware('permission:create-penjualans');
+    Route::post('penjualans', [PenjualanController::class, 'store'])->name('penjualans.store')->middleware('permission:create-penjualans');
+    Route::get('penjualans/{penjualan}', [PenjualanController::class, 'show'])->name('penjualans.show')->middleware('permission:show-penjualans');
+    Route::get('penjualans/{penjualan}/edit', [PenjualanController::class, 'edit'])->name('penjualans.edit')->middleware('permission:edit-penjualans');
+    Route::put('penjualans/{penjualan}', [PenjualanController::class, 'update'])->name('penjualans.update')->middleware('permission:edit-penjualans');
+    Route::delete('penjualans/{penjualan}', [PenjualanController::class, 'destroy'])->name('penjualans.destroy')->middleware('permission:delete-penjualans');
 });
 
 require __DIR__ . '/auth.php';
