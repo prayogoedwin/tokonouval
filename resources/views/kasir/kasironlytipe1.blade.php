@@ -130,7 +130,7 @@
                 
                 <div class="col-lg-6 text-xs text-gray-500 px-4 py-2 text-right">
 
-                    <form action="{{ route('kasir.exittoko') }}" method="POST" class="inline">
+                    <form action="{{ route('kasir.kasir_exittoko') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="text-red-500 hover:text-red-700 ml-2" style="font-size: large;">
                             <i class="fas fa-sign-out-alt"></i> Exit
@@ -455,7 +455,7 @@
         // Create a form and submit
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '{{ route("kasir.processpayment") }}';
+        form.action = '{{ route("kasir.kasir_processpayment") }}';
 
         // Add CSRF token
         const csrfInput = document.createElement('input');

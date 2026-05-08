@@ -127,11 +127,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/kasir/dashboard', [KasirController::class, 'dashboard'])->name('kasir.dashboard')->middleware('permission:kasir');
         Route::post('/kasir/exittoko', [KasirController::class, 'exitToko'])->name('kasir.exittoko')->middleware('permission:kasir');
 
+        Route::post('/kasir/kasir_exittoko', [KasirController::class, 'kasir_exitToko'])->name('kasir.kasir_exittoko')->middleware('permission:kasir');
+
         //Route khusus Login kasir
         Route::get('/kasir/ui', [KasirController::class, 'kasir_dashboard'])->name('kasir.kasir_dashboard');
 
 
         Route::post('/kasir/process-payment', [KasirController::class, 'processPayment'])->name('kasir.processpayment')->middleware('permission:kasir');
+
+        Route::post('/kasir/uiprocess-payment', [KasirController::class, 'kasir_processPayment'])->name('kasir.kasir_processpayment')->middleware('permission:kasir');
 
         // Route kasir lainnya (transaksi, dll)
         // Route::get('/kasir/transaksi', ...);

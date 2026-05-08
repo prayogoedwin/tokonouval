@@ -201,10 +201,15 @@ class KasirController extends Controller
     public function kasir_simpanPilihanToko(Request $request)
     {
         $request->validate([
-            'toko_id' => 'required|exists:tokos,id'
+            'toko_id' => 'required|exists:tokos,id',
+            'kode_toko' => 'required'
         ]);
 
         $toko = Toko::find($request->toko_id);
+
+        if ($request->kode_toko != $toko->kode_toko) {
+            return back()->with('status', 'Kode salah');
+        }
 
         // Simpan ke session
         session([
@@ -218,13 +223,107 @@ class KasirController extends Controller
         return to_route('kasir.kasir_dashboard')->with('status', 'Berhasil memilih toko: ' . $toko->name);
     }
 
+    public function kasir_processPayment(Request $request)
+    {
+        // dd($request->all()); 
+
+        $validated = $request->validate([
+            'cart_items' => 'required|json',
+            'subtotal_before_discount' => 'required|numeric',
+            'discount_percent' => 'required|numeric',
+            'discount_amount' => 'required|numeric',
+            'payment_method_id' => 'required|numeric',
+            'total_payment' => 'required|numeric',
+            'payment_amount' => 'required|numeric',
+            'change_amount' => 'required|numeric',
+            // 'transaction_id' => 'required|string'
+        ]);
+        $cartItems = json_decode($request->cart_items, true);
+
+        // $fillable = [
+        //     'customer_id',
+        //     'toko_id',
+        //     'no_invoice',
+        //     'tipe_pembayaran_id',
+        //     'total_pembelian',
+        //     'diskon_percentage',
+        //     'diskon_nominal',
+        //     'total_harus_dibayar',
+        //     'dibayar',
+        //     'kembalian',
+        //     'keterangan',
+
+        //     'created_by',
+        //     'updated_by',
+        //     'deleted_by',
+        // ];
+        // dd("here");
+
+        // Create penjualan record
+        $penjualan = Penjualan::create([
+            'toko_id' =>  session('selected_toko_id'),
+            // 'no_invoice' => nanti di model
+            // 'tipe_pembayaran_id' => $validated['discount_percent'],
+            'tipe_pembayaran_id' => $validated['payment_method_id'],
+            'diskon_percentage' => $validated['discount_percent'],
+            'diskon_nominal' => $validated['discount_amount'],
+            'total_pembelian' => $validated['subtotal_before_discount'],
+            'total_harus_dibayar' => $validated['total_payment'],
+            'dibayar' => $validated['payment_amount'],
+            'kembalian' => $validated['change_amount'],
+            'keterangan' => 'completed'
+        ]);
+
+        // dd($penjualan);
+
+        // $fillable = [
+        //     'penjualan_id',
+        //     'produk_id',
+        //     'harga_beli',
+        //     'harga_jual',
+        //     'jumlah',
+        //     'satuan',
+        //     'sub_total',
+        //     'created_by',
+        //     'updated_by',
+        //     'deleted_by',
+        // ];
+        // Create penjualan details
+        foreach ($cartItems as $item) {
+            PenjualanDetail::create([
+                'penjualan_id' => $penjualan->id,
+                'produk_id' => $item['id'],
+                'harga_jual' => $item['price'],
+                'harga_beli' => $item['harga_beli'],
+                'jumlah' => $item['quantity'],
+                'satuan' => $item['unit'],
+                'sub_total' => $item['total']
+            ]);
+        }
+
+        return to_route('kasir.kasir_dashboard')
+            ->with('status', 'Berhasil Melakukan Transaksi: ');
+    }
+
+    //TODO:
     // Fitur exit toko (clear session tapi tidak logout)
     public function kasir_exitToko()
     {
         // Hapus session toko
         session()->forget(['selected_toko_id', 'selected_toko_nama', 'selected_toko_data']);
 
-        return redirect()->route('kasir.kasir_pilihtoko')
+        $ishaveToko = (bool) auth()->user()->toko_id;
+        if ($ishaveToko) {
+
+            auth()->logout();
+            session()->invalidate();
+            session()->regenerateToken();
+
+           
+            return redirect('/dashboard')->with('success', 'Berhasil logout');
+        }
+
+        return redirect()->route('kasir.kasir_pilihToko')
             ->with('success', 'Berhasil keluar dari toko');
     }
 }

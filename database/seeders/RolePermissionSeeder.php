@@ -96,8 +96,7 @@ class RolePermissionSeeder extends Seeder
         $superAdminRole->permissions()->sync(Permission::all());
         $adminRole->permissions()->sync(Permission::all());
 
-        //TODO: !
-        $adminRole->permissions()->sync(
+        $kasirRole->permissions()->sync(
             Permission::whereIn('name', [
                 'kasir'
             ])->pluck('id')

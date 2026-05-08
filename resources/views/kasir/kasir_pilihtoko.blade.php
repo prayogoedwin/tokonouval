@@ -118,43 +118,61 @@
 
 <body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col">
     <main class="flex-1 flex flex-col overflow-auto bg-gray-100 dark:bg-gray-900 content-transition p-6 h-full">
-        <div class="mb-6 flex items-center text-sm">
-            <a href="{{ route('dashboard') }}"
-                class="text-blue-600 dark:text-blue-400 hover:underline">{{ __('Dashboard') }}</a>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2 text-gray-400" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-            <span class="text-gray-500 dark:text-gray-400">{{ __('Cashier') }}</span>
-        </div>
+
 
         <div class="mb-6">
             <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Pilih Toko') }}</h1>
             <p class="text-gray-600 dark:text-gray-400 mt-1">{{ __('') }}</p>
+
+            <div class="col-lg-6 text-xs text-gray-500 px-4 py-2 text-right">
+
+                <form action="{{ route('logout') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="text-red-500 hover:text-red-700 ml-2" style="font-size: large;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <div class="container">
-            <h2>Pilih Toko untuk Kasir</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col p-3">
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                @foreach($tokos as $toko)
-                <div class="col-lg-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 text-gray-800 dark:text-gray-100">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5>{{ $toko->name }}</h5>
-                            <p>{{ $toko->alamat }}</p>
-                            <form action="{{ route('kasir.kasir_simpantoko') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="toko_id" value="{{ $toko->id }}">
-                                <button type="submit" class=" w-100 flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
-                                    Pilih Toko Ini
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+
+            <form action="{{ route('kasir.kasir_simpantoko') }}" method="POST">
+                @csrf
+
+
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Pilih Toko
+                    </label>
+
+                    <select
+                        name="toko_id"
+                        class="block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm p-2">
+
+                        <option value="">Pilih Toko</option>
+                        @foreach($tokos as $toko)
+                        <option value="{{ $toko->id }}">
+                            {{ $toko->name }}
+                        </option>
+                        @endforeach
+                    </select>
+
+
                 </div>
-                @endforeach
-            </div>
+
+                <div class="mb-4">
+                    <x-forms.input label="Kode Toko" name="kode_toko" type="text" value="" required />
+                </div>
+
+                <div class="flex gap-3">
+                    <x-button type="primary">{{ __('Masuk') }}</x-button>
+
+                </div>
+
+            </form>
         </div>
     </main>
 
