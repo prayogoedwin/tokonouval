@@ -79,6 +79,8 @@ class RolePermissionSeeder extends Seeder
             'edit-penjualans',
             'download-penjualans',
             'delete-penjualans',
+
+            'kasir',
         ];
 
         foreach ($permissions as $permissionName) {
@@ -95,7 +97,11 @@ class RolePermissionSeeder extends Seeder
         $adminRole->permissions()->sync(Permission::all());
 
         //TODO: !
-        $adminRole->permissions()->sync(Permission::all());
+        $adminRole->permissions()->sync(
+            Permission::whereIn('name', [
+                'kasir'
+            ])->pluck('id')
+        );
 
 
         $editorRole->permissions()->sync(
@@ -114,7 +120,6 @@ class RolePermissionSeeder extends Seeder
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('password'),
-                'toko_id' => 1
             ]
         );
 
@@ -125,7 +130,6 @@ class RolePermissionSeeder extends Seeder
             [
                 'name' => 'Admin User',
                 'password' => Hash::make('password'),
-                'toko_id' => 1,
             ]
         );
 
@@ -136,7 +140,6 @@ class RolePermissionSeeder extends Seeder
             [
                 'name' => 'Editor User',
                 'password' => Hash::make('password'),
-                'toko_id' => 1,
 
             ]
         );
@@ -148,15 +151,14 @@ class RolePermissionSeeder extends Seeder
             [
                 'name' => 'Regular User',
                 'password' => Hash::make('password'),
-                'toko_id' => 1,
 
             ]
         );
 
         $user->roles()->sync([$userRole->id]);
 
-        $kasir = User::firstOrCreate(
-            ['email' => 'kasir@example.com'],
+        $kasir1 = User::firstOrCreate(
+            ['email' => 'kasirtoko1@example.com'],
             [
                 'name' => 'example Kasir',
                 'password' => Hash::make('password'),
@@ -164,7 +166,27 @@ class RolePermissionSeeder extends Seeder
 
             ]
         );
+        $kasir2 = User::firstOrCreate(
+            ['email' => 'kasirtoko2@example.com'],
+            [
+                'name' => 'example Kasir',
+                'password' => Hash::make('password'),
+                'toko_id' => 2,
 
-        $kasir->roles()->sync([$kasirRole->id]);
+            ]
+        );
+        $kasirnull = User::firstOrCreate(
+            ['email' => 'kasir@example.com'],
+            [
+                'name' => 'example Kasir',
+                'password' => Hash::make('password'),
+                // 'toko_id' => 1,
+
+            ]
+        );
+
+        $kasir1->roles()->sync([$kasirRole->id]);
+        $kasir2->roles()->sync([$kasirRole->id]);
+        $kasirnull->roles()->sync([$kasirRole->id]);
     }
 }

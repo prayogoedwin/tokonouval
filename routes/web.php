@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PenjualanController;
@@ -17,7 +18,7 @@ Route::get('/', function () {
     return redirect('dashboard');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
+Route::get('dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -111,16 +112,26 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('stoks/{stok}', [StokController::class, 'destroy'])->name('stoks.destroy')->middleware('permission:delete-stoks');
 
 
+
     // Route untuk kasir tanpa middleware (untuk pilih toko)
     Route::get('/kasir/pilihtoko', [KasirController::class, 'pilihToko'])->name('kasir.pilihtoko');
     Route::post('/kasir/simpantoko', [KasirController::class, 'simpanPilihanToko'])->name('kasir.simpantoko');
 
+
+    Route::get('/kasir/uipilihtoko', [KasirController::class, 'kasir_pilihtoko'])->name('kasir.kasir_pilihToko');
+    Route::post('/kasir/uisimpantoko', [KasirController::class, 'kasir_simpanPilihanToko'])->name('kasir.kasir_simpantoko');
+
+
     // Route untuk kasir yang sudah punya session toko
     Route::middleware(['checkSelectedToko'])->group(function () {
-        Route::get('/kasir/dashboard', [KasirController::class, 'dashboard'])->name('kasir.dashboard');
-        Route::post('/kasir/exittoko', [KasirController::class, 'exitToko'])->name('kasir.exittoko');
+        Route::get('/kasir/dashboard', [KasirController::class, 'dashboard'])->name('kasir.dashboard')->middleware('permission:kasir');
+        Route::post('/kasir/exittoko', [KasirController::class, 'exitToko'])->name('kasir.exittoko')->middleware('permission:kasir');
 
-        Route::post('/kasir/process-payment', [KasirController::class, 'processPayment'])->name('kasir.processpayment');
+        //Route khusus Login kasir
+        Route::get('/kasir/ui', [KasirController::class, 'kasir_dashboard'])->name('kasir.kasir_dashboard');
+
+
+        Route::post('/kasir/process-payment', [KasirController::class, 'processPayment'])->name('kasir.processpayment')->middleware('permission:kasir');
 
         // Route kasir lainnya (transaksi, dll)
         // Route::get('/kasir/transaksi', ...);

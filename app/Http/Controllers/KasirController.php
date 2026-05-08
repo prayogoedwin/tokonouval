@@ -67,7 +67,7 @@ class KasirController extends Controller
         // dd($produks);
 
         // TODO: ganti nextnya
-        if($tokoId == 1){
+        if ($tokoId == 1) {
             return view('kasir.dashboard', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
         }
 
@@ -163,6 +163,68 @@ class KasirController extends Controller
         session()->forget(['selected_toko_id', 'selected_toko_nama', 'selected_toko_data']);
 
         return redirect()->route('kasir.pilihtoko')
+            ->with('success', 'Berhasil keluar dari toko');
+    }
+
+
+    //--------KASIR ONLY-----------//
+
+    public function kasir_dashboard()
+    {
+        // Ambil data dari session
+        $tokoId = session('selected_toko_id');
+        $tokoNama = session('selected_toko_nama');
+
+        // Load data yang diperlukan untuk kasir
+        $produks = Produk::where('produks.toko_id', $tokoId)
+            ->get();
+
+        $tipe_pembayarans = TipePembayaran::get();
+
+        // dd($produks);
+
+        // TODO: ganti nextnya
+        if ($tokoId == 1) {
+            return view('kasir.kasironlytipe1', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
+        }
+
+        return view('kasir.kasironlytipe2', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
+    }
+
+    public function kasir_pilihToko()
+    {
+        // dd('here');
+        $tokos = Toko::all(); // Ambil semua toko
+        return view('kasir.kasir_pilihtoko', compact('tokos'));
+    }
+
+    public function kasir_simpanPilihanToko(Request $request)
+    {
+        $request->validate([
+            'toko_id' => 'required|exists:tokos,id'
+        ]);
+
+        $toko = Toko::find($request->toko_id);
+
+        // Simpan ke session
+        session([
+            'selected_toko_id' => $toko->id,
+            'selected_toko_nama' => $toko->name,
+            'selected_toko_data' => $toko
+        ]);
+
+
+
+        return to_route('kasir.kasir_dashboard')->with('status', 'Berhasil memilih toko: ' . $toko->name);
+    }
+
+    // Fitur exit toko (clear session tapi tidak logout)
+    public function kasir_exitToko()
+    {
+        // Hapus session toko
+        session()->forget(['selected_toko_id', 'selected_toko_nama', 'selected_toko_data']);
+
+        return redirect()->route('kasir.kasir_pilihtoko')
             ->with('success', 'Berhasil keluar dari toko');
     }
 }
