@@ -44,6 +44,12 @@ class TokoController extends Controller
                     ['value' => 'Pusat', 'label' => 'Pusat'],
                     ['value' => 'Cabang', 'label' => 'Cabang'],
 
+                ]],
+                ['name' => 'tipe_kasir', 'value' => 'tipe_kasir', 'title' => 'Tipe Kasir', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
+
+                    ['value' => 'Inovice', 'label' => 'Inovice'],
+                    ['value' => 'POS', 'label' => 'POS'],
+
                 ]]
 
             ],

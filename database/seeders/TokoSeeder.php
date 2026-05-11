@@ -14,18 +14,20 @@ class TokoSeeder extends Seeder
     {
         $data = [
             [
-                'name' => "Alfamart",
-                'kode_toko' => "ALF-001",
+                'name' => "Toko Pusat",
+                'kode_toko' => "PST-001",
                 'pass_toko' => "12345678",
                 'alamat' => "Jl.Semarang Bali No.20, Yogyakarta",
                 'status_toko' => 'Pusat',
+                'tipe_kasir' => 'Invoice',
             ],
             [
-                'name' => "Indomart",
-                'kode_toko' => "Ind-002",
+                'name' => "Toko Cabang 1",
+                'kode_toko' => "CBG-002",
                 'pass_toko' => "12345678",
                 'alamat' => "Jl.Semarang Solo No.10, Jakarta",
                 'status_toko' => 'Cabang',
+                'tipe_kasir' => 'POS',
 
             ],
 

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('pass_toko');
             $table->string('alamat');
             $table->string('status_toko'); //(Cabang / Pusat)
+            $table->string('tipe_kasir'); //(Invoice / Pos)
             $table->timestamps();
             $table->softDeletes();
             $table->foreignId('created_by')->nullable();
