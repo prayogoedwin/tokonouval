@@ -17,15 +17,24 @@ class StokController extends Controller
 {
     private function getPagedata()
     {
+        // protected $fillable = [
+        // 'produk_id',
+        // 'tipe',
+        // 'jumlah',
 
+        // 'created_by',
+        // 'updated_by',
+        // 'deleted_by',
+        // ];
         $produks = Produk::get();
 
         $pagedata = [
             'title' => 'Stok',
             'tablename' => 'stoks',
             'tableaction' => true,
+            'canCreate' => false,
             'columns' => [
-                ['name' => 'kategori_id', 'value' => 'kategori', 'title' => 'Kategori', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
+                ['name' => 'produk_id', 'value' => 'produk', 'title' => 'Produk', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
                     // Ambil data kategori dari database
                     // ['value' => '', 'label' => 'Pilih Toko'],
                     ...$produks->map(function ($produk) {
@@ -51,9 +60,25 @@ class StokController extends Controller
     public function index(Request $request)
     {
         // dd($request->headers->all());
+        // $stoks = Stok::where('stoks.deleted_at', null)
+        //     ->join('produks', 'stoks.produk_id', '=', 'produks.id')
+        //     ->select(
+        //         'stoks.*',
+        //         'produks.name as produk',
+        //     )
+        //     ->get();
+
+        // dd($stoks);
         if ($request->ajax()) {
             // dd('masuk ajax');
-            $stoks = Stok::get();
+            $stoks = Stok::where('stoks.deleted_at', null)
+                ->join('produks', 'stoks.produk_id', '=', 'produks.id')
+                ->select(
+                    'stoks.*',
+                    'produks.name as produk',
+                )
+                ->get();
+
             // dd($stoks);
 
             return DataTables::of($stoks)
@@ -73,16 +98,16 @@ class StokController extends Controller
                         $actions .= '<a href="' . route('stoks.show', $Stok) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">View</a>';
                     }
 
-                    if (auth()->user()->hasPermission('edit-stoks')) {
-                        $actions .= '<a href="' . route('stoks.edit', $Stok) . '" class="text-blue-600 dark:text-blue-400 hover:underline mr-3">Edit</a>';
-                    }
+                    // if (auth()->user()->hasPermission('edit-stoks')) {
+                    //     $actions .= '<a href="' . route('stoks.edit', $Stok) . '" class="text-blue-600 dark:text-blue-400 hover:underline mr-3">Edit</a>';
+                    // }
 
-                    if (auth()->user()->hasPermission('delete-stoks')) {
-                        $actions .= '<form action="' . route('stoks.destroy', $Stok) . '" method="POST" class="inline" onsubmit="return confirm(\'Are you sure?\')">
-                            ' . csrf_field() . method_field('DELETE') . '
-                            <button type="submit" class="text-red-600 dark:text-red-400 hover:underline">Delete</button>
-                        </form>';
-                    }
+                    // if (auth()->user()->hasPermission('delete-stoks')) {
+                    //     $actions .= '<form action="' . route('stoks.destroy', $Stok) . '" method="POST" class="inline" onsubmit="return confirm(\'Are you sure?\')">
+                    //         ' . csrf_field() . method_field('DELETE') . '
+                    //         <button type="submit" class="text-red-600 dark:text-red-400 hover:underline">Delete</button>
+                    //     </form>';
+                    // }
 
                     return $actions;
                 })
