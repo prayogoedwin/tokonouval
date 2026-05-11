@@ -6,7 +6,7 @@
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
-        <span class="text-gray-500 dark:text-gray-400">{{ __('Cashier') }}</span>
+        <span class="text-gray-500 dark:text-gray-400">{{ __('Cashier POS') }}</span>
     </div>
 
     <div class="grid grid-cols-2 mb-6">

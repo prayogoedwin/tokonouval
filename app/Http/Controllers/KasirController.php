@@ -57,6 +57,7 @@ class KasirController extends Controller
         // Ambil data dari session
         $tokoId = session('selected_toko_id');
         $tokoNama = session('selected_toko_nama');
+        $toko_tipe_kasir = Toko::find($tokoId)->tipe_kasir;
 
         // Load data yang diperlukan untuk kasir
         $produks = Produk::where('produks.toko_id', $tokoId)
@@ -64,10 +65,9 @@ class KasirController extends Controller
 
         $tipe_pembayarans = TipePembayaran::get();
 
-        // dd($produks);
+        // dd($toko_tipe_kasir);
 
-        // TODO: ganti nextnya
-        if ($tokoId == 1) {
+        if ($toko_tipe_kasir === "POS") {
             return view('kasir.dashboard', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
         }
 
@@ -174,6 +174,7 @@ class KasirController extends Controller
         // Ambil data dari session
         $tokoId = session('selected_toko_id');
         $tokoNama = session('selected_toko_nama');
+        $toko_tipe_kasir = Toko::find($tokoId)->tipe_kasir;
 
         // Load data yang diperlukan untuk kasir
         $produks = Produk::where('produks.toko_id', $tokoId)
@@ -182,13 +183,13 @@ class KasirController extends Controller
         $tipe_pembayarans = TipePembayaran::get();
 
         // dd($produks);
-
-        // TODO: ganti nextnya
-        if ($tokoId == 1) {
-            return view('kasir.kasironlytipe1', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
+        // dd($toko_tipe_kasir);
+        
+        if ($toko_tipe_kasir == "Invoice") {
+            return view('kasir.kasironlytipe2', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
         }
 
-        return view('kasir.kasironlytipe2', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
+        return view('kasir.kasironlytipe1', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
     }
 
     public function kasir_pilihToko()
