@@ -14,14 +14,11 @@ class KategoriSeeder extends Seeder
     {
         //
         $data = [
-            ['name' => 'Makanan & Minuman'],
-            ['name' => 'Minuman', 'id_parent' => 1],
-            ['name' => 'Rokok & Tembakau'],
-            ['name' => 'Perlengkapan Mandi'],
-            ['name' => 'Makanan Instan', 'id_parent' => 1],
-            ['name' => 'Minuman Kemasan'],
-            ['name' => 'Bumbu Dapur'],
-            ['name' => 'Snack Sehat', 'id_parent' => 1],
+            ['id' => 1, 'name' => 'Genset & Kelistrikan'],
+            ['id' => 2, 'name' => 'Kabel & Aksesoris'],
+            ['id' => 3, 'name' => 'Penyedot Debu & Kebersihan'],
+            ['id' => 4, 'name' => 'Power Tools', 'id_parent' => 1],
+            ['id' => 5, 'name' => 'Aksesoris & Perlengkapan', 'id_parent' => 2],
         ];
 
         foreach ($data as $item) {

@@ -24,39 +24,40 @@ class ProdukSeeder extends Seeder
         // ];
 
         $data = [
-            // Makanan Ringan (category_id = 1)
-            ['name' => 'Indomie Goreng', 'category_id' => 5, 'satuan' => 'pcs', 'harga_beli' => 2800, 'harga_jual' => 3500, 'min_stock' => 20, 'image' => null],
-            ['name' => 'Indomie Kari Ayam', 'category_id' => 5, 'satuan' => 'pcs', 'harga_beli' => 2800, 'harga_jual' => 3500, 'min_stock' => 20, 'image' => null],
-            ['name' => 'Chitato Sapi Panggang 68g', 'category_id' => 1, 'satuan' => 'pcs', 'harga_beli' => 12000, 'harga_jual' => 15500, 'min_stock' => 10, 'image' => null],
-            ['name' => 'Qtela', 'category_id' => 1, 'satuan' => 'pcs', 'harga_beli' => 6000, 'harga_jual' => 8000, 'min_stock' => 15, 'image' => null],
-            ['name' => 'Taro Net 54g', 'category_id' => 1, 'satuan' => 'pcs', 'harga_beli' => 6500, 'harga_jual' => 8500, 'min_stock' => 12, 'image' => null],
-            
-            
-            ['name' => 'Teh Botol Sosro 350ml', 'category_id' => 6, 'satuan' => 'botol', 'harga_beli' => 3500, 'harga_jual' => 4500, 'min_stock' => 20, 'image' => null],
-            ['name' => 'Coca Cola 390ml', 'category_id' => 6, 'satuan' => 'kaleng', 'harga_beli' => 5000, 'harga_jual' => 6500, 'min_stock' => 20, 'image' => null],
-            ['name' => 'Aqua 600ml', 'category_id' => 6, 'satuan' => 'botol', 'harga_beli' => 2500, 'harga_jual' => 3500, 'min_stock' => 30, 'image' => null],
+            // Genset & Kelistrikan (category_id = 1)
+            ['name' => 'Genset 1000 Watt', 'category_id' => 1, 'satuan' => 'unit', 'harga_beli' => 1500000, 'harga_jual' => 1750000],
+            ['name' => 'Genset 3000 Watt', 'category_id' => 1, 'satuan' => 'unit', 'harga_beli' => 2800000, 'harga_jual' => 3250000],
+            ['name' => 'Stabilizer 500 VA', 'category_id' => 1, 'satuan' => 'pcs', 'harga_beli' => 250000, 'harga_jual' => 300000],
+            ['name' => 'MCB 10 Ampere', 'category_id' => 1, 'satuan' => 'pcs', 'harga_beli' => 25000, 'harga_jual' => 35000],
 
-            ['name' => 'Ultra Milk Coklat 250ml', 'category_id' => 6, 'satuan' => 'kotak', 'harga_beli' => 5500, 'harga_jual' => 7000, 'min_stock' => 10, 'image' =>null],
-            
-            ['name' => 'Sampoerna Mild 16', 'category_id' => 3, 'satuan' => 'batang', 'harga_beli' => 25000, 'harga_jual' => 30000, 'min_stock' => 5, 'image' => null],
-            ['name' => 'Dunhill 20', 'category_id' => 3, 'satuan' => 'batang', 'harga_beli' => 32000, 'harga_jual' => 38000, 'min_stock' => 5, 'image' => null],
-            ['name' => 'Marlboro 20', 'category_id' => 3, 'satuan' => 'batang', 'harga_beli' => 35000, 'harga_jual' => 42000, 'min_stock' => 5, 'image' =>null],
-            
-            ['name' => 'Lifebuoy Sabun Mandi 80ml', 'category_id' => 4, 'satuan' => 'pcs', 'harga_beli' => 3500, 'harga_jual' => 4500, 'min_stock' => 15, 'image' => null],
-            ['name' => 'Pepsodent Pasta Gigi', 'category_id' => 4, 'satuan' => 'pcs', 'harga_beli' => 12000, 'harga_jual' => 15000, 'min_stock' => 10, 'image' => null],
-            ['name' => 'Shampo Pantene 200ml', 'category_id' => 4, 'satuan' => 'pcs', 'harga_beli' => 18000, 'harga_jual' => 23000, 'min_stock' => 8, 'image' =>null],
-            
-            ['name' => 'Sasa Santan Bubuk', 'category_id' => 7, 'satuan' => 'pcs', 'harga_beli' => 3500, 'harga_jual' => 4500, 'min_stock' => 10, 'image' => null],
-            ['name' => 'Royco Ayam', 'category_id' => 7, 'satuan' => 'pcs', 'harga_beli' => 500, 'harga_jual' => 1000, 'min_stock' => 50, 'image' => null],
-            ['name' => 'Kecap Bango 135ml', 'category_id' => 7, 'satuan' => 'botol', 'harga_beli' => 8000, 'harga_jual' => 11000, 'min_stock' => 12, 'image' =>null],
-          
-            ['name' => 'Kacang Atom', 'category_id' => 8, 'satuan' => 'pcs', 'harga_beli' => 1000, 'harga_jual' => 2000, 'min_stock' => 30, 'image' => null],
-            ['name' => 'Yogurt Cimory 250ml', 'category_id' => 8, 'satuan' => 'botol', 'harga_beli' => 8000, 'harga_jual' => 12000, 'min_stock' => 8, 'image' => null]
+            // Kabel & Aksesoris (category_id = 2)
+            ['name' => 'Kabel NYY 2x1.5 mm', 'category_id' => 2, 'satuan' => 'meter', 'harga_beli' => 3500, 'harga_jual' => 5000],
+            ['name' => 'Kabel NYA 1.5 mm', 'category_id' => 2, 'satuan' => 'meter', 'harga_beli' => 1800, 'harga_jual' => 2500],
+            ['name' => 'Stop Kontak Industri', 'category_id' => 2, 'satuan' => 'pcs', 'harga_beli' => 15000, 'harga_jual' => 22000],
+            ['name' => 'Kabel Rol 20 meter', 'category_id' => 2, 'satuan' => 'pcs', 'harga_beli' => 120000, 'harga_jual' => 150000],
+
+            // Penyedot Debu & Kebersihan (category_id = 3)
+            ['name' => 'Vacuum Cleaner 600W', 'category_id' => 3, 'satuan' => 'unit', 'harga_beli' => 350000, 'harga_jual' => 450000],
+            ['name' => 'Vacuum Cleaner Basah & Kering', 'category_id' => 3, 'satuan' => 'unit', 'harga_beli' => 650000, 'harga_jual' => 800000],
+            ['name' => 'Blower Debu Industri', 'category_id' => 3, 'satuan' => 'unit', 'harga_beli' => 250000, 'harga_jual' => 320000],
+            ['name' => 'Filter HEPA Vacuum', 'category_id' => 3, 'satuan' => 'pcs', 'harga_beli' => 45000, 'harga_jual' => 60000],
+
+            // Power Tools (category_id = 4)
+            ['name' => 'Bor Listrik 10 mm', 'category_id' => 4, 'satuan' => 'unit', 'harga_beli' => 180000, 'harga_jual' => 240000],
+            ['name' => 'Gerinda Tangan 4"', 'category_id' => 4, 'satuan' => 'unit', 'harga_beli' => 220000, 'harga_jual' => 290000],
+            ['name' => 'Mesin Amplas', 'category_id' => 4, 'satuan' => 'unit', 'harga_beli' => 150000, 'harga_jual' => 200000],
+            ['name' => 'Mesin Bor Bobok', 'category_id' => 4, 'satuan' => 'unit', 'harga_beli' => 400000, 'harga_jual' => 520000],
+
+            // Aksesoris & Perlengkapan (category_id = 5)
+            ['name' => 'Kabel Ties 10 cm', 'category_id' => 5, 'satuan' => 'pak', 'harga_beli' => 5000, 'harga_jual' => 8000],
+            ['name' => 'Multimeter Digital', 'category_id' => 5, 'satuan' => 'pcs', 'harga_beli' => 85000, 'harga_jual' => 120000],
+            ['name' => 'Sarung Tangan Las', 'category_id' => 5, 'satuan' => 'pasang', 'harga_beli' => 25000, 'harga_jual' => 35000],
+            ['name' => 'Kacamata Safety', 'category_id' => 5, 'satuan' => 'pcs', 'harga_beli' => 15000, 'harga_jual' => 22000],
         ];
 
         foreach ($data as $item) {
             \App\Models\Produk::create([
-                'toko_id' => rand(1,2),
+                'toko_id' => rand(1, 2),
                 'name' => $item['name'],
                 'kategori_id' => $item['category_id'],
                 'satuan' => $item['satuan'],
