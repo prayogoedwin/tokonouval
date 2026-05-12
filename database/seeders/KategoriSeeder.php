@@ -14,11 +14,19 @@ class KategoriSeeder extends Seeder
     {
         //
         $data = [
-            ['id' => 1, 'name' => 'Genset & Kelistrikan'],
-            ['id' => 2, 'name' => 'Kabel & Aksesoris'],
-            ['id' => 3, 'name' => 'Penyedot Debu & Kebersihan'],
-            ['id' => 4, 'name' => 'Power Tools', 'id_parent' => 1],
-            ['id' => 5, 'name' => 'Aksesoris & Perlengkapan', 'id_parent' => 2],
+            ['name' => 'Genset & Kelistrikan'],
+            ['name' => 'Kabel & Aksesoris'],
+            ['name' => 'Penyedot Debu & Kebersihan'],
+            ['name' => 'Power Tools', 'id_parent' => 1],
+            ['name' => 'Aksesoris & Perlengkapan', 'id_parent' => 2],
+            ['name' => 'Spare-Part', 'id_parent' => 2],
+            ['name' => 'Sistem Bahan Bakar', 'id_parent' => 6],
+            ['name' => 'Sistem Pelumasan', 'id_parent' => 6],
+            ['name' => 'Sistem Pendingin', 'id_parent' => 6],
+            ['name' => 'Engine & Mekanik', 'id_parent' => 6],
+            ['name' => 'Sistem Kontrol & Kelistrikan', 'id_parent' => 6],
+            ['name' => 'Knalpot & Air Filter', 'id_parent' => 6],
+            ['name' => 'Aksesoris Genset', 'id_parent' => 6],
         ];
 
         foreach ($data as $item) {
