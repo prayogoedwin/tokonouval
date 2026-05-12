@@ -66,7 +66,7 @@ class ProdukSeeder extends Seeder
             ]);
         }
 
-        [
+        $data2 = [
             // ==================== SISTEM BAHAN BAKAR (category_id = 6) ====================
             ['name' => 'Fuel Filter Genset Diesel (Percik)', 'category_id' => 7, 'satuan' => 'pcs', 'harga_beli' => 45000, 'harga_jual' => 75000],
             ['name' => 'Water Separator Fuel Filter Assembly', 'category_id' => 7, 'satuan' => 'unit', 'harga_beli' => 185000, 'harga_jual' => 250000],
@@ -133,7 +133,7 @@ class ProdukSeeder extends Seeder
             ['name' => 'Cover / Sarung Genset (Waterproof)', 'category_id' => 13, 'satuan' => 'pcs', 'harga_beli' => 95000, 'harga_jual' => 140000],
         ];
 
-        foreach ($data as $item) {
+        foreach ($data2 as $item) {
             \App\Models\Produk::create([
                 'toko_id' => 2,
                 'name' => $item['name'],

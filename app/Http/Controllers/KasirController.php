@@ -26,7 +26,7 @@ class KasirController extends Controller
     public function pilihToko()
     {
 
-        $tokos = Toko::all(); // Ambil semua toko
+        $tokos = Toko::all(); 
         return view('kasir.pilihtoko', compact('tokos'));
     }
 
@@ -68,10 +68,10 @@ class KasirController extends Controller
         // dd($toko_tipe_kasir);
 
         if ($toko_tipe_kasir === "POS") {
-            return view('kasir.dashboard', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
+            return view('kasir.kasirtipe1', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
         }
 
-        return view('kasir.tipe2', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
+        return view('kasir.kasirtipe2', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
     }
 
     public function processPayment(Request $request)
@@ -114,7 +114,6 @@ class KasirController extends Controller
         $penjualan = Penjualan::create([
             'toko_id' =>  session('selected_toko_id'),
             // 'no_invoice' => nanti di model
-            // 'tipe_pembayaran_id' => $validated['discount_percent'],
             'tipe_pembayaran_id' => $validated['payment_method_id'],
             'diskon_percentage' => $validated['discount_percent'],
             'diskon_nominal' => $validated['discount_amount'],
@@ -122,7 +121,9 @@ class KasirController extends Controller
             'total_harus_dibayar' => $validated['total_payment'],
             'dibayar' => $validated['payment_amount'],
             'kembalian' => $validated['change_amount'],
-            'keterangan' => 'completed'
+            'keterangan' => 'completed',
+
+            'created_by' => auth()->user()->id,
         ]);
 
         // dd($penjualan);
@@ -148,7 +149,9 @@ class KasirController extends Controller
                 'harga_beli' => $item['harga_beli'],
                 'jumlah' => $item['quantity'],
                 'satuan' => $item['unit'],
-                'sub_total' => $item['total']
+                'sub_total' => $item['total'],
+
+                'created_by' => auth()->user()->id,
             ]);
         }
 
@@ -272,7 +275,9 @@ class KasirController extends Controller
             'total_harus_dibayar' => $validated['total_payment'],
             'dibayar' => $validated['payment_amount'],
             'kembalian' => $validated['change_amount'],
-            'keterangan' => 'completed'
+            'keterangan' => 'completed',
+
+            'created_by' => auth()->user()->id,
         ]);
 
         // dd($penjualan);
@@ -298,7 +303,9 @@ class KasirController extends Controller
                 'harga_beli' => $item['harga_beli'],
                 'jumlah' => $item['quantity'],
                 'satuan' => $item['unit'],
-                'sub_total' => $item['total']
+                'sub_total' => $item['total'],
+
+                'created_by' => auth()->user()->id,
             ]);
         }
 
@@ -306,8 +313,8 @@ class KasirController extends Controller
             ->with('status', 'Berhasil Melakukan Transaksi: ');
     }
 
-    //TODO:
-    // Fitur exit toko (clear session tapi tidak logout)
+    
+    // Fitur exit toko (clear session tapi tidak logout) kalo punya toko maka logout
     public function kasir_exitToko()
     {
         // Hapus session toko

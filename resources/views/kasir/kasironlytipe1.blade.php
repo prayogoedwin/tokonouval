@@ -222,7 +222,7 @@
                     </div>
                 </div>
 
-                {{-- LEFT COLUMN: Product Grid --}}
+                {{-- RIGHT COLUMN: Product Grid --}}
                 <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <div class="p-4 border-b border-gray-200 dark:border-gray-700">
                         <h2 class="font-semibold text-gray-800 dark:text-gray-200">{{ __('Products') }}</h2>
