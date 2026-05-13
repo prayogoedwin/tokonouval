@@ -184,6 +184,7 @@ class StokController extends Controller
     {
 
         $data = $Stok;
+        $data->produk = $Stok->produk->name;
 
 
         $pagedata = $this->getPagedata();
