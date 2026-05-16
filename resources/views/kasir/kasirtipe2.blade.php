@@ -20,7 +20,7 @@
             <form action="{{ route('kasir.exittoko') }}" method="POST" class="inline">
                 @csrf
                 <button type="submit" class="text-red-500 hover:text-red-700 ml-2" style="font-size: large;">
-                    <i class="fas fa-sign-out-alt" ></i> Exit
+                    <i class="fas fa-sign-out-alt"></i> Exit
                 </button>
             </form>
         </div>
@@ -34,7 +34,8 @@
                     {{ __('Add Product') }}
                 </label>
                 <select id="productSelect"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                    class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:focus:border-indigo-400 dark:focus:ring-indigo-400/40 searchable-select"
+                    placeholder="{{ __('-- Search Product --') }}">
                     <option value="">{{ __('-- Select Product --') }}</option>
                     @foreach($produks as $produk)
                     <option value="{{ $loop->index }}"
@@ -42,9 +43,8 @@
                         data-name="{{ $produk->name }}"
                         data-price="{{ $produk->harga_jual }}"
                         data-harga_beli="{{ $produk->harga_beli }}"
-                        data-unit="{{ $produk->satuan }}"
-                        >
-                        {{ $produk->name }} - {{ $produk->satuan }} (Rp {{ number_format($produk->harga_jual, 0, ',', '.') }})
+                        data-unit="{{ $produk->satuan }}">
+                        {{ $produk->name }} - {{ $produk->sku }}
                     </option>
                     @endforeach
                 </select>
@@ -182,6 +182,38 @@
             </button>
         </div>
     </div>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const productSelect = document.getElementById('productSelect');
+
+            if (productSelect) {
+                new TomSelect(productSelect, {
+                    create: false,
+                    allowEmptyOption: true,
+                    maxOptions: 25,
+                    closeAfterSelect: true,
+                    openOnFocus: false,
+                    hidePlaceholder: false,
+                    placeholder: productSelect.getAttribute('placeholder') || 'Ketik nama produk...',
+                    render: {
+                        no_results: function() {
+                            return '<div class="no-results">Produk tidak ditemukan</div>';
+                        }
+                    },
+                    onChange: function(value) {
+                        // Optional: auto focus to quantity input after selection
+                        if (value) {
+                            document.getElementById('productQty').focus();
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 
 
     <script>
