@@ -59,35 +59,28 @@ class StokController extends Controller
 
     public function index(Request $request)
     {
-        // dd($request->headers->all());
-        // $stoks = Stok::where('stoks.deleted_at', null)
-        //     ->join('produks', 'stoks.produk_id', '=', 'produks.id')
-        //     ->select(
-        //         'stoks.*',
-        //         'produks.name as produk',
-        //     )
-        //     ->get();
 
-        // dd($stoks);
+
+        
         if ($request->ajax()) {
             // dd('masuk ajax');
-            $stoks = Stok::where('stoks.deleted_at', null)
+            $query = Stok::where('stoks.deleted_at', null)
                 ->join('produks', 'stoks.produk_id', '=', 'produks.id')
                 ->select(
                     'stoks.*',
                     'produks.name as produk',
-                )
-                ->get();
+                );
+                
 
-            // dd($stoks);
+            // Memeriksa apakah ada parameter produk_id di dalam request
+            if ($request->has('produk_id') && $request->produk_id != '') {
+                $query->where('stoks.produk_id', $request->produk_id);
+            }
+
+            $stoks = $query->get();
 
             return DataTables::of($stoks)
-                // ->filterColumn('name', function ($query, $keyword) {
-                //     $query->where('stoks.name_Stok', 'like', "%{$keyword}%");
-                // })
-                // ->filterColumn('stok', function ($query, $keyword) {
-                //     $query->where('stok_stoks.name', 'like', "%{$keyword}%");
-                // })
+
 
 
 
@@ -98,16 +91,7 @@ class StokController extends Controller
                         $actions .= '<a href="' . route('stoks.show', $Stok) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">View</a>';
                     }
 
-                    // if (auth()->user()->hasPermission('edit-stoks')) {
-                    //     $actions .= '<a href="' . route('stoks.edit', $Stok) . '" class="text-blue-600 dark:text-blue-400 hover:underline mr-3">Edit</a>';
-                    // }
 
-                    // if (auth()->user()->hasPermission('delete-stoks')) {
-                    //     $actions .= '<form action="' . route('stoks.destroy', $Stok) . '" method="POST" class="inline" onsubmit="return confirm(\'Are you sure?\')">
-                    //         ' . csrf_field() . method_field('DELETE') . '
-                    //         <button type="submit" class="text-red-600 dark:text-red-400 hover:underline">Delete</button>
-                    //     </form>';
-                    // }
 
                     return $actions;
                 })
@@ -117,7 +101,7 @@ class StokController extends Controller
 
         $pagedata = $this->getPagedata();
 
-        return view('dynamiccrud.index', $pagedata);
+        return view('stoks.index', $pagedata);
     }
 
 

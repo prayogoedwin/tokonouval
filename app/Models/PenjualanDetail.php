@@ -36,6 +36,19 @@ class PenjualanDetail extends Model
         'deleted_by',
     ];
 
+    protected static function booted()
+    {
+        static::created(function ($detail) {
+            // Otomatis tambah data ke table Stok dengan tipe 'OUT' saat detail penjualan dibuat
+            Stok::create([
+                'produk_id'  => $detail->produk_id,
+                'tipe'       => 'OUT',
+                'jumlah'     => $detail->jumlah, // sesuaikan dengan nama kolom jumlah di detail penjualanmu (misal: qty / jumlah)
+                'created_by' => auth()->id(),
+            ]);
+        });
+    }
+
     public function penjualan(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Penjualan::class);

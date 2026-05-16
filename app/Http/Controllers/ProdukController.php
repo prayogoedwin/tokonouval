@@ -99,6 +99,9 @@ class ProdukController extends Controller
                     if (auth()->user()->hasPermission('show-produks')) {
                         $actions .= '<a href="' . route('produks.show', $Produk) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">View</a>';
                     }
+                    if (auth()->user()->hasPermission('show-stoks')) {
+                        $actions .= '<a href="' . route('stoks.index', ['produk_id' => $Produk->id]) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">Stoks</a>';
+                    }
 
                     if (auth()->user()->hasPermission('edit-produks')) {
                         $actions .= '<a href="' . route('produks.edit', $Produk) . '" class="text-blue-600 dark:text-blue-400 hover:underline mr-3">Edit</a>';

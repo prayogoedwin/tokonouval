@@ -8,7 +8,7 @@ class Stok extends Model
 {
     protected $fillable = [
         'produk_id',
-        'tipe',
+        'tipe', // IN or OUT
         'jumlah',
 
         'created_by',
