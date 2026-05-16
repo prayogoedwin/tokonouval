@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('penjualans', function (Blueprint $table) {
             $table->id();
-            $table->integer('customer_id')->default(0);
+            $table->integer('customer_id')->nullable();
             $table->foreignId('toko_id')->constrained('tokos');
             $table->string('no_invoice'); // (generated [kodetoko#tahun#bulan#id])
             $table->foreignId('tipe_pembayaran_id')->constrained('tipe_pembayarans');

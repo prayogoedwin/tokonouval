@@ -181,20 +181,11 @@ class PenjualanController extends Controller
         return to_route('penjualans.index')->with('status', 'Penjualan updated successfully.');
     }
 
-    public function show(Penjualan $Penjualan): View
+    public function show(Penjualan $penjualan): View
     {
-
-        $data = $Penjualan;
-        $data->tipe_pembayaran = $Penjualan->tipePembayaran->name;
-        $data->toko = $Penjualan->toko->name;
-
         $pagedata = $this->getPagedata();
 
-        //TO DO: asdfasdfwe
-
-        // dd($data, $pagedata);
-
-        return view('dynamiccrud.show', compact('data'), $pagedata);
+        return view('penjualans.show', compact('penjualan'), $pagedata);
     }
 
     public function edit(Penjualan $Penjualan): View
