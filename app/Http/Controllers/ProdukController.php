@@ -39,6 +39,7 @@ class ProdukController extends Controller
             'tableaction' => true,
             'columns' => [
                 ['name' => 'name', 'value' => 'name',  'title' => 'Nama Produk', 'type' => 'text', 'inform' => true, 'intable' => true],
+                ['name' => 'sku', 'value' => 'sku',  'title' => 'SKU', 'type' => 'text', 'inform' => true, 'intable' => true],
                 ['name' => 'toko_id', 'value' => 'toko', 'title' => 'Toko', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
                     // Ambil data kategori dari database
                     ['value' => '', 'label' => 'Pilih Toko'],

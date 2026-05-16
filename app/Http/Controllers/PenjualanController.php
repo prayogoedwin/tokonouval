@@ -59,7 +59,7 @@ class PenjualanController extends Controller
 
                 ['name' => 'tipe_pembayaran_id', 'value' => 'tipe_pembayaran', 'title' => 'Tipe Pembayaran', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
                     // Ambil data tipe_pembayaran dari database
-                    ['value' => '', 'label' => 'Pilih Toko'],
+                    ['value' => '', 'label' => 'Pilih Tipe Pembayaran'],
                     ...$tipe_pembayarans->map(function ($tipe_pembayaran) {
                         return ['value' => $tipe_pembayaran->id, 'label' => $tipe_pembayaran->name];
                     })->toArray(),
@@ -185,8 +185,8 @@ class PenjualanController extends Controller
     {
 
         $data = $Penjualan;
-        $data->kategori = Kategori::find($Penjualan->kategori_id)->name;
-        $data->toko = Toko::find($Penjualan->toko_id)->name;
+        $data->tipe_pembayaran = $Penjualan->tipePembayaran->name;
+        $data->toko = $Penjualan->toko->name;
 
         $pagedata = $this->getPagedata();
 

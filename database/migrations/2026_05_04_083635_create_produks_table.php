@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('satuan');
             $table->integer('harga_beli');
             $table->integer('harga_jual');
+            $table->string('sku');
             $table->timestamps();
             $table->softDeletes();
             $table->foreignId('created_by')->nullable();
