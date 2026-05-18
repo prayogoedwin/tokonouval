@@ -21,10 +21,17 @@
         %3C/svg%3E">
     
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="{{ asset('js/tailwind.js') }}"></script>
     
     <!-- Alpine.js CDN -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
+    <script src="{{ asset('js/alpine.min.js') }}"></script>
+
+    
+    <!-- FontAwesome CDN for Icons -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" /> -->
+    <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}" />
     
     <!-- Tailwind Config -->
     <script>
