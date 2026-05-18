@@ -667,4 +667,212 @@
         updateCartTable();
     </script>
 
+    <!-- Payment Success Modal -->
+    <div id="paymentSuccessModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-90" aria-hidden="true"></div>
+
+            <!-- Modal panel -->
+            <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl dark:bg-gray-800 sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="px-4 pt-5 pb-4 bg-white dark:bg-gray-800 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-green-100 rounded-full dark:bg-green-900 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100" id="modal-title">
+                                Payment Successful!
+                            </h3>
+                            <div class="mt-2">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transaction Summary -->
+                    <div class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-600 dark:text-gray-400">Invoice Number:</span>
+                                <span class="text-gray-900 dark:text-gray-100 font-mono" id="modalInvoiceNumber">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-600 dark:text-gray-400">Total Pembayaran:</span>
+                                <span class="text-gray-900 dark:text-gray-100 font-bold" id="modalTotal">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-600 dark:text-gray-400">Metode Pembayaran:</span>
+                                <span class="text-gray-900 dark:text-gray-100" id="modalPaymentMethod">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-600 dark:text-gray-400">Kembalian:</span>
+                                <span class="text-green-600 dark:text-green-400 font-semibold" id="modalChange">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Phone Input (optional) -->
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Customer Phone Number (for WhatsApp)
+                        </label>
+                        <input type="text" id="customerPhone"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
+                            placeholder="e.g., 628123456789">
+                    </div>
+                </div>
+
+                <div class="px-4 py-3 bg-gray-50 dark:bg-gray-900 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
+                    <button type="button" id="printInvoiceBtn"
+                        class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                        </svg>
+                        Print Invoice
+                    </button>
+                    <button type="button" id="sendWABtn"
+                        class="inline-flex justify-center w-full px-4 py-2 mt-2 text-base font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        Send WhatsApp
+                    </button>
+                    <button type="button" id="closeModalBtn"
+                        class="inline-flex justify-center w-full px-4 py-2 mt-2 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Modal functionality
+        const paymentSuccessModal = document.getElementById('paymentSuccessModal');
+        let currentTransactionData = null;
+
+        // Check if modal should be shown from session
+        @if(session('show_payment_modal') && session('transaction_data'))
+        document.addEventListener('DOMContentLoaded', function() {
+            showPaymentModal(@json(session('transaction_data')));
+        });
+        @endif
+
+        function showPaymentModal(transactionData) {
+            currentTransactionData = transactionData;
+
+            // Populate modal with transaction data
+            document.getElementById('modalInvoiceNumber').textContent = transactionData.no_invoice;
+            document.getElementById('modalTotal').textContent = formatRupiah(transactionData.total_harus_dibayar);
+            document.getElementById('modalChange').textContent = formatRupiah(transactionData.kembalian);
+            document.getElementById('modalPaymentMethod').textContent = transactionData.tipe_pembayaran_name;
+
+            // Show modal
+            paymentSuccessModal.classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            paymentSuccessModal.classList.add('hidden');
+        }
+
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+
+        // Click outside to close
+        paymentSuccessModal.addEventListener('click', function(e) {
+            if (e.target === paymentSuccessModal) {
+                closeModal();
+            }
+        });
+
+        // Print Invoice using DomPDF
+        document.getElementById('printInvoiceBtn').addEventListener('click', function() {
+            console.log(currentTransactionData, currentTransactionData.penjualan_id);
+            if (!currentTransactionData || !currentTransactionData.penjualan_id) {
+                alert('Transaction data not found!');
+                return;
+            }
+
+            // Open the PDF in a new tab
+            const pdfUrl = `{{ route('penjualans.cetaknota', ['penjualan' => ':penjualan_id']) }}`.replace(':penjualan_id', currentTransactionData.penjualan_id);
+            window.open(pdfUrl, '_blank');
+        });
+
+
+
+        function buildCompactWaMessage(transaction) {
+            console.log(transaction);
+            // Membuka format monospace WhatsApp dengan ```
+            let message = "```\n";
+            message += `*TOKO NOUVAL*\n`;
+            message += `${'='.repeat(32)}\n`;
+            message += `Nota: ${transaction.no_invoice}\n`;
+            message += `Tgl : ${new Date().toLocaleString('id-ID')}\n`;
+            message += `${'='.repeat(32)}\n`;
+            message += `Item         Qty   Harga    Total\n`;
+            message += `${'-'.repeat(32)}\n`;
+
+            transaction.details.forEach(item => {
+                const subtotal = item.harga_jual * item.jumlah;
+                // Truncate nama jika lebih dari 12 karakter agar kolom tidak geser
+                const nameTrunc = item.name.length > 12 ? item.name.substring(0, 10) + '..' : item.name;
+
+                // Memformat kolom agar sejajar rapi
+                const itemCol = nameTrunc.padEnd(12);
+                const qtyCol = item.jumlah.toString().padStart(3);
+                const hargaCol = item.harga_jual.toString().padStart(7);
+                const totalCol = subtotal.toString().padStart(8);
+
+                message += `${itemCol} ${qtyCol} ${hargaCol} ${totalCol}\n`;
+            });
+
+            message += `${'-'.repeat(32)}\n`;
+            message += `Grand Total: ${transaction.total_pembelian.toString().padStart(19)}\n`;
+
+            if (transaction.diskon_percentage > 0) {
+                const diskonLabel = `Diskon ${transaction.diskon_percentage}%:`;
+                const diskonValue = `-${transaction.diskon_nominal}`;
+                message += `${diskonLabel.padEnd(12)} ${diskonValue.padStart(19)}\n`;
+            }
+
+            message += `${'='.repeat(32)}\n`;
+            message += `Total Bayar: ${transaction.total_harus_dibayar.toString().padStart(19)}\n`;
+            message += `Dibayar:     ${transaction.dibayar.toString().padStart(19)}\n`;
+            message += `Kembalian:   ${transaction.kembalian.toString().padStart(19)}\n`;
+            message += `${'='.repeat(32)}\n`;
+            message += `Metode: ${transaction.tipe_pembayaran_name}\n`;
+            message += `${'='.repeat(32)}\n`;
+            message += `${new Date().toLocaleTimeString('id-ID')}\n`;
+
+            // Menutup format monospace WhatsApp
+            message += "```";
+
+            return message;
+        }
+
+        // Gunakan di tombol sendWA
+        document.getElementById('sendWABtn').addEventListener('click', function() {
+            if (!currentTransactionData) return;
+
+            let customerPhone = document.getElementById('customerPhone').value.trim();
+            if (!customerPhone) {
+                alert('Please enter phone number first!');
+                return;
+            }
+
+            let phone = customerPhone.replace(/\D/g, '');
+            if (phone.startsWith('0')) phone = '62' + phone.substring(1);
+            if (!phone.startsWith('62')) phone = '62' + phone;
+
+            // PERBAIKAN: Generate message terlebih dahulu sebelum dibaca oleh console / URL
+            const message = buildCompactWaMessage(currentTransactionData);
+
+            // console.log(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`);
+
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        });
+    </script>
 </body>

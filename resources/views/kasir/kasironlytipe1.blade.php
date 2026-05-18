@@ -127,7 +127,7 @@
                     <p class="text-gray-600 dark:text-gray-400 mt-1">{{ __('Transaction') }}</p>
 
                 </div>
-                
+
                 <div class="col-lg-6 text-xs text-gray-500 px-4 py-2 text-right">
 
                     <form action="{{ route('kasir.kasir_exittoko') }}" method="POST" class="inline">
@@ -257,45 +257,44 @@
 
     </main>
 
-</body>
 
-<script>
-    // Cart state
-    let cart = [];
+    <script>
+        // Cart state
+        let cart = [];
 
-    // DOM Elements
-    const cartContainer = document.getElementById('cartItems');
-    const subtotalEl = document.getElementById('subtotal');
-    const taxEl = document.getElementById('tax');
-    const totalEl = document.getElementById('total');
-    const paymentInput = document.getElementById('paymentAmount');
-    const changeAmountEl = document.getElementById('changeAmount');
+        // DOM Elements
+        const cartContainer = document.getElementById('cartItems');
+        const subtotalEl = document.getElementById('subtotal');
+        const taxEl = document.getElementById('tax');
+        const totalEl = document.getElementById('total');
+        const paymentInput = document.getElementById('paymentAmount');
+        const changeAmountEl = document.getElementById('changeAmount');
 
-    // Helper: Format Rupiah
-    function formatRupiah(amount) {
-        return 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
-    }
-
-    // Update cart display and totals
-    function updateCart() {
-        if (cart.length === 0) {
-            cartContainer.innerHTML = '<p class="text-center text-gray-400 dark:text-gray-500 text-sm py-8">{{ __("No items added yet") }}</p>';
-            subtotalEl.textContent = formatRupiah(0);
-            document.getElementById('discountAmount').textContent = formatRupiah(0);
-            totalEl.textContent = formatRupiah(0);
-            paymentInput.value = '';
-            changeAmountEl.textContent = formatRupiah(0);
-            return;
+        // Helper: Format Rupiah
+        function formatRupiah(amount) {
+            return 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
         }
 
-        // Build cart items HTML
-        let html = '';
-        let subtotal = 0;
+        // Update cart display and totals
+        function updateCart() {
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<p class="text-center text-gray-400 dark:text-gray-500 text-sm py-8">{{ __("No items added yet") }}</p>';
+                subtotalEl.textContent = formatRupiah(0);
+                document.getElementById('discountAmount').textContent = formatRupiah(0);
+                totalEl.textContent = formatRupiah(0);
+                paymentInput.value = '';
+                changeAmountEl.textContent = formatRupiah(0);
+                return;
+            }
 
-        cart.forEach((item, idx) => {
-            const itemTotal = item.price * item.quantity;
-            subtotal += itemTotal;
-            html += `
+            // Build cart items HTML
+            let html = '';
+            let subtotal = 0;
+
+            cart.forEach((item, idx) => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                html += `
             <div class="flex justify-between items-center p-2 border border-gray-100 dark:border-gray-700 rounded-lg">
                 <div class="flex-1">
                     <div class="font-medium text-gray-800 dark:text-gray-200">${escapeHtml(item.name)}</div>
@@ -314,201 +313,411 @@
                 </div>
             </div>
         `;
-        });
-
-        cartContainer.innerHTML = html;
-
-        // Calculate discount and total
-        const discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0;
-        const discountAmount = subtotal * (discountPercent / 100);
-        const total = subtotal - discountAmount;
-
-        subtotalEl.textContent = formatRupiah(subtotal);
-        document.getElementById('discountAmount').textContent = formatRupiah(discountAmount);
-        totalEl.textContent = formatRupiah(total);
-
-        // Recalculate change if payment is entered
-        calculateChange();
-    }
-
-    // Adjust quantity
-    window.adjustQuantity = function(index, delta) {
-        if (cart[index]) {
-            const newQty = cart[index].quantity + delta;
-            if (newQty <= 0) {
-                removeFromCart(index);
-            } else {
-                cart[index].quantity = newQty;
-                updateCart();
-            }
-        }
-    };
-
-    // Remove item
-    window.removeFromCart = function(index) {
-        cart.splice(index, 1);
-        updateCart();
-    };
-
-    // Calculate change
-    function calculateChange() {
-        const totalText = totalEl.textContent.replace(/[^0-9]/g, '');
-        const total = parseInt(totalText) || 0;
-        const payment = parseInt(paymentInput.value) || 0;
-        const change = payment - total;
-        changeAmountEl.textContent = formatRupiah(change > 0 ? change : 0);
-        return {
-            total,
-            payment,
-            change
-        };
-    }
-
-    // Event: calculate change button
-    document.getElementById('calculateChangeBtn').addEventListener('click', calculateChange);
-
-    document.getElementById('discountPercent').addEventListener('input', function() {
-        let value = parseInt(this.value) || 0;
-        if (value < 0) this.value = 0;
-        if (value > 100) this.value = 100;
-        updateCart();
-    });
-
-    // Add product to cart
-    function addToCart(id, name, price, harga_beli, unit) {
-        const existing = cart.find(item => item.name === name && item.price === price);
-        if (existing) {
-            existing.quantity++;
-        } else {
-            cart.push({
-                id: id,
-                name: name,
-                price: price,
-                harga_beli: harga_beli,
-                unit: unit,
-                quantity: 1
             });
+
+            cartContainer.innerHTML = html;
+
+            // Calculate discount and total
+            const discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0;
+            const discountAmount = subtotal * (discountPercent / 100);
+            const total = subtotal - discountAmount;
+
+            subtotalEl.textContent = formatRupiah(subtotal);
+            document.getElementById('discountAmount').textContent = formatRupiah(discountAmount);
+            totalEl.textContent = formatRupiah(total);
+
+            // Recalculate change if payment is entered
+            calculateChange();
         }
-        updateCart();
-    }
 
-    // Product button click listeners
-    document.querySelectorAll('.product-item').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const name = this.dataset.name;
-            const price = parseInt(this.dataset.price);
-            const harga_beli = parseInt(this.dataset.harga_beli);
-            const unit = this.dataset.unit;
-            addToCart(id, name, price, harga_beli, unit);
-        });
-    });
-
-    // Search filter
-    document.getElementById('searchProduct').addEventListener('input', function(e) {
-        const search = e.target.value.toLowerCase();
-        document.querySelectorAll('.product-item').forEach(btn => {
-            const name = btn.dataset.name.toLowerCase();
-            if (name.includes(search)) {
-                btn.style.display = '';
-            } else {
-                btn.style.display = 'none';
+        // Adjust quantity
+        window.adjustQuantity = function(index, delta) {
+            if (cart[index]) {
+                const newQty = cart[index].quantity + delta;
+                if (newQty <= 0) {
+                    removeFromCart(index);
+                } else {
+                    cart[index].quantity = newQty;
+                    updateCart();
+                }
             }
-        });
-    });
+        };
 
-    // Clear cart
-    document.getElementById('clearCartBtn').addEventListener('click', () => {
-        if (confirm('Clear all items from cart?')) {
-            cart = [];
+        // Remove item
+        window.removeFromCart = function(index) {
+            cart.splice(index, 1);
+            updateCart();
+        };
+
+        // Calculate change
+        function calculateChange() {
+            const totalText = totalEl.textContent.replace(/[^0-9]/g, '');
+            const total = parseInt(totalText) || 0;
+            const payment = parseInt(paymentInput.value) || 0;
+            const change = payment - total;
+            changeAmountEl.textContent = formatRupiah(change > 0 ? change : 0);
+            return {
+                total,
+                payment,
+                change
+            };
+        }
+
+        // Event: calculate change button
+        document.getElementById('calculateChangeBtn').addEventListener('click', calculateChange);
+
+        document.getElementById('discountPercent').addEventListener('input', function() {
+            let value = parseInt(this.value) || 0;
+            if (value < 0) this.value = 0;
+            if (value > 100) this.value = 100;
+            updateCart();
+        });
+
+        // Add product to cart
+        function addToCart(id, name, price, harga_beli, unit) {
+            const existing = cart.find(item => item.name === name && item.price === price);
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({
+                    id: id,
+                    name: name,
+                    price: price,
+                    harga_beli: harga_beli,
+                    unit: unit,
+                    quantity: 1
+                });
+            }
             updateCart();
         }
-    });
 
-    // Process payment and clean cart
-    document.getElementById('processPaymentBtn').addEventListener('click', async () => {
-        if (cart.length === 0) {
-            alert('Cart is empty. Add some products first.');
-            return;
-        }
-
-        const {
-            total,
-            payment,
-            change
-        } = calculateChange();
-        if (payment < total) {
-            alert('Insufficient payment. Please enter amount greater than or equal to total.');
-            return;
-        }
-
-        const subtotalText = subtotalEl.textContent.replace(/[^0-9]/g, '');
-        const subtotal = parseInt(subtotalText) || 0;
-        const discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0;
-        const discountAmount = subtotal * (discountPercent / 100);
-        const totalAfterDiscount = subtotal - discountAmount;
-        const paymentMethodSelect = document.getElementById('paymentMethod');
-        const paymentMethodId = paymentMethodSelect.value;
-
-
-
-        // Create a form and submit
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ route("kasir.kasir_processpayment") }}';
-
-        // Add CSRF token
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_token';
-        csrfInput.value = '{{ csrf_token() }}';
-        form.appendChild(csrfInput);
-
-        // Add form data
-        const formData = {
-            subtotal_before_discount: subtotal,
-            subtotal_after_discount: totalAfterDiscount,
-            discount_percent: discountPercent,
-            discount_amount: discountAmount,
-            total_payment: totalAfterDiscount,
-            payment_method_id: paymentMethodId,
-            payment_amount: payment,
-            change_amount: change,
-            cart_items: JSON.stringify(cart.map(item => ({
-                id: item.id,
-                name: item.name,
-                price: item.price,
-                harga_beli: item.harga_beli,
-                quantity: item.quantity,
-                unit: item.unit,
-                total: item.price * item.quantity
-            })))
-        };
-
-        for (const [key, value] of Object.entries(formData)) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            form.appendChild(input);
-        }
-
-        document.body.appendChild(form);
-        form.submit();
-    });
-
-
-    // Simple escape to prevent XSS
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
+        // Product button click listeners
+        document.querySelectorAll('.product-item').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                const price = parseInt(this.dataset.price);
+                const harga_beli = parseInt(this.dataset.harga_beli);
+                const unit = this.dataset.unit;
+                addToCart(id, name, price, harga_beli, unit);
+            });
         });
-    }
 
-    // Initial update
-    updateCart();
-</script>
+        // Search filter
+        document.getElementById('searchProduct').addEventListener('input', function(e) {
+            const search = e.target.value.toLowerCase();
+            document.querySelectorAll('.product-item').forEach(btn => {
+                const name = btn.dataset.name.toLowerCase();
+                if (name.includes(search)) {
+                    btn.style.display = '';
+                } else {
+                    btn.style.display = 'none';
+                }
+            });
+        });
+
+        // Clear cart
+        document.getElementById('clearCartBtn').addEventListener('click', () => {
+            if (confirm('Clear all items from cart?')) {
+                cart = [];
+                updateCart();
+            }
+        });
+
+        // Process payment and clean cart
+        document.getElementById('processPaymentBtn').addEventListener('click', async () => {
+            if (cart.length === 0) {
+                alert('Cart is empty. Add some products first.');
+                return;
+            }
+
+            const {
+                total,
+                payment,
+                change
+            } = calculateChange();
+            if (payment < total) {
+                alert('Insufficient payment. Please enter amount greater than or equal to total.');
+                return;
+            }
+
+            const subtotalText = subtotalEl.textContent.replace(/[^0-9]/g, '');
+            const subtotal = parseInt(subtotalText) || 0;
+            const discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0;
+            const discountAmount = subtotal * (discountPercent / 100);
+            const totalAfterDiscount = subtotal - discountAmount;
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+            const paymentMethodId = paymentMethodSelect.value;
+
+
+
+            // Create a form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("kasir.kasir_processpayment") }}';
+
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = '{{ csrf_token() }}';
+            form.appendChild(csrfInput);
+
+            // Add form data
+            const formData = {
+                subtotal_before_discount: subtotal,
+                subtotal_after_discount: totalAfterDiscount,
+                discount_percent: discountPercent,
+                discount_amount: discountAmount,
+                total_payment: totalAfterDiscount,
+                payment_method_id: paymentMethodId,
+                payment_amount: payment,
+                change_amount: change,
+                cart_items: JSON.stringify(cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    harga_beli: item.harga_beli,
+                    quantity: item.quantity,
+                    unit: item.unit,
+                    total: item.price * item.quantity
+                })))
+            };
+
+            for (const [key, value] of Object.entries(formData)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        });
+
+
+        // Simple escape to prevent XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // Initial update
+        updateCart();
+    </script>
+
+    <!-- Payment Success Modal -->
+    <div id="paymentSuccessModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-90" aria-hidden="true"></div>
+
+            <!-- Modal panel -->
+            <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl dark:bg-gray-800 sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="px-4 pt-5 pb-4 bg-white dark:bg-gray-800 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-green-100 rounded-full dark:bg-green-900 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100" id="modal-title">
+                                Payment Successful!
+                            </h3>
+                            <div class="mt-2">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transaction Summary -->
+                    <div class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-600 dark:text-gray-400">Invoice Number:</span>
+                                <span class="text-gray-900 dark:text-gray-100 font-mono" id="modalInvoiceNumber">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-600 dark:text-gray-400">Total Pembayaran:</span>
+                                <span class="text-gray-900 dark:text-gray-100 font-bold" id="modalTotal">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-600 dark:text-gray-400">Metode Pembayaran:</span>
+                                <span class="text-gray-900 dark:text-gray-100" id="modalPaymentMethod">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-600 dark:text-gray-400">Kembalian:</span>
+                                <span class="text-green-600 dark:text-green-400 font-semibold" id="modalChange">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Phone Input (optional) -->
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Customer Phone Number (for WhatsApp)
+                        </label>
+                        <input type="text" id="customerPhone"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
+                            placeholder="e.g., 628123456789">
+                    </div>
+                </div>
+
+                <div class="px-4 py-3 bg-gray-50 dark:bg-gray-900 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
+                    <button type="button" id="printInvoiceBtn"
+                        class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                        </svg>
+                        Print Invoice
+                    </button>
+                    <button type="button" id="sendWABtn"
+                        class="inline-flex justify-center w-full px-4 py-2 mt-2 text-base font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        Send WhatsApp
+                    </button>
+                    <button type="button" id="closeModalBtn"
+                        class="inline-flex justify-center w-full px-4 py-2 mt-2 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Modal functionality
+        const paymentSuccessModal = document.getElementById('paymentSuccessModal');
+        let currentTransactionData = null;
+
+        // Check if modal should be shown from session
+        @if(session('show_payment_modal') && session('transaction_data'))
+        document.addEventListener('DOMContentLoaded', function() {
+            showPaymentModal(@json(session('transaction_data')));
+        });
+        @endif
+
+        function showPaymentModal(transactionData) {
+            currentTransactionData = transactionData;
+
+            // Populate modal with transaction data
+            document.getElementById('modalInvoiceNumber').textContent = transactionData.no_invoice;
+            document.getElementById('modalTotal').textContent = formatRupiah(transactionData.total_harus_dibayar);
+            document.getElementById('modalChange').textContent = formatRupiah(transactionData.kembalian);
+            document.getElementById('modalPaymentMethod').textContent = transactionData.tipe_pembayaran_name;
+
+            // Show modal
+            paymentSuccessModal.classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            paymentSuccessModal.classList.add('hidden');
+        }
+
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+
+        // Click outside to close
+        paymentSuccessModal.addEventListener('click', function(e) {
+            if (e.target === paymentSuccessModal) {
+                closeModal();
+            }
+        });
+
+        // Print Invoice using DomPDF
+        document.getElementById('printInvoiceBtn').addEventListener('click', function() {
+            console.log(currentTransactionData, currentTransactionData.penjualan_id);
+            if (!currentTransactionData || !currentTransactionData.penjualan_id) {
+                alert('Transaction data not found!');
+                return;
+            }
+
+            // Open the PDF in a new tab
+            const pdfUrl = `{{ route('penjualans.cetaknota', ['penjualan' => ':penjualan_id']) }}`.replace(':penjualan_id', currentTransactionData.penjualan_id);
+            window.open(pdfUrl, '_blank');
+        });
+
+
+
+        function buildCompactWaMessage(transaction) {
+            console.log(transaction);
+            // Membuka format monospace WhatsApp dengan ```
+            let message = "```\n";
+            message += `*TOKO NOUVAL*\n`;
+            message += `${'='.repeat(32)}\n`;
+            message += `Nota: ${transaction.no_invoice}\n`;
+            message += `Tgl : ${new Date().toLocaleString('id-ID')}\n`;
+            message += `${'='.repeat(32)}\n`;
+            message += `Item         Qty   Harga    Total\n`;
+            message += `${'-'.repeat(32)}\n`;
+
+            transaction.details.forEach(item => {
+                const subtotal = item.harga_jual * item.jumlah;
+                // Truncate nama jika lebih dari 12 karakter agar kolom tidak geser
+                const nameTrunc = item.name.length > 12 ? item.name.substring(0, 10) + '..' : item.name;
+
+                // Memformat kolom agar sejajar rapi
+                const itemCol = nameTrunc.padEnd(12);
+                const qtyCol = item.jumlah.toString().padStart(3);
+                const hargaCol = item.harga_jual.toString().padStart(7);
+                const totalCol = subtotal.toString().padStart(8);
+
+                message += `${itemCol} ${qtyCol} ${hargaCol} ${totalCol}\n`;
+            });
+
+            message += `${'-'.repeat(32)}\n`;
+            message += `Grand Total: ${transaction.total_pembelian.toString().padStart(19)}\n`;
+
+            if (transaction.diskon_percentage > 0) {
+                const diskonLabel = `Diskon ${transaction.diskon_percentage}%:`;
+                const diskonValue = `-${transaction.diskon_nominal}`;
+                message += `${diskonLabel.padEnd(12)} ${diskonValue.padStart(19)}\n`;
+            }
+
+            message += `${'='.repeat(32)}\n`;
+            message += `Total Bayar: ${transaction.total_harus_dibayar.toString().padStart(19)}\n`;
+            message += `Dibayar:     ${transaction.dibayar.toString().padStart(19)}\n`;
+            message += `Kembalian:   ${transaction.kembalian.toString().padStart(19)}\n`;
+            message += `${'='.repeat(32)}\n`;
+            message += `Metode: ${transaction.tipe_pembayaran_name}\n`;
+            message += `${'='.repeat(32)}\n`;
+            message += `${new Date().toLocaleTimeString('id-ID')}\n`;
+
+            // Menutup format monospace WhatsApp
+            message += "```";
+
+            return message;
+        }
+
+        // Gunakan di tombol sendWA
+        document.getElementById('sendWABtn').addEventListener('click', function() {
+            if (!currentTransactionData) return;
+
+            let customerPhone = document.getElementById('customerPhone').value.trim();
+            if (!customerPhone) {
+                alert('Please enter phone number first!');
+                return;
+            }
+
+            let phone = customerPhone.replace(/\D/g, '');
+            if (phone.startsWith('0')) phone = '62' + phone.substring(1);
+            if (!phone.startsWith('62')) phone = '62' + phone;
+
+            // PERBAIKAN: Generate message terlebih dahulu sebelum dibaca oleh console / URL
+            const message = buildCompactWaMessage(currentTransactionData);
+
+            // console.log(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`);
+
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        });
+    </script>
+</body>

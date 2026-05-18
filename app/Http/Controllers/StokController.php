@@ -42,6 +42,7 @@ class StokController extends Controller
                     })->toArray(),
 
                 ]],
+                ['name' => 'toko', 'value' => 'toko',  'title' => 'Toko', 'type' => 'text', 'inform' => false, 'intable' => true],
                 ['name' => 'tipe', 'value' => 'tipe', 'title' => 'Tipe', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
 
                     ['value' => 'IN', 'label' => 'IN'],
@@ -49,6 +50,7 @@ class StokController extends Controller
 
                 ]],
                 ['name' => 'jumlah', 'value' => 'jumlah',  'title' => 'Jumlah', 'type' => 'number', 'inform' => true, 'intable' => true],
+                ['name' => 'tanggal', 'value' => 'created_at',  'title' => 'Tanggal', 'type' => 'text', 'inform' => false, 'intable' => true],
 
 
             ],
@@ -61,16 +63,18 @@ class StokController extends Controller
     {
 
 
-        
+
         if ($request->ajax()) {
             // dd('masuk ajax');
             $query = Stok::where('stoks.deleted_at', null)
                 ->join('produks', 'stoks.produk_id', '=', 'produks.id')
+                ->join('tokos', 'produks.toko_id', '=', 'tokos.id')
                 ->select(
                     'stoks.*',
                     'produks.name as produk',
+                    'tokos.name as toko',
                 );
-                
+
 
             // Memeriksa apakah ada parameter produk_id di dalam request
             if ($request->has('produk_id') && $request->produk_id != '') {
@@ -80,7 +84,10 @@ class StokController extends Controller
             $stoks = $query->get();
 
             return DataTables::of($stoks)
-
+                ->editColumn('created_at', function ($Stok) {
+                    // Format tgl-bln-thn jam:menit:detik, misal: 18-05-2026 13:45:00
+                    return \Carbon\Carbon::parse($Stok->created_at)->format('d-m-Y H:i:s');
+                })
 
 
 

@@ -7,6 +7,7 @@ use App\Models\Kategori;
 use App\Models\Penjualan;
 use App\Models\TipePembayaran;
 use App\Models\Toko;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
@@ -186,6 +187,21 @@ class PenjualanController extends Controller
         $pagedata = $this->getPagedata();
 
         return view('penjualans.show', compact('penjualan'), $pagedata);
+    }
+
+    public function cetakNota(Penjualan $penjualan)
+    {
+       
+
+        // dd($pembelian);
+
+        // Opsional: Atur ukuran kertas (khusus nota thermal biasanya 80mm atau 58mm)
+        // Jika kertas A4 gunakan 'a4', jika thermal gunakan array [0, 0, 226.77, 500] (80mm x sesuai panjang)
+        $pdf = Pdf::loadView('exports.nota', compact('penjualan'))
+            ->setPaper('a4', 'portrait');
+
+        // Stream untuk melihat di browser, atau download() untuk langsung unduh
+        return $pdf->download('Nota-' . $penjualan->no_invoice . '.pdf');
     }
 
     public function edit(Penjualan $Penjualan): View

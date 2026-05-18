@@ -26,7 +26,7 @@ class KasirController extends Controller
     public function pilihToko()
     {
 
-        $tokos = Toko::all(); 
+        $tokos = Toko::all();
         return view('kasir.pilihtoko', compact('tokos'));
     }
 
@@ -126,21 +126,6 @@ class KasirController extends Controller
             'created_by' => auth()->user()->id,
         ]);
 
-        // dd($penjualan);
-
-        // $fillable = [
-        //     'penjualan_id',
-        //     'produk_id',
-        //     'harga_beli',
-        //     'harga_jual',
-        //     'jumlah',
-        //     'satuan',
-        //     'sub_total',
-        //     'created_by',
-        //     'updated_by',
-        //     'deleted_by',
-        // ];
-        // Create penjualan details
         foreach ($cartItems as $item) {
             PenjualanDetail::create([
                 'penjualan_id' => $penjualan->id,
@@ -155,8 +140,19 @@ class KasirController extends Controller
             ]);
         }
 
+        // penyediain data untuk ditampilkan di modal setelah pembayaran karena tidak bisa langsung dengan relasi
+        $penjualan->penjualan_id = $penjualan->id; 
+        $penjualan->tipe_pembayaran = $penjualan->tipePembayaran; 
+        $penjualan->tipe_pembayaran_name = $penjualan->tipePembayaran->name; 
+        $penjualan->details = $penjualan->details;
+        foreach ($penjualan->details as $detail) {
+            $detail->name = $detail->produk->name;
+        }
+
         return to_route('kasir.dashboard')
-            ->with('status', 'Berhasil Melakukan Transaksi: ');
+            ->with('status', 'Berhasil Melakukan Transaksi: ')
+            ->with('show_payment_modal', true)
+            ->with('transaction_data', $penjualan);
     }
 
     // Fitur exit toko (clear session tapi tidak logout)
@@ -187,7 +183,7 @@ class KasirController extends Controller
 
         // dd($produks);
         // dd($toko_tipe_kasir);
-        
+
         if ($toko_tipe_kasir == "Invoice") {
             return view('kasir.kasironlytipe2', compact('tokoId', 'tokoNama', 'produks', 'tipe_pembayarans'));
         }
@@ -313,7 +309,7 @@ class KasirController extends Controller
             ->with('status', 'Berhasil Melakukan Transaksi: ');
     }
 
-    
+
     // Fitur exit toko (clear session tapi tidak logout) kalo punya toko maka logout
     public function kasir_exitToko()
     {
@@ -327,7 +323,7 @@ class KasirController extends Controller
             session()->invalidate();
             session()->regenerateToken();
 
-           
+
             return redirect('/dashboard')->with('success', 'Berhasil logout');
         }
 

@@ -26,7 +26,7 @@
                 <x-button type="primary">{{ __('Edit Penjualan') }}</x-button>
             </a>
             @endif
-            //TODO:cetak
+            <!-- //TODO:cetak -->
             <a href="{{ route($tablename . '.index') }}">
                 <x-button type="warning">{{ __('Cetak') }}</x-button>
             </a>
