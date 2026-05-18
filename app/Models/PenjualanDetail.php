@@ -43,7 +43,7 @@ class PenjualanDetail extends Model
             Stok::create([
                 'produk_id'  => $detail->produk_id,
                 'tipe'       => 'OUT',
-                'jumlah'     => $detail->jumlah, // sesuaikan dengan nama kolom jumlah di detail penjualanmu (misal: qty / jumlah)
+                'jumlah'     => $detail->jumlah,
                 'created_by' => auth()->id(),
             ]);
         });

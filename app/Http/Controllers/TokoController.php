@@ -7,8 +7,11 @@ use App\Models\Toko;
 use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use Illuminate\Validation\Rules\Password;
+
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -68,7 +71,7 @@ class TokoController extends Controller
             // dd($tokos);
 
             return DataTables::of($tokos)
-                
+
 
 
 
@@ -136,7 +139,7 @@ class TokoController extends Controller
             'kode_toko' => ['required'],
             'pass_toko' => ['required', 'string', 'max:50'],
             'alamat' => ['required', 'string'],
-            'status' => ['required', 'string'],
+            'status_toko' => ['required', 'string'],
 
             'created_by' => ['required', 'integer']
         ]);
@@ -182,47 +185,32 @@ class TokoController extends Controller
     {
         // dd($request->all());
 
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'kode_toko' => ['required', 'string'],
+            'password' => ['nullable', 'confirmed', Password::defaults()],
+            'alamat' => ['required', 'string', 'max:255'],
+            'tipe_kasir' => ['required', 'string', 'max:255'],
+            'status_toko' => ['required', 'string', 'max:255'],
+        ]);
 
-        // dd("current user id: " . $current_user_id);
-        $store_data = [
+         $store_data = [
             'name' => $request->input('name'),
             'kode_toko' => $request->input('kode_toko'),
-            'pass_toko' => $request->input('pass_toko'),
             'alamat' => $request->input('alamat'),
+            'tipe_kasir' => $request->input('tipe_kasir'),
             'status_toko' => $request->input('status_toko'),
 
             'updated_by' => auth()->id(),
         ];
 
-
-        $validate = Validator::make($store_data, [
-            'name' => ['required', 'string', 'max:255'],
-            'kode_toko' => ['required'],
-            'pass_toko' => ['required', 'string', 'max:50'],
-            'alamat' => ['required', 'string'],
-            'status' => ['required', 'string'],
-
-            'updated_by' => ['required', 'integer']
-        ]);
-
-
-        if ($validate->fails()) {
-            return back()->withErrors($validate)->withInput();
-        }
-
-
-        // dd("validated data: " . json_encode($validate));
-
-
-
-
-        // dd($data);
-
         $Toko->update($store_data);
 
-
-        // dd("Toko updated: " . json_encode($Toko));
-
+        if (! empty($validated['password'])) {
+            $Toko->update([
+                'pass_toko' => Hash::make($validated['password']),
+            ]);
+        }
 
 
         return to_route('tokos.index')->with('status', 'Toko updated successfully.');

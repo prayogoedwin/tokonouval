@@ -300,7 +300,51 @@
 
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-    
+    <style>
+        .ts-wrapper.single .ts-control {
+            min-height: 42px;
+            border-radius: 0.5rem;
+            border-color: rgb(209 213 219);
+            background: rgb(255 255 255);
+            box-shadow: none;
+        }
+
+        .dark .ts-wrapper.single .ts-control {
+            border-color: rgb(75 85 99);
+            background: rgb(17 24 39);
+            color: rgb(243 244 246);
+        }
+
+        .ts-wrapper .ts-control input {
+            color: rgb(17 24 39);
+        }
+
+        .ts-wrapper .ts-control input::placeholder {
+            color: rgb(107 114 128);
+            opacity: 1;
+        }
+
+        .dark .ts-wrapper .ts-control input {
+            color: rgb(243 244 246) !important;
+        }
+
+        .dark .ts-wrapper .ts-control input::placeholder {
+            color: rgb(156 163 175);
+            opacity: 1;
+        }
+
+        .ts-dropdown {
+            border-radius: 0.5rem;
+            border-color: rgb(75 85 99);
+            background: rgb(17 24 39);
+            color: rgb(243 244 246);
+        }
+
+        .ts-dropdown .active {
+            background: rgb(30 64 175);
+            color: #fff;
+        }
+    </style>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
