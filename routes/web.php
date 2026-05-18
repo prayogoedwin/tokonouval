@@ -147,8 +147,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('penjualans/create', [PenjualanController::class, 'create'])->name('penjualans.create')->middleware('permission:create-penjualans');
     Route::post('penjualans', [PenjualanController::class, 'store'])->name('penjualans.store')->middleware('permission:create-penjualans');
     Route::get('penjualans/{penjualan}', [PenjualanController::class, 'show'])->name('penjualans.show')->middleware('permission:show-penjualans');
-    Route::get('penjualans/{penjualan}/cetaknota', [PenjualanController::class, 'cetakNota'])->name('penjualans.cetaknota')->middleware('permission:show-penjualans');
-    Route::get('penjualans/{penjualan}/kirimwa', [PenjualanController::class, 'kirimwa'])->name('penjualans.kirimwa')->middleware('permission:show-penjualans');
+    Route::get('penjualans/{penjualan}/cetaknota', [PenjualanController::class, 'cetakNota'])->name('penjualans.cetaknota')->middleware('permission:kasir');
+    Route::get('penjualans/{penjualan}/kirimwa', [PenjualanController::class, 'kirimwa'])->name('penjualans.kirimwa')->middleware('permission:kasir');
     Route::get('penjualans/{penjualan}/edit', [PenjualanController::class, 'edit'])->name('penjualans.edit')->middleware('permission:edit-penjualans');
     Route::put('penjualans/{penjualan}', [PenjualanController::class, 'update'])->name('penjualans.update')->middleware('permission:edit-penjualans');
     Route::delete('penjualans/{penjualan}', [PenjualanController::class, 'destroy'])->name('penjualans.destroy')->middleware('permission:delete-penjualans');

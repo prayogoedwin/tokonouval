@@ -50,7 +50,7 @@ class TokoController extends Controller
                 ]],
                 ['name' => 'tipe_kasir', 'value' => 'tipe_kasir', 'title' => 'Tipe Kasir', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
 
-                    ['value' => 'Inovice', 'label' => 'Inovice'],
+                    ['value' => 'Invoice', 'label' => 'Invoice'],
                     ['value' => 'POS', 'label' => 'POS'],
 
                 ]]
