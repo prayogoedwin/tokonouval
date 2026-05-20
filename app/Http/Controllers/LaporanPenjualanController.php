@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AbsensiExport;
+use App\Exports\LaporanPenjualanExport;
 use App\Models\Absensi;
 use App\Models\Karyawan;
 use App\Models\Penjualan;
@@ -111,7 +112,7 @@ class LaporanPenjualanController extends Controller
                     ]);
                 });
 
-            
+
 
             $penjualandetails = $penjualandetails->get();
 
@@ -163,10 +164,18 @@ class LaporanPenjualanController extends Controller
 
 
 
-    public function export()
+    public function export(Request $request)
     {
         // return Excel::download(new AbsensiExport, 'absensis-' . date('Y-m-d') . '.xlsx');
-    }
+        // Mengambil filter tanggal dengan default bulan ini (sama seperti index dataTables)
+        $startdate = $request->startdate ?: Carbon::now()->startOfMonth()->toDateString();
+        $enddate = $request->enddate ?: Carbon::now()->endOfMonth()->toDateString();
+        $toko = $request->toko ?: null;
 
-    
+        // Generate nama file dinamis agar tidak tertukar
+        $filename = 'Laporan_Penjualan_' . $startdate . '_to_' . $enddate . '.xlsx';
+
+        // Lempar parameter ke dalam Class Export
+        return Excel::download(new LaporanPenjualanExport($startdate, $enddate, $toko), $filename);
+    }
 }
