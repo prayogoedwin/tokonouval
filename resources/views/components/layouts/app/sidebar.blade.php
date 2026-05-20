@@ -50,6 +50,10 @@
                                 :active="request()->routeIs('stoks*')">Stok
                             </x-layouts.sidebar-link>
 
+                            <x-layouts.sidebar-link href="{{ route('laporans.penjualan') }}" icon='fas-chart-line'
+                                :active="request()->routeIs('laporans*')">Laporan
+                            </x-layouts.sidebar-link>
+
                             
                         </ul>
                     </nav>

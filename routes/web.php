@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\LaporanPenjualanController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProdukController;
@@ -152,6 +153,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('penjualans/{penjualan}/edit', [PenjualanController::class, 'edit'])->name('penjualans.edit')->middleware('permission:edit-penjualans');
     Route::put('penjualans/{penjualan}', [PenjualanController::class, 'update'])->name('penjualans.update')->middleware('permission:edit-penjualans');
     Route::delete('penjualans/{penjualan}', [PenjualanController::class, 'destroy'])->name('penjualans.destroy')->middleware('permission:delete-penjualans');
+
+    //Laporans
+    Route::get('laporans/penjualan', [LaporanPenjualanController::class, 'index'])->name('laporans.penjualan')->middleware('permission:view-laporanpenjualans');
+    Route::get('laporans/penjualan/export', [LaporanPenjualanController::class, 'export'])->name('laporans.penjualan.export')->middleware('permission:view-laporanpenjualans');
 });
 
 require __DIR__ . '/auth.php';

@@ -81,6 +81,8 @@ class RolePermissionSeeder extends Seeder
             'delete-penjualans',
 
             'kasir',
+
+            'view-laporanpenjualans'
         ];
 
         foreach ($permissions as $permissionName) {
