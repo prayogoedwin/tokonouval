@@ -49,7 +49,7 @@
                         </label>
                         <div class="relative">
                             <input type="date" id="startdate" name="startdate"
-                                value="{{ request('startdate') }}"
+                                value="{{ $startdate }}"
                                 class="block w-full px-3 py-2 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-500 transition-colors">
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                         </label>
                         <div class="relative">
                             <input type="date" id="enddate" name="enddate"
-                                value="{{ request('enddate') }}"
+                                value="{{ $enddate }}"
                                 class="block w-full px-3 py-2 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-500 transition-colors">
                         </div>
                     </div>
@@ -75,9 +75,9 @@
                             <select id="toko" name="toko" class="block w-full px-3 py-2 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-500 transition-colors">
                                 <option value="">Semua Toko</option>
                                 @foreach($tokos as $toko)
-                                    <option value="{{ $toko->id }}" {{ request('toko') == $toko->id ? 'selected' : '' }}>
-                                        {{ $toko->name }}
-                                    </option>
+                                <option value="{{ $toko->id }}" {{ request('toko') == $toko->id ? 'selected' : '' }}>
+                                    {{ $toko->name }}
+                                </option>
                                 @endforeach
                             </select>
                         </div>
@@ -103,6 +103,23 @@
                     </div>
                 </div>
             </form>
+        </div>
+
+        <!-- Current Filter Info Status -->
+        <div class="px-5 py-3 bg-blue-50/50 dark:bg-blue-950/20 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>
+                Menampilkan data
+                dari <strong>{{ \Carbon\Carbon::parse($startdate)->translatedFormat('d M Y') }}</strong> sampai <strong>{{ \Carbon\Carbon::parse($enddate)->translatedFormat('d M Y') }}</strong>
+                untuk
+                @if(request('toko'))
+                toko <strong>{{ $tokos->firstWhere('id', request('toko'))->name ?? 'Terpilih' }}</strong>
+                @else
+                <strong>Semua Toko</strong>
+                @endif
+            </span>
         </div>
 
         <!-- Section Tabel -->
@@ -137,7 +154,7 @@
 
     <script>
         // Define arrays of column values that should be right-aligned
-        const rightAlignedColumns = ['harga_beli', 'harga_jual', 'terjual', 'kas_masuk', 'pendapatan'];
+        const rightAlignedColumns = ['harga_beli', 'harga_jual', 'terjual', 'kas_masuk', 'pendapatan', 'stok_saat_ini'];
 
         $columnsdata = [
             @foreach($columns as $column)

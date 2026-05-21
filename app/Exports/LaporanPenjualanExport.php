@@ -41,7 +41,13 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
             })->get();
 
         // 2. Ambil data produk berdasarkan filter toko
-        $produks = Produk::with('toko')->whereNull('deleted_at');
+        $produks = Produk::with('toko')->whereNull('deleted_at')
+            ->withSum(['stoks as total_masuk' => function ($query) {
+                $query->where('tipe', 'IN');
+            }], 'jumlah')
+            ->withSum(['stoks as total_keluar' => function ($query) {
+                $query->where('tipe', 'OUT');
+            }], 'jumlah');;
 
         if ($this->toko) {
             $tokoId = $this->toko;
@@ -57,11 +63,13 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
         foreach ($produks as $produk) {
             // Hitung total terjual dari collection yang sudah di-load (menghindari N+1 Query)
             $terjual = $penjualandetails->where('produk_id', $produk->id)->sum('jumlah');
-            
+
             $harga_beli = $produk->harga_beli;
             $harga_jual = $produk->harga_jual;
             $kas_masuk = $terjual * $harga_jual;
             $pendapatan = ($harga_jual - $harga_beli) * $terjual;
+            $stok_saat_ini = $produk->total_masuk - $produk->total_keluar;
+
 
             $laporan[] = [
                 'toko' => $produk->toko->name ?? '-',
@@ -71,10 +79,14 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
                 'terjual' => $terjual,
                 'kas_masuk' => $kas_masuk,
                 'pendapatan' => $pendapatan,
+                'stok_saat_ini' => $stok_saat_ini,
+
             ];
         }
 
-        return $laporan;
+        $sortedLaporan = collect($laporan)->sortByDesc('terjual')->values()->all();
+
+        return $sortedLaporan;
     }
 
     public function headings(): array
@@ -90,6 +102,7 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
                 'Terjual',
                 'Kas Masuk (Sub Total)',
                 'Keuntungan (Pendapatan)',
+                'Stok Saat ini',
             ] // Baris 3: Header Tabel
         ];
     }
@@ -109,6 +122,7 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
             $row['terjual'],
             $row['kas_masuk'],
             $row['pendapatan'],
+            $row['stok_saat_ini'],
         ];
     }
 
@@ -120,12 +134,12 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
         // Posisi baris awal data dimulai setelah info tanggal dan header (Baris ke-4)
         $startDataRow = 4;
         $endDataRow = $startDataRow + $this->rowCount - 1;
-        
+
         // Antisipasi jika data kosong agar rumus Excel tidak rusak
         if ($this->rowCount === 0) {
             $endDataRow = $startDataRow;
         }
-        
+
         $totalRow = $endDataRow + 1;
 
         // Tulis teks "TOTAL" dan rumus SUM ke cell Excel
@@ -133,9 +147,10 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
         $sheet->setCellValue("E{$totalRow}", "=SUM(E{$startDataRow}:E{$endDataRow})"); // Total Terjual
         $sheet->setCellValue("F{$totalRow}", "=SUM(F{$startDataRow}:F{$endDataRow})"); // Total Kas Masuk
         $sheet->setCellValue("G{$totalRow}", "=SUM(G{$startDataRow}:G{$endDataRow})"); // Total Keuntungan
+        $sheet->setCellValue("H{$totalRow}", ""); 
 
         // Format mata uang rupiah untuk kolom harga dan pendapatan (C, D, F, G)
-        $currencyFormat = '#,##0'; // Kamu bisa ubah jadi '"Rp" #,##0' jika ingin ada teks Rp-nya
+        $currencyFormat = '#,##0'; 
         $sheet->getStyle("C{$startDataRow}:D{$totalRow}")->getNumberFormat()->setFormatCode($currencyFormat);
         $sheet->getStyle("F{$startDataRow}:G{$totalRow}")->getNumberFormat()->setFormatCode($currencyFormat);
 

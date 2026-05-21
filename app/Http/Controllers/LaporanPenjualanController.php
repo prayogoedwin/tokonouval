@@ -39,6 +39,7 @@ class LaporanPenjualanController extends Controller
                 ['name' => 'terjual', 'value' => 'terjual',  'title' => 'Terjual', 'type' => 'number', 'intable' => true],
                 ['name' => 'kas_masuk', 'value' => 'kas_masuk',  'title' => 'Kas Masuk', 'type' => 'number', 'intable' => true],
                 ['name' => 'pendapatan', 'value' => 'pendapatan',  'title' => 'Pendapatan', 'type' => 'number', 'intable' => true],
+                ['name' => 'stok_saat_ini', 'value' => 'stok_saat_ini',  'title' => 'Stok Saat Ini', 'type' => 'number', 'intable' => true],
 
             ],
         ];
@@ -61,42 +62,9 @@ class LaporanPenjualanController extends Controller
             $enddate = Carbon::parse($request->enddate)->toDateString();
         }
 
-        // // 3. Build the query
-        // // We eager-load ('with') the product and its store (toko) to avoid N+1 query issues.
-        // $penjualandetails = PenjualanDetail::with(['produk.toko'])
-        //     ->whereHas('penjualan', function ($query) use ($startdate, $enddate) {
-        //         // Filter based on the parent sale's transaction date
-        //         $query->whereBetween('created_at', [
-        //             $startdate . ' 00:00:00',
-        //             $enddate . ' 23:59:59'
-        //         ]);
-        //     })
-        //     ->get();
 
-        // $produks = Produk::where('deleted_at', null)->get();
 
-        // $laporan = [];
-        // foreach($produks as $produk) {
-        //     $terjual = $penjualandetails->where('produk_id', $produk->id)->sum('jumlah');
-        //     $harga_beli = $produk->harga_beli;
-        //     $harga_jual = $produk->harga_jual;
-        //     $kas_masuk = $terjual * $harga_jual;
-        //     $pendapatan = ($harga_jual - $harga_beli) * $terjual;
 
-        //     // Simpan hasil perhitungan ke dalam array atau langsung ke database
-        //     // Contoh menyimpan ke array:
-        //     $laporan[] = [
-        //         'toko_id' => $produk->toko->name,
-        //         'produk_id' => $produk->name,
-        //         'harga_beli' => $harga_beli,
-        //         'harga_jual' => $harga_jual,
-        //         'terjual' => $terjual,
-        //         'kas_masuk' => $kas_masuk,
-        //         'pendapatan' => $pendapatan,
-        //     ];
-        // }
-
-        // dd($laporan);
         // dd($request->all(), $startdate, $enddate);
 
         if ($request->ajax()) {
@@ -116,7 +84,13 @@ class LaporanPenjualanController extends Controller
 
             $penjualandetails = $penjualandetails->get();
 
-            $produks = Produk::where('deleted_at', null);
+            $produks = Produk::where('deleted_at', null)
+                ->withSum(['stoks as total_masuk' => function ($query) {
+                    $query->where('tipe', 'IN');
+                }], 'jumlah')
+                ->withSum(['stoks as total_keluar' => function ($query) {
+                    $query->where('tipe', 'OUT');
+                }], 'jumlah');
 
             if ($request->has('toko') && $request->toko != '') {
                 $toko = $request->toko;
@@ -134,6 +108,7 @@ class LaporanPenjualanController extends Controller
                 $harga_jual = $produk->harga_jual;
                 $kas_masuk = $terjual * $harga_jual;
                 $pendapatan = ($harga_jual - $harga_beli) * $terjual;
+                $stok_saat_ini = $produk->total_masuk - $produk->total_keluar;
 
                 $laporan[] = [
                     'toko' => $produk->toko->name,
@@ -143,6 +118,7 @@ class LaporanPenjualanController extends Controller
                     'terjual' => $terjual,
                     'kas_masuk' => $kas_masuk,
                     'pendapatan' => $pendapatan,
+                    'stok_saat_ini' => $stok_saat_ini,
                 ];
             }
 
@@ -154,6 +130,10 @@ class LaporanPenjualanController extends Controller
 
 
         $tokos = Toko::where('deleted_at', null)->get();
+        $pagedata['startdate'] = $startdate;
+        $pagedata['enddate'] = $enddate;
+
+        // dd($pagedata);
 
 
         return view('laporans.penjualan', compact('tokos'), $pagedata);

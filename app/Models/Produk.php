@@ -44,4 +44,13 @@ class Produk extends Model
     {
         return $this->belongsTo(Toko::class);
     }
+
+    // 1. Definisikan relasi ke model Stok
+    public function stoks(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        // Pastikan nama foreign key di tabel stok adalah 'product_id'
+        return $this->hasMany(Stok::class); 
+    }
+
+    
 }
