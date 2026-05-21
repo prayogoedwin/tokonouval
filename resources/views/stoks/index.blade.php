@@ -16,6 +16,7 @@
         </div>
         <div class="flex gap-2">
             @if(auth()->user()->hasPermission('download-' . $tablename))
+            @if (($canDownload ?? true) !== false)
             <a href="{{ route(strtolower($tablename) . '.export') }}">
                 <x-button type="secondary">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -24,6 +25,7 @@
                     {{ __('Download Excel') }}
                 </x-button>
             </a>
+            @endif
             @endif
             @if(auth()->user()->hasPermission('create-' . strtolower($tablename)))
             @if (($canCreate ?? true) !== false)

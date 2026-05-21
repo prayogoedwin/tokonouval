@@ -27,6 +27,7 @@ class KategoriController extends Controller
             'title' => 'Kategori',
             'tablename' => 'kategories',
             'tableaction' => true,
+            'canDownload' => false,
             'columns' => [
                 ['name' => 'name', 'value' => 'name',  'title' => 'Nama Kategori', 'type' => 'text', 'inform' => true, 'intable' => true],
                 ['name' => 'id_parent', 'value' => 'id_parent',  'title' => 'Kategori Parent', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [

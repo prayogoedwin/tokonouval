@@ -37,12 +37,12 @@ class ProdukController extends Controller
             'title' => 'Produk',
             'tablename' => 'produks',
             'tableaction' => true,
+            'canDownload' => false,
             'columns' => [
                 ['name' => 'name', 'value' => 'name',  'title' => 'Nama Produk', 'type' => 'text', 'inform' => true, 'intable' => true],
                 ['name' => 'sku', 'value' => 'sku',  'title' => 'SKU', 'type' => 'text', 'inform' => true, 'intable' => true],
                 ['name' => 'toko_id', 'value' => 'toko', 'title' => 'Toko', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
                     // Ambil data kategori dari database
-                    ['value' => '', 'label' => 'Pilih Toko'],
                     ...$tokos->map(function ($toko) {
                         return ['value' => $toko->id, 'label' => $toko->name];
                     })->toArray(),
@@ -51,7 +51,6 @@ class ProdukController extends Controller
 
                 ['name' => 'kategori_id', 'value' => 'kategori', 'title' => 'Kategori', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
                     // Ambil data kategori dari database
-                    ['value' => '', 'label' => 'Pilih Toko'],
                     ...$kategories->map(function ($kategori) {
                         return ['value' => $kategori->id, 'label' => $kategori->name];
                     })->toArray(),
@@ -59,6 +58,7 @@ class ProdukController extends Controller
                 ]],
                 ['name' => 'harga_beli', 'value' => 'harga_beli', 'title' => 'Harga Beli', 'type' => 'number', 'inform' => true, 'intable' => true],
                 ['name' => 'harga_jual', 'value' => 'harga_jual', 'title' => 'Harga Jual', 'type' => 'number', 'inform' => true, 'intable' => true],
+                ['name' => 'satuan', 'value' => 'satuan', 'title' => 'Satuan', 'type' => 'text', 'inform' => true, 'intable' => true],
 
             ],
         ];
@@ -146,10 +146,12 @@ class ProdukController extends Controller
     {
         $store_data = [
             'name' => $request->input('name'),
+            'sku' => $request->input('sku'),
             'toko_id' => $request->input('toko_id'),
             'kategori_id' => $request->input('kategori_id'),
             'harga_beli' => $request->input('harga_beli'),
             'harga_jual' => $request->input('harga_jual'),
+            'satuan' => $request->input('satuan'),
 
             'created_by' => auth()->id(),
         ];
@@ -157,10 +159,12 @@ class ProdukController extends Controller
 
         $validate = Validator::make($store_data, [
             'name' => ['required', 'string', 'max:255'],
+            'sku' => ['required', 'string', 'max:255'],
             'toko_id' => ['required', 'integer'],
             'kategori_id' => ['required', 'integer'],
             'harga_beli' => ['required', 'integer'],
             'harga_jual' => ['required', 'integer'],
+            'satuan' => ['required', 'string'],
 
             'created_by' => ['required', 'integer']
         ]);
@@ -211,25 +215,28 @@ class ProdukController extends Controller
         // dd("current user id: " . $current_user_id);
         $store_data = [
             'name' => $request->input('name'),
+            'sku' => $request->input('sku'),
             'toko_id' => $request->input('toko_id'),
             'kategori_id' => $request->input('kategori_id'),
             'harga_beli' => $request->input('harga_beli'),
             'harga_jual' => $request->input('harga_jual'),
+            'satuan' => $request->input('satuan'),
 
-            'updated_by' => auth()->id(),
+            'created_by' => auth()->id(),
         ];
 
 
         $validate = Validator::make($store_data, [
             'name' => ['required', 'string', 'max:255'],
+            'sku' => ['required', 'string', 'max:255'],
             'toko_id' => ['required', 'integer'],
             'kategori_id' => ['required', 'integer'],
             'harga_beli' => ['required', 'integer'],
             'harga_jual' => ['required', 'integer'],
+            'satuan' => ['required', 'string'],
 
-            'updated_by' => ['required', 'integer']
+            'created_by' => ['required', 'integer']
         ]);
-
 
         if ($validate->fails()) {
             return back()->withErrors($validate)->withInput();

@@ -33,6 +33,7 @@ class StokController extends Controller
             'tablename' => 'stoks',
             'tableaction' => true,
             'canCreate' => false,
+            'canDownload' => false,
             'columns' => [
                 ['name' => 'produk_id', 'value' => 'produk', 'title' => 'Produk', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
                     // Ambil data kategori dari database

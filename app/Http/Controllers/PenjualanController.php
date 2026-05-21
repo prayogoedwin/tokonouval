@@ -47,6 +47,7 @@ class PenjualanController extends Controller
             'tableaction' => true,
             'canCreate'=> false,
             'canEdit' => false,
+            'canDownload' => false,
             'columns' => [
                 ['name' => 'no_invoice', 'value' => 'no_invoice',  'title' => 'No Invoice', 'type' => 'text', 'inform' => true, 'intable' => true],
                 ['name' => 'toko_id', 'value' => 'toko', 'title' => 'Toko', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
