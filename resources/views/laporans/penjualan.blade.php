@@ -180,7 +180,7 @@
                 },
                 columns: $columnsdata,
                 order: [
-                    [0, 'desc']
+                    [4, 'desc']
                 ],
                 language: {
                     search: "_INPUT_",
