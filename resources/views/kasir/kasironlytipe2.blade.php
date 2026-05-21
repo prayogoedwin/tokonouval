@@ -21,13 +21,21 @@
         %3C/svg%3E">
 
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="{{ asset('js/tailwind.js') }}"></script>
 
     <!-- Alpine.js CDN -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
+    <script src="{{ asset('js/alpine.min.js') }}" defer></script>
+
 
     <!-- FontAwesome CDN for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" /> -->
+    <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}" />
+
+    <!-- tom select -->
+    <link rel="stylesheet" href="{{ asset('css/tom-select.css') }}" />
+    <script src="{{ asset('js/tom-select.complete.min.js') }}"></script>
 
     <!-- Custom Tailwind Config -->
     <script>
@@ -147,7 +155,7 @@
                             {{ __('Add Product') }}
                         </label>
                         <select id="productSelect"
-                    class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:focus:border-indigo-400 dark:focus:ring-indigo-400/40 searchable-select">
+                            class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:focus:border-indigo-400 dark:focus:ring-indigo-400/40 searchable-select">
                             @foreach($produks as $produk)
                             <option value="{{ $loop->index }}"
                                 data-id="{{ $produk->id }}"
@@ -198,7 +206,7 @@
                                         <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300 w-24">Qty</th>
                                         <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300 w-24">Unit</th>
                                         <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">Sub Total</th>
-                                        <th class="px-4 py-3 text-center w-16">Action</th>
+                                        <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300 w-16">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="cartTableBody">
@@ -208,10 +216,7 @@
                                         </td>
                                     </tr>
                                 </tbody>
-                                <tfoot id="cartTableFooter" class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 font-medium">
-                                    <!-- Dynamic footer will be inserted here -->
-
-                                </tfoot>
+                                
                             </table>
                         </div>
                     </div>
@@ -295,7 +300,7 @@
             </div>
         </div>
     </main>
-   
+
     <!-- Choices.js CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <!-- Choices.js JS -->
@@ -314,6 +319,10 @@
         .dark .choices__inner {
             border-color: rgb(75 85 99) !important;
             background: rgb(17 24 39) !important;
+        }
+
+        .dark .choices__item--selectable{
+            color: rgb(255 255 255);
         }
 
 

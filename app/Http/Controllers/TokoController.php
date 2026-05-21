@@ -37,6 +37,7 @@ class TokoController extends Controller
             'tableaction' => true,
             'canCreate' => false,
             'canDelete' => false,
+            'canDownload' => false,
             'columns' => [
                 ['name' => 'kode_toko', 'value' => 'kode_toko',  'title' => 'Kode Toko', 'type' => 'text', 'inform' => true, 'intable' => true],
                 ['name' => 'name', 'value' => 'name',  'title' => 'Nama Toko', 'type' => 'text', 'inform' => true, 'intable' => true],
@@ -128,6 +129,7 @@ class TokoController extends Controller
             'kode_toko' => $request->input('kode_toko'),
             'pass_toko' => $request->input('pass_toko'),
             'alamat' => $request->input('alamat'),
+            'tipe_kasir' => $request->input('tipe_kasir'),
             'status_toko' => $request->input('status_toko'),
 
             'created_by' => auth()->id(),
@@ -139,6 +141,7 @@ class TokoController extends Controller
             'kode_toko' => ['required'],
             'pass_toko' => ['required', 'string', 'max:50'],
             'alamat' => ['required', 'string'],
+            'tipe_kasir' => ['required', 'string', 'max:255'],
             'status_toko' => ['required', 'string'],
 
             'created_by' => ['required', 'integer']
@@ -194,7 +197,7 @@ class TokoController extends Controller
             'status_toko' => ['required', 'string', 'max:255'],
         ]);
 
-         $store_data = [
+        $store_data = [
             'name' => $request->input('name'),
             'kode_toko' => $request->input('kode_toko'),
             'alamat' => $request->input('alamat'),
