@@ -30,15 +30,15 @@ class KategoriController extends Controller
             'canDownload' => false,
             'columns' => [
                 ['name' => 'name', 'value' => 'name',  'title' => 'Nama Kategori', 'type' => 'text', 'inform' => true, 'intable' => true],
-                ['name' => 'id_parent', 'value' => 'id_parent',  'title' => 'Kategori Parent', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
+                ['name' => 'id_parent', 'value' => 'parent',  'title' => 'Kategori Parent', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
                     // Ambil data kategori dari database
                     ['value' => '', 'label' => 'Tanpa Parent'],
                     ...$kategories->map(function ($kategori) {
                         return ['value' => $kategori->id, 'label' => $kategori->name];
                     })->toArray(),
-                    
+
                 ]],
-                
+
 
             ],
         ];
@@ -49,19 +49,34 @@ class KategoriController extends Controller
     public function index(Request $request)
     {
         // dd($request->headers->all());
-        
+        // $kategories = Kategori::from('kategories as child')
+        //     ->leftJoin('kategories as parent', 'parent.id', '=', 'child.id_parent')
+        //     ->select([
+        //         'child.id as child_id',
+        //         'child.name as name',
+        //         'parent.id as parent_id',
+        //         'parent.name as parent'
+        //     ])
+        //     ->get();
+
+        // dd($kategories);
+
         if ($request->ajax()) {
             // dd('masuk ajax');
-            $kategories = Kategori::get();
+            $kategories = Kategori::from('kategories as child')
+                ->leftJoin('kategories as parent', 'parent.id', '=', 'child.id_parent')
+                ->select([
+                    'child.id as id',
+                    'child.name as name',
+                    'parent.id as parent_id',
+                    'parent.name as parent'
+                ])
+                ->get();
+
+            // dd($kategories);
             // dd($kategories);
 
             return DataTables::of($kategories)
-                // ->filterColumn('name', function ($query, $keyword) {
-                //     $query->where('kategories.name_Kategori', 'like', "%{$keyword}%");
-                // })
-                // ->filterColumn('kategori', function ($query, $keyword) {
-                //     $query->where('kategori_kategories.name', 'like', "%{$keyword}%");
-                // })
 
 
 

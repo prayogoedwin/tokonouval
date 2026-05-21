@@ -13,6 +13,11 @@ class Kategori extends Model
         'name'
     ];
 
+    public function parentt()
+    {
+        return $this->belongsTo(Kategori::class);
+    }
+
 
     
 }
