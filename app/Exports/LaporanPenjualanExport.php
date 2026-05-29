@@ -16,6 +16,7 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
     protected $startdate;
     protected $enddate;
     protected $toko;
+    protected $data; // Menyimpan data yang sudah diproses untuk digunakan di styles()
     private $rowCount = 0;
 
     // Terima parameter filter dari Controller via Constructor
@@ -24,12 +25,11 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
         $this->startdate = $startdate;
         $this->enddate = $enddate;
         $this->toko = $toko;
+
+        $this->prepareData(); // Proses data saat instance dibuat agar bisa digunakan di semua method
     }
 
-    /**
-     * Mengembalikan data dalam bentuk Array untuk di-export
-     */
-    public function array(): array
+    private function prepareData()
     {
         // 1. Ambil data penjualan detail berdasarkan range tanggal (Eager load relasi)
         $penjualandetails = PenjualanDetail::with(['produk.toko'])
@@ -85,14 +85,35 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
         }
 
         $sortedLaporan = collect($laporan)->sortByDesc('terjual')->values()->all();
+        
+        $this->data = $sortedLaporan; // Simpan data yang sudah diproses untuk digunakan di styles()
+        $this->rowCount = count($this->data);
+    }
 
-        return $sortedLaporan;
+    /**
+     * Mengembalikan data dalam bentuk Array untuk di-export
+     */
+    public function array(): array
+    {
+        return $this->data;
+    }
+
+    // Tambahkan method ini
+    public function getRawData()
+    {
+        
+        return $this->data ?? [];
     }
 
     public function headings(): array
     {
+        $totalOmset = collect($this->getRawData())->sum('kas_masuk');
+        $totalPendapatan = collect($this->getRawData())->sum('pendapatan');
+
         return [
             ['Periode Laporan:', $this->startdate . ' s/d ' . $this->enddate], // Baris 1: Info Tanggal
+            ['Total Omset:', $totalOmset], // Total Omset dari data yang sudah diproses
+            ['Total Pendapatan:', $totalPendapatan], // Total Pendapatan dari data yang sudah diproses
             [], // Baris 2: Spasi Kosong
             [
                 'Toko',
@@ -112,7 +133,6 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
      */
     public function map($row): array
     {
-        $this->rowCount++; // Hitung jumlah baris data nyata yang masuk
 
         return [
             $row['toko'],
@@ -132,7 +152,7 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
     public function styles(Worksheet $sheet)
     {
         // Posisi baris awal data dimulai setelah info tanggal dan header (Baris ke-4)
-        $startDataRow = 4;
+        $startDataRow = 6;
         $endDataRow = $startDataRow + $this->rowCount - 1;
 
         // Antisipasi jika data kosong agar rumus Excel tidak rusak
@@ -141,26 +161,33 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
         }
 
         $totalRow = $endDataRow + 1;
+        // dd($startDataRow, $endDataRow, $totalRow);
 
         // Tulis teks "TOTAL" dan rumus SUM ke cell Excel
         $sheet->setCellValue("A{$totalRow}", 'TOTAL');
         $sheet->setCellValue("E{$totalRow}", "=SUM(E{$startDataRow}:E{$endDataRow})"); // Total Terjual
         $sheet->setCellValue("F{$totalRow}", "=SUM(F{$startDataRow}:F{$endDataRow})"); // Total Kas Masuk
         $sheet->setCellValue("G{$totalRow}", "=SUM(G{$startDataRow}:G{$endDataRow})"); // Total Keuntungan
-        $sheet->setCellValue("H{$totalRow}", ""); 
+        $sheet->setCellValue("H{$totalRow}", "");
 
         // Format mata uang rupiah untuk kolom harga dan pendapatan (C, D, F, G)
-        $currencyFormat = '#,##0'; 
+        $currencyFormat = '#,##0';
         $sheet->getStyle("C{$startDataRow}:D{$totalRow}")->getNumberFormat()->setFormatCode($currencyFormat);
         $sheet->getStyle("F{$startDataRow}:G{$totalRow}")->getNumberFormat()->setFormatCode($currencyFormat);
+
+        //untk total omset dan total pendapatan di bawah, format mata uang rupiah
+        $sheet->getStyle("B2:B3")->getNumberFormat()->setFormatCode($currencyFormat);
+
 
         // Format styling agar terlihat profesional
         return [
             // Tebalkan judul periode tanggal
             1 => ['font' => ['bold' => true]],
+            2 => ['font' => ['bold' => true]],
+            3 => ['font' => ['bold' => true]],
 
-            // Tebalkan Header Tabel (Baris ke-3)
-            3 => [
+            // Tebalkan Header Tabel (Baris ke-5)
+            5 => [
                 'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,

@@ -148,6 +148,8 @@
             </div>
         </div>
 
+        <h1 class="p-3 text-lg font-bold text-gray-800 dark:text-gray-100">Top 10 Produk terlaris</h1>
+
         <!-- Section Tabel -->
         <div class="p-4 overflow-x-auto">
             <table id="dynamic-table" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
