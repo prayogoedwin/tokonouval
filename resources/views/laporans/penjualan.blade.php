@@ -122,6 +122,32 @@
             </span>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
+            <div class="bg-blue-600 rounded-lg p-5 text-white shadow-sm">
+                <p class="text-blue-100 text-sm font-medium uppercase">Total Omset</p>
+                <h3 class="text-2xl font-bold mt-1">Rp {{ number_format($totalOmset, 0, ',', '.') }}</h3>
+            </div>
+            <div class="bg-emerald-600 rounded-lg p-5 text-white shadow-sm">
+                <p class="text-emerald-100 text-sm font-medium uppercase">Total Pendapatan</p>
+                <h3 class="text-2xl font-bold mt-1">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</h3>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 px-5 pb-5">
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase font-semibold">Jumlah Transaksi</p>
+                <p class="text-lg font-bold text-gray-800 dark:text-gray-100">{{ $jumlahTransaksi }}</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase font-semibold">Barang Terjual</p>
+                <p class="text-lg font-bold text-gray-800 dark:text-gray-100">{{ $totalBarangTerjual }}</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase font-semibold">Stok Habis</p>
+                <p class="text-lg font-bold text-red-600">{{ $stokHabisCount }}</p>
+            </div>
+        </div>
+
         <!-- Section Tabel -->
         <div class="p-4 overflow-x-auto">
             <table id="dynamic-table" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

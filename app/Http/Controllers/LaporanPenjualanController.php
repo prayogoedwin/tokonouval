@@ -37,8 +37,6 @@ class LaporanPenjualanController extends Controller
                 ['name' => 'harga_beli', 'value' => 'harga_beli',  'title' => 'Harga Beli', 'type' => 'number', 'intable' => true],
                 ['name' => 'harga_jual', 'value' => 'harga_jual',  'title' => 'Harga Jual', 'type' => 'number', 'intable' => true],
                 ['name' => 'terjual', 'value' => 'terjual',  'title' => 'Terjual', 'type' => 'number', 'intable' => true],
-                ['name' => 'kas_masuk', 'value' => 'kas_masuk',  'title' => 'Kas Masuk', 'type' => 'number', 'intable' => true],
-                ['name' => 'pendapatan', 'value' => 'pendapatan',  'title' => 'Pendapatan', 'type' => 'number', 'intable' => true],
                 ['name' => 'stok_saat_ini', 'value' => 'stok_saat_ini',  'title' => 'Stok Saat Ini', 'type' => 'number', 'intable' => true],
 
             ],
@@ -62,6 +60,72 @@ class LaporanPenjualanController extends Controller
             $enddate = Carbon::parse($request->enddate)->toDateString();
         }
 
+        $totalOmset = 0;
+        $totalPendapatan = 0;
+
+        $penjualandetails = PenjualanDetail::with(['produk.toko'])
+            ->whereHas('penjualan', function ($query) use ($startdate, $enddate) {
+                // Filter based on the parent sale's transaction date
+                $query->whereBetween('created_at', [
+                    $startdate . ' 00:00:00',
+                    $enddate . ' 23:59:59'
+                ])
+                ->where('deleted_at', null)
+                ;
+            });
+
+        $jumlahTransaksi = $penjualandetails->distinct('penjualan_id')->count('penjualan_id');
+
+
+
+        $penjualandetails = $penjualandetails->get();
+
+        $produks = Produk::where('deleted_at', null)
+            ->withSum(['stoks as total_masuk' => function ($query) {
+                $query->where('tipe', 'IN');
+            }], 'jumlah')
+            ->withSum(['stoks as total_keluar' => function ($query) {
+                $query->where('tipe', 'OUT');
+            }], 'jumlah');
+
+        if ($request->has('toko') && $request->toko != '') {
+            $toko = $request->toko;
+            $produks->whereHas('toko', function ($query) use ($toko) {
+                $query->where('id', $toko);
+            });
+        }
+
+        $produks = $produks->get();
+
+        $laporan = [];
+        $stokHabisCount = 0;
+        foreach ($produks as $produk) {
+            $terjual = $penjualandetails->where('produk_id', $produk->id)->sum('jumlah');
+            $harga_beli = $produk->harga_beli;
+            $harga_jual = $produk->harga_jual;
+            $stok_saat_ini = $produk->total_masuk - $produk->total_keluar;
+
+            if ($stok_saat_ini <= 0) {
+                // dd($produk, $stok_saat_ini);
+                $stokHabisCount++;
+            }
+
+            $laporan[] = [
+                'toko' => $produk->toko->name,
+                'produk' => $produk->name,
+                'harga_beli' => $harga_beli,
+                'harga_jual' => $harga_jual,
+                'terjual' => $terjual,
+                'stok_saat_ini' => $stok_saat_ini,
+            ];
+
+
+            $totalOmset += $harga_jual * $terjual;
+            $totalPendapatan += ($harga_jual - $harga_beli) * $terjual;
+        }
+
+        $totalBarangTerjual = $penjualandetails->sum('jumlah');
+
 
 
 
@@ -69,61 +133,10 @@ class LaporanPenjualanController extends Controller
 
         if ($request->ajax()) {
 
-            // 3. Build the query
-            // We eager-load ('with') the product and its store (toko) to avoid N+1 query issues.
-            $penjualandetails = PenjualanDetail::with(['produk.toko'])
-                ->whereHas('penjualan', function ($query) use ($startdate, $enddate) {
-                    // Filter based on the parent sale's transaction date
-                    $query->whereBetween('created_at', [
-                        $startdate . ' 00:00:00',
-                        $enddate . ' 23:59:59'
-                    ]);
-                });
 
-
-
-            $penjualandetails = $penjualandetails->get();
-
-            $produks = Produk::where('deleted_at', null)
-                ->withSum(['stoks as total_masuk' => function ($query) {
-                    $query->where('tipe', 'IN');
-                }], 'jumlah')
-                ->withSum(['stoks as total_keluar' => function ($query) {
-                    $query->where('tipe', 'OUT');
-                }], 'jumlah');
-
-            if ($request->has('toko') && $request->toko != '') {
-                $toko = $request->toko;
-                $produks->whereHas('toko', function ($query) use ($toko) {
-                    $query->where('id', $toko);
-                });
-            }
-
-            $produks = $produks->get();
-
-            $laporan = [];
-            foreach ($produks as $produk) {
-                $terjual = $penjualandetails->where('produk_id', $produk->id)->sum('jumlah');
-                $harga_beli = $produk->harga_beli;
-                $harga_jual = $produk->harga_jual;
-                $kas_masuk = $terjual * $harga_jual;
-                $pendapatan = ($harga_jual - $harga_beli) * $terjual;
-                $stok_saat_ini = $produk->total_masuk - $produk->total_keluar;
-
-                $laporan[] = [
-                    'toko' => $produk->toko->name,
-                    'produk' => $produk->name,
-                    'harga_beli' => $harga_beli,
-                    'harga_jual' => $harga_jual,
-                    'terjual' => $terjual,
-                    'kas_masuk' => $kas_masuk,
-                    'pendapatan' => $pendapatan,
-                    'stok_saat_ini' => $stok_saat_ini,
-                ];
-            }
-
-            // dd($laporan);
-
+            #max 10 data untuk ditampilkan di halaman, diambil dari yang penjualan paling banyak
+            $laporan = collect($laporan)->sortByDesc('terjual')->values()->all();
+            $laporan = array_slice($laporan, 0, 10);
             return DataTables::of($laporan)->make(true);
         }
 
@@ -132,6 +145,16 @@ class LaporanPenjualanController extends Controller
         $tokos = Toko::where('deleted_at', null)->get();
         $pagedata['startdate'] = $startdate;
         $pagedata['enddate'] = $enddate;
+
+
+
+        $pagedata['totalOmset'] = $totalOmset;
+        $pagedata['totalPendapatan'] = $totalPendapatan;
+        $pagedata['jumlahTransaksi'] = $jumlahTransaksi;
+        $pagedata['totalBarangTerjual'] = $totalBarangTerjual;
+        $pagedata['stokHabisCount'] = $stokHabisCount;
+
+
 
         // dd($pagedata);
 
