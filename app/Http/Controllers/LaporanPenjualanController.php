@@ -98,12 +98,17 @@ class LaporanPenjualanController extends Controller
         $produks = $produks->get();
 
         $laporan = [];
+        $totalStok = 0;
+        $totalAsset = 0;
         $stokHabisCount = 0;
         foreach ($produks as $produk) {
             $terjual = $penjualandetails->where('produk_id', $produk->id)->sum('jumlah');
             $harga_beli = $produk->harga_beli;
             $harga_jual = $produk->harga_jual;
             $stok_saat_ini = $produk->total_masuk - $produk->total_keluar;
+
+            $totalStok += $stok_saat_ini;
+            $totalAsset += $stok_saat_ini * $produk->harga_beli;
 
             if ($stok_saat_ini <= 0) {
                 // dd($produk, $stok_saat_ini);
@@ -153,6 +158,8 @@ class LaporanPenjualanController extends Controller
         $pagedata['jumlahTransaksi'] = $jumlahTransaksi;
         $pagedata['totalBarangTerjual'] = $totalBarangTerjual;
         $pagedata['stokHabisCount'] = $stokHabisCount;
+        $pagedata['totalStok'] = $totalStok;
+        $pagedata['totalAsset'] = $totalAsset;
 
 
 

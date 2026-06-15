@@ -12,7 +12,7 @@
     <div class="mb-6 flex justify-between items-center">
         <div>
             <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ $title }}</h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-1">Manage System {{ $title }}</p>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Pengelolaan {{ $title }}</p>
         </div>
         <div class="flex gap-2">
             @if(auth()->user()->hasPermission('download-' . $tablename))
@@ -40,7 +40,7 @@
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div class="p-4">
+        <div class="p-4 overflow-x-auto">
             <table id="dynamic-table" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-900">
                     <tr>
@@ -51,7 +51,7 @@
                         @endforeach
 
                         @if($tableaction)
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Actions') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Aksi') }}</th>
                         @endif
                     </tr>
                 </thead>
@@ -103,13 +103,13 @@
                 ],
                 language: {
                     search: "_INPUT_",
-                    searchPlaceholder: "Search " + "{{ $title }}",
-                    lengthMenu: "Show _MENU_ entries",
-                    info: "Showing _START_ to _END_ of _TOTAL_ {{ strtolower($title) }}",
-                    infoEmpty: "No {{ strtolower($title) }} found",
+                    searchPlaceholder: "Cari " + "{{ $title }}",
+                    lengthMenu: "Perlihatkan _MENU_ data",
+                    info: "Memperlihatkan _START_ sampai _END_ dari _TOTAL_ {{ strtolower($title) }}",
+                    infoEmpty: "tidak ada data {{ strtolower($title) }} ditemukan",
                     infoFiltered: "(filtered from _MAX_ total {{ strtolower($title) }})",
-                    zeroRecords: "No matching {{ strtolower($title) }} found",
-                    emptyTable: "No {{ strtolower($title) }} available"
+                    zeroRecords: "tidak ada data {{ strtolower($title) }} ditemukan",
+                    emptyTable: "tidak ada {{ strtolower($title) }}"
                 },
                 dom: '<"flex flex-col md:flex-row justify-between items-center mb-4"lf>rt<"flex flex-col md:flex-row justify-between items-center mt-4"ip>',
                 pageLength: 10,

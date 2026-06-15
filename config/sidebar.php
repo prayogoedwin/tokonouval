@@ -9,7 +9,7 @@ return [
         'permission' => null, // Bebas diakses semua user terautentikasi
     ],
     [
-        'title' => 'User Management',
+        'title' => 'Pengelolaan User',
         'icon' => 'fas-users',
         'active' => ['users*', 'roles*', 'permissions*'],
         'permission' => ['view-users', 'view-roles', 'view-permissions'], // Parent muncul jika punya salah satu
@@ -38,7 +38,7 @@ return [
         ],
     ],
     [
-        'title' => 'Toko Management',
+        'title' => 'Pengelolaan Toko',
         'icon' => 'fas-store',
         'route' => 'tokos.index',
         'active' => 'tokos*',
@@ -52,14 +52,14 @@ return [
         'permission' => 'kasir',
     ],
     [
-        'title' => 'Penjualan Management',
+        'title' => 'Pengelolaan Penjualan',
         'icon' => 'fas-chart-line',
         'route' => 'penjualans.index',
         'active' => 'penjualans*',
         'permission' => 'view-penjualans',
     ],
     [
-        'title' => 'Produk Management',
+        'title' => 'Pengelolaan Produk',
         'icon' => 'fas-boxes-stacked',
         'active' => ['produks*', 'kategories*', 'satuans*'],
         'permission' => ['view-produks', 'view-kategories', 'view-satuans'],

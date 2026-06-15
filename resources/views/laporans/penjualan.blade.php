@@ -12,7 +12,6 @@
     <div class="mb-6 flex justify-between items-center">
         <div>
             <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ $title }}</h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-1">Manage System {{ $title }}</p>
         </div>
         <div class="flex gap-2">
             @if(auth()->user()->hasPermission('view-laporanpenjualans'))
@@ -45,7 +44,7 @@
                     <!-- Start Date Group -->
                     <div class="flex-1">
                         <label for="startdate" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
-                            Start Date
+                            Tanggal Mulai
                         </label>
                         <div class="relative">
                             <input type="date" id="startdate" name="startdate"
@@ -57,7 +56,7 @@
                     <!-- End Date Group -->
                     <div class="flex-1">
                         <label for="enddate" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
-                            End Date
+                            Tanggal Selesai
                         </label>
                         <div class="relative">
                             <input type="date" id="enddate" name="enddate"
@@ -130,6 +129,17 @@
             <div class="bg-emerald-600 rounded-lg p-5 text-white shadow-sm">
                 <p class="text-emerald-100 text-sm font-medium uppercase">Total Pendapatan</p>
                 <h3 class="text-2xl font-bold mt-1">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</h3>
+            </div>
+        </div>
+        <h1 class="p-3 text-lg font-bold text-gray-800 dark:text-gray-100">Total Asset</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
+            <div class="bg-blue-600 rounded-lg p-5 text-white shadow-sm">
+                <p class="text-blue-100 text-sm font-medium uppercase">Total Stok</p>
+                <h3 class="text-2xl font-bold mt-1">{{ $totalStok }}</h3>
+            </div>
+            <div class="bg-emerald-600 rounded-lg p-5 text-white shadow-sm">
+                <p class="text-emerald-100 text-sm font-medium uppercase">Total Aset</p>
+                <h3 class="text-2xl font-bold mt-1">Rp {{ number_format($totalAsset, 0, ',', '.') }}</h3>
             </div>
         </div>
 
@@ -229,13 +239,13 @@
                 ],
                 language: {
                     search: "_INPUT_",
-                    searchPlaceholder: "Search " + "{{ $title }}",
-                    lengthMenu: "Show _MENU_ entries",
-                    info: "Showing _START_ to _END_ of _TOTAL_ {{ strtolower($title) }}",
-                    infoEmpty: "No {{ strtolower($title) }} found",
+                    searchPlaceholder: "Cari " + "{{ $title }}",
+                    lengthMenu: "Perlihatkan _MENU_ data",
+                    info: "Memperlihatkan _START_ sampai _END_ dari _TOTAL_ {{ strtolower($title) }}",
+                    infoEmpty: "tidak ada data {{ strtolower($title) }} ditemukan",
                     infoFiltered: "(filtered from _MAX_ total {{ strtolower($title) }})",
-                    zeroRecords: "No matching {{ strtolower($title) }} found",
-                    emptyTable: "No {{ strtolower($title) }} available"
+                    zeroRecords: "tidak ada data {{ strtolower($title) }} ditemukan",
+                    emptyTable: "tidak ada {{ strtolower($title) }}"
                 },
                 dom: '<"flex flex-col md:flex-row justify-between items-center mb-4"lf>rt<"flex flex-col md:flex-row justify-between items-center mt-4"ip>',
                 pageLength: 10,

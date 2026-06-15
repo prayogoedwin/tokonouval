@@ -123,8 +123,8 @@
 
             <div class="grid grid-cols-2 mb-6">
                 <div class="col-lg-6">
-                    <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Cashier {{ $tokoNama }}</h1>
-                    <p class="text-gray-600 dark:text-gray-400 mt-1">{{ __('Transaction') }}</p>
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Kasir {{ $tokoNama }}</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1">{{ __('Transaksi') }}</p>
 
                 </div>
 
@@ -133,7 +133,7 @@
                     <form action="{{ route('kasir.kasir_exittoko') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="text-red-500 hover:text-red-700 ml-2" style="font-size: large;">
-                            <i class="fas fa-sign-out-alt"></i> Exit
+                            <i class="fas fa-sign-out-alt"></i> Keluar
                         </button>
                     </form>
                 </div>
@@ -147,12 +147,12 @@
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-[800px]">
                     {{-- Cart Header --}}
                     <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                        <h2 class="font-semibold text-gray-800 dark:text-gray-200">{{ __('Shopping Cart') }}</h2>
+                        <h2 class="font-semibold text-gray-800 dark:text-gray-200">{{ __('Keranjang') }}</h2>
                     </div>
 
                     {{-- Cart Items List (Scrollable) --}}
                     <div class="flex-1 overflow-y-auto p-4 space-y-3" id="cartItems">
-                        <p class="text-center text-gray-400 dark:text-gray-500 text-sm py-8">{{ __('No items added yet') }}</p>
+                        <p class="text-center text-gray-400 dark:text-gray-500 text-sm py-8">{{ __('Belum ada item') }}</p>
                     </div>
 
                     {{-- Cart Summary & Invoice Preview --}}
@@ -163,7 +163,7 @@
                                 <span class="font-medium text-gray-800 dark:text-gray-200" id="subtotal">Rp 0</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-gray-600 dark:text-gray-400">{{ __('Discount') }}</span>
+                                <span class="text-gray-600 dark:text-gray-400">{{ __('Diskon') }}</span>
                                 <div class="flex items-center gap-2">
                                     <input type="number" id="discountPercent" value="0" min="0" max="100" step="1"
                                         class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
@@ -171,7 +171,7 @@
                                 </div>
                             </div>
                             <div class="flex justify-between text-sm">
-                                <span class="text-gray-600 dark:text-gray-400">{{ __('Discount Amount') }}</span>
+                                <span class="text-gray-600 dark:text-gray-400">{{ __('Total Diskon') }}</span>
                                 <span class="font-medium text-red-600 dark:text-red-400" id="discountAmount">Rp 0</span>
                             </div>
                             <div class="flex justify-between text-lg font-bold pt-2 border-t border-gray-200 dark:border-gray-700">
@@ -184,10 +184,9 @@
                         <div class="mt-4 space-y-2">
                             {{-- Payment Method Select --}}
                             <div class="flex justify-between items-center gap-2">
-                                <span class="text-gray-600 dark:text-gray-400 text-sm">{{ __('Payment Method') }}</span>
+                                <span class="text-gray-600 dark:text-gray-400 text-sm">{{ __('Metode Pembayaran') }}</span>
                                 <select id="paymentMethod"
                                     class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                    <option value="">{{ __('Select payment method') }}</option>
                                     @foreach($tipe_pembayarans as $tipe_pembayaran)
                                     <option value="{{ $tipe_pembayaran->id }}" data-name="{{ $tipe_pembayaran->name }}">
                                         {{ $tipe_pembayaran->name }}
@@ -200,11 +199,11 @@
                                 <input type="number" id="paymentAmount" placeholder="Payment amount"
                                     class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                                 <button id="calculateChangeBtn"
-                                    class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 text-sm font-medium transition">{{ __('Change') }}</button>
+                                    class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 text-sm font-medium transition">{{ __('Hitung Kembalian') }}</button>
                             </div>
 
                             <div class="flex justify-between items-center text-sm">
-                                <span class="text-gray-600 dark:text-gray-400">{{ __('Change') }}</span>
+                                <span class="text-gray-600 dark:text-gray-400">{{ __('Kembalian') }}</span>
                                 <span class="font-bold text-green-600 dark:text-green-400" id="changeAmount">Rp 0</span>
                             </div>
                         </div>
@@ -212,11 +211,11 @@
                         <div class="mt-4 flex gap-2">
                             <button id="processPaymentBtn"
                                 class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                                {{ __('Process Payment') }}
+                                {{ __('Process Pembayaran') }}
                             </button>
                             <button id="clearCartBtn"
                                 class="px-4 py-2 border border-red-300 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md text-sm font-medium transition">
-                                {{ __('Clear') }}
+                                {{ __('Kosongkan') }}
                             </button>
                         </div>
                     </div>
@@ -562,7 +561,7 @@
                     <!-- WhatsApp Phone Input (optional) -->
                     <div class="mt-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Customer Phone Number (for WhatsApp)
+                            Customer Nomer Hp (untuk WhatsApp)
                         </label>
                         <input type="text" id="customerPhone"
                             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"

@@ -67,7 +67,7 @@
         </div>
 
 
-        <div class="p-4">
+        <div class="p-4 overflow-x-auto">
             <table id="dynamic-table" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-900">
                     <tr>
@@ -216,13 +216,13 @@
                 ],
                 language: {
                     search: "_INPUT_",
-                    searchPlaceholder: "Search " + "{{ $title }}",
-                    lengthMenu: "Show _MENU_ entries",
-                    info: "Showing _START_ to _END_ of _TOTAL_ {{ strtolower($title) }}",
-                    infoEmpty: "No {{ strtolower($title) }} found",
+                    searchPlaceholder: "Cari " + "{{ $title }}",
+                    lengthMenu: "Perlihatkan _MENU_ data",
+                    info: "Memperlihatkan _START_ sampai _END_ dari _TOTAL_ {{ strtolower($title) }}",
+                    infoEmpty: "tidak ada data {{ strtolower($title) }} ditemukan",
                     infoFiltered: "(filtered from _MAX_ total {{ strtolower($title) }})",
-                    zeroRecords: "No matching {{ strtolower($title) }} found",
-                    emptyTable: "No {{ strtolower($title) }} available"
+                    zeroRecords: "tidak ada data {{ strtolower($title) }} ditemukan",
+                    emptyTable: "tidak ada {{ strtolower($title) }}"
                 },
                 dom: '<"flex flex-col md:flex-row justify-between items-center mb-4"lf>rt<"flex flex-col md:flex-row justify-between items-center mt-4"ip>',
                 pageLength: 10,

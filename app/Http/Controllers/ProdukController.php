@@ -301,7 +301,9 @@ class ProdukController extends Controller
     //soft delete
     public function destroy(Produk $Produk): RedirectResponse
     {
-        $Produk->update(['deleted_by' => auth()->id(), 'deleted_at' => now()]);
+        $Produk->update(['deleted_by' => auth()->id()]);
+
+        $Produk->delete();
 
 
         return to_route('produks.index')->with('status', 'Produk deleted successfully.');

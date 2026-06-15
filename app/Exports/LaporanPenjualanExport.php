@@ -17,6 +17,8 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
     protected $enddate;
     protected $toko;
     protected $data; // Menyimpan data yang sudah diproses untuk digunakan di styles()
+    protected $totalStok;
+    protected $totalAsset;
     private $rowCount = 0;
 
     // Terima parameter filter dari Controller via Constructor
@@ -24,7 +26,8 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
     {
         $this->startdate = $startdate;
         $this->enddate = $enddate;
-        $this->toko = $toko;
+        $this->totalStok = 0;
+        $this->totalAsset = 0;
 
         $this->prepareData(); // Proses data saat instance dibuat agar bisa digunakan di semua method
     }
@@ -59,6 +62,9 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
         $produks = $produks->get();
 
         // 3. Gabungkan data & Hitung Kalkulasi Finansial
+        $totalAsset = 0;
+        $totalStok = 0;
+
         $laporan = [];
         foreach ($produks as $produk) {
             // Hitung total terjual dari collection yang sudah di-load (menghindari N+1 Query)
@@ -70,6 +76,8 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
             $pendapatan = ($harga_jual - $harga_beli) * $terjual;
             $stok_saat_ini = $produk->total_masuk - $produk->total_keluar;
 
+            $totalStok += $stok_saat_ini;
+            $totalAsset += $stok_saat_ini * $produk->harga_beli;
 
             $laporan[] = [
                 'toko' => $produk->toko->name ?? '-',
@@ -88,6 +96,8 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
         
         $this->data = $sortedLaporan; // Simpan data yang sudah diproses untuk digunakan di styles()
         $this->rowCount = count($this->data);
+        $this->totalStok = $totalStok;
+        $this->totalAsset = $totalAsset;
     }
 
     /**
@@ -109,11 +119,13 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
     {
         $totalOmset = collect($this->getRawData())->sum('kas_masuk');
         $totalPendapatan = collect($this->getRawData())->sum('pendapatan');
+        $a = $this->totalAsset;
+        $b = $this->totalStok;
 
         return [
             ['Periode Laporan:', $this->startdate . ' s/d ' . $this->enddate], // Baris 1: Info Tanggal
-            ['Total Omset:', $totalOmset], // Total Omset dari data yang sudah diproses
-            ['Total Pendapatan:', $totalPendapatan], // Total Pendapatan dari data yang sudah diproses
+            ['Total Omset:', $totalOmset, 'Total Stok', $b], // Total Omset dari data yang sudah diproses
+            ['Total Pendapatan:', $totalPendapatan, 'Total Asset', $a], // Total Pendapatan dari data yang sudah diproses
             [], // Baris 2: Spasi Kosong
             [
                 'Toko',
@@ -177,6 +189,7 @@ class LaporanPenjualanExport implements FromArray, WithHeadings, WithMapping, Wi
 
         //untk total omset dan total pendapatan di bawah, format mata uang rupiah
         $sheet->getStyle("B2:B3")->getNumberFormat()->setFormatCode($currencyFormat);
+        $sheet->getStyle("D2:D3")->getNumberFormat()->setFormatCode($currencyFormat);
 
 
         // Format styling agar terlihat profesional

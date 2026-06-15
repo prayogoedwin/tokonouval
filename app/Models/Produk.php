@@ -29,6 +29,7 @@ class Produk extends Model
         'harga_beli',
         'harga_jual',
         'sku',
+        'batas_bawah', // batas bawah sebelum stok allert menipis
         'created_by',
         'updated_by',
         'deleted_by',
