@@ -43,6 +43,7 @@ class TokoController extends Controller
                 ['name' => 'name', 'value' => 'name',  'title' => 'Nama Toko', 'type' => 'text', 'inform' => true, 'intable' => true],
                 ['name' => 'pass_toko', 'value' => 'pass_toko', 'title' => 'Password Toko', 'type' => 'password', 'inform' => true, 'intable' => false],
                 ['name' => 'alamat', 'value' => 'alamat', 'title' => 'Alamat', 'type' => 'text', 'inform' => true, 'intable' => true],
+                ['name' => 'telp', 'value' => 'telp', 'title' => 'No Telp', 'type' => 'text', 'inform' => true, 'intable' => true],
                 ['name' => 'status_toko', 'value' => 'status_toko', 'title' => 'Status', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
 
                     ['value' => 'Pusat', 'label' => 'Pusat'],

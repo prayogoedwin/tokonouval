@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ProdukExport;
 use App\Models\Kategori;
 use App\Models\Produk;
+use App\Models\Stok;
 use App\Models\Toko;
 use Illuminate\Http\Request;
 
@@ -20,18 +21,19 @@ class ProdukController extends Controller
     {
         $tokos = Toko::get();
         $kategories = Kategori::get();
+        $satuans = config('helper.satuans');
 
-    //     protected $fillable = [
-    //     'toko_id',
-    //     'kategori_id',
-    //     'name',
-    //     'harga_beli',
-    //     'harga_jual',
-    //     'created_by',
-    //     'updated_by',
-    //     'deleted_by',
-        
-    // ];
+        //     protected $fillable = [
+        //     'toko_id',
+        //     'kategori_id',
+        //     'name',
+        //     'harga_beli',
+        //     'harga_jual',
+        //     'created_by',
+        //     'updated_by',
+        //     'deleted_by',
+
+        // ];
 
         $pagedata = [
             'title' => 'Produk',
@@ -46,7 +48,7 @@ class ProdukController extends Controller
                     ...$tokos->map(function ($toko) {
                         return ['value' => $toko->id, 'label' => $toko->name];
                     })->toArray(),
-                    
+
                 ]],
 
                 ['name' => 'kategori_id', 'value' => 'kategori', 'title' => 'Kategori', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
@@ -54,11 +56,16 @@ class ProdukController extends Controller
                     ...$kategories->map(function ($kategori) {
                         return ['value' => $kategori->id, 'label' => $kategori->name];
                     })->toArray(),
-                    
+
                 ]],
                 ['name' => 'harga_beli', 'value' => 'harga_beli', 'title' => 'Harga Beli', 'type' => 'number', 'inform' => true, 'intable' => true],
                 ['name' => 'harga_jual', 'value' => 'harga_jual', 'title' => 'Harga Jual', 'type' => 'number', 'inform' => true, 'intable' => true],
-                ['name' => 'satuan', 'value' => 'satuan', 'title' => 'Satuan', 'type' => 'text', 'inform' => true, 'intable' => true],
+                ['name' => 'satuan', 'value' => 'satuan', 'title' => 'Satuan', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
+                    ...collect($satuans)->map(function ($satuan) {
+                        return ['value' => $satuan, 'label' => $satuan];
+                    })->toArray(),
+
+                ]],
 
             ],
         ];
@@ -69,18 +76,18 @@ class ProdukController extends Controller
     public function index(Request $request)
     {
         // dd($request->headers->all());
-        
+
         if ($request->ajax()) {
             // dd('masuk ajax');
             $produks = Produk::where('produks.deleted_at', null)
-            ->join('kategories', 'produks.kategori_id', '=', 'kategories.id')
-            ->join('tokos', 'produks.toko_id', '=', 'tokos.id')
-            ->select(
+                ->join('kategories', 'produks.kategori_id', '=', 'kategories.id')
+                ->join('tokos', 'produks.toko_id', '=', 'tokos.id')
+                ->select(
                     'produks.*',
                     'kategories.name as kategori',
                     'tokos.name as toko'
                 )
-            ->get();
+                ->get();
             // dd($produks);
 
             return DataTables::of($produks)
@@ -100,7 +107,7 @@ class ProdukController extends Controller
                         $actions .= '<a href="' . route('produks.show', $Produk) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">View</a>';
                     }
                     if (auth()->user()->hasPermission('show-stoks')) {
-                        $actions .= '<a href="' . route('stoks.index', ['produk_id' => $Produk->id]) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">Stoks</a>';
+                        $actions .= '<a href="' . route('stoks.produk', $Produk->id) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">Stoks</a>';
                     }
 
                     if (auth()->user()->hasPermission('edit-produks')) {
@@ -177,9 +184,40 @@ class ProdukController extends Controller
 
 
         $Produk = Produk::create($store_data);
-        
+
 
         return to_route('produks.index')->with('status', 'Produk updated successfully.');
+    }
+
+    public function tambahstokstore(Produk $produk, Request $request): RedirectResponse
+    {
+        $store_data = [
+            'produk_id' => $produk->id,
+            'tipe' => $request->input('tipe'),
+            'jumlah' => $request->input('jumlah'),
+
+            'created_by' => auth()->id(),
+        ];
+
+
+        $validate = Validator::make($store_data, [
+            'tipe' => ['required', 'string', 'max:255'],
+            'jumlah' => ['required', 'integer'],
+
+            'created_by' => ['required', 'integer']
+        ]);
+
+
+        if ($validate->fails()) {
+            return back()->withErrors($validate)->withInput();
+        }
+
+
+
+        $stok = Stok::create($store_data);
+
+
+        return to_route('stoks.produk', $produk)->with('status', 'Stok updated successfully.');
     }
 
     public function show(Produk $Produk): View

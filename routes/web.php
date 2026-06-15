@@ -76,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('produks', [ProdukController::class, 'index'])->name('produks.index')->middleware('permission:view-produks');
     Route::get('produks/export', [ProdukController::class, 'export'])->name('produks.export')->middleware('permission:download-produks');
     Route::get('produks/create', [ProdukController::class, 'create'])->name('produks.create')->middleware('permission:create-produks');
+    Route::post('produks/tambahstok/{produk}', [ProdukController::class, 'tambahstokstore'])->name('produks.tambahstokstore')->middleware('permission:create-produks');
     Route::post('produks', [ProdukController::class, 'store'])->name('produks.store')->middleware('permission:create-produks');
     Route::get('produks/{produk}', [ProdukController::class, 'show'])->name('produks.show')->middleware('permission:show-produks');
     Route::get('produks/{produk}/edit', [ProdukController::class, 'edit'])->name('produks.edit')->middleware('permission:edit-produks');
@@ -104,6 +105,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Stok Management - dengan permission check
     Route::get('stoks', [StokController::class, 'index'])->name('stoks.index')->middleware('permission:view-stoks');
+    Route::get('stoksproduk/{produk}', [StokController::class, 'stokproduk'])->name('stoks.produk')->middleware('permission:view-stoks');
+
     Route::get('stoks/export', [StokController::class, 'export'])->name('stoks.export')->middleware('permission:download-stoks');
     Route::get('stoks/create', [StokController::class, 'create'])->name('stoks.create')->middleware('permission:create-stoks');
     Route::post('stoks', [StokController::class, 'store'])->name('stoks.store')->middleware('permission:create-stoks');

@@ -540,6 +540,7 @@
             message += `${'='.repeat(32)}\n`;
             message += `Nota: ${transaction.no_invoice}\n`;
             message += `Tgl : ${new Date().toLocaleString('id-ID')}\n`;
+            message += `Telp : ${transaction.toko_telp}\n`;
             message += `${'='.repeat(32)}\n`;
             message += `Item         Qty   Harga    Total\n`;
             message += `${'-'.repeat(32)}\n`;

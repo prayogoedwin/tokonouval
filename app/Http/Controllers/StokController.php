@@ -113,6 +113,83 @@ class StokController extends Controller
     }
 
 
+    public function stokproduk(Produk $produk, Request $request)
+    {
+        // dd($produk, $request->all());
+        $query = Stok::where('stoks.deleted_at', null)
+            ->join('produks', 'stoks.produk_id', '=', 'produks.id')
+            ->join('tokos', 'produks.toko_id', '=', 'tokos.id')
+            ->select(
+                'stoks.*',
+                'produks.name as produk',
+                'tokos.name as toko',
+            );
+
+
+        // ambil dari produk ini saja
+
+        $query->where('stoks.produk_id', $produk->id);
+
+        $stoks = $query->get();
+
+
+
+        if ($request->ajax()) {
+            // dd('masuk ajax');
+            $query = Stok::where('stoks.deleted_at', null)
+                ->join('produks', 'stoks.produk_id', '=', 'produks.id')
+                ->join('tokos', 'produks.toko_id', '=', 'tokos.id')
+                ->select(
+                    'stoks.*',
+                    'produks.name as produk',
+                    'tokos.name as toko',
+                );
+
+
+            // ambil dari produk ini saja
+
+            $query->where('stoks.produk_id', $produk->id);
+
+
+            $stoks = $query->get();
+
+            return DataTables::of($stoks)
+                ->editColumn('created_at', function ($Stok) {
+                    // Format tgl-bln-thn jam:menit:detik, misal: 18-05-2026 13:45:00
+                    return \Carbon\Carbon::parse($Stok->created_at)->format('d-m-Y H:i:s');
+                })
+
+
+
+                ->addColumn('actions', function ($Stok) {
+                    $actions = '';
+
+                    if (auth()->user()->hasPermission('show-stoks')) {
+                        $actions .= '<a href="' . route('stoks.show', $Stok) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">View</a>';
+                    }
+
+
+
+                    return $actions;
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+        }
+
+        $stokMasuk = $stoks->where('tipe', 'IN')->sum('jumlah');
+
+        $stokKeluar = $stoks->where('tipe', 'OUT')->sum('jumlah');
+
+        $stokSaatIni = $stokMasuk - $stokKeluar;
+
+
+
+        $pagedata = $this->getPagedata();
+
+        return view('stoks.product', compact('produk', 'stokMasuk', 'stokKeluar', 'stokSaatIni'), $pagedata);
+    }
+
+
 
 
 

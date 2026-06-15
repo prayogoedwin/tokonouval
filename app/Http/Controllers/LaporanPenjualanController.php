@@ -37,7 +37,7 @@ class LaporanPenjualanController extends Controller
                 ['name' => 'harga_beli', 'value' => 'harga_beli',  'title' => 'Harga Beli', 'type' => 'number', 'intable' => true],
                 ['name' => 'harga_jual', 'value' => 'harga_jual',  'title' => 'Harga Jual', 'type' => 'number', 'intable' => true],
                 ['name' => 'terjual', 'value' => 'terjual',  'title' => 'Terjual', 'type' => 'number', 'intable' => true],
-                ['name' => 'stok_saat_ini', 'value' => 'stok_saat_ini',  'title' => 'Stok Saat Ini', 'type' => 'number', 'intable' => true],
+                
 
             ],
         ];

@@ -198,7 +198,8 @@ class PenjualanController extends Controller
 
         // Opsional: Atur ukuran kertas (khusus nota thermal biasanya 80mm atau 58mm)
         // Jika kertas A4 gunakan 'a4', jika thermal gunakan array [0, 0, 226.77, 500] (80mm x sesuai panjang)
-        $pdf = Pdf::loadView('exports.nota', compact('penjualan'))
+        $toko = $penjualan->toko;
+        $pdf = Pdf::loadView('exports.nota', compact('penjualan', 'toko'))
             ->setPaper('a4', 'portrait');
 
         // Stream untuk melihat di browser, atau download() untuk langsung unduh

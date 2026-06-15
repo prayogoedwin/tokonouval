@@ -25,6 +25,7 @@ class Toko extends Model
         'kode_toko',
         'pass_toko',
         'alamat',
+        'telp',
         'tipe_kasir',
         'status_toko',
         'created_by',

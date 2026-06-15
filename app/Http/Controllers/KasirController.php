@@ -144,6 +144,7 @@ class KasirController extends Controller
         $penjualan->penjualan_id = $penjualan->id; 
         $penjualan->tipe_pembayaran = $penjualan->tipePembayaran; 
         $penjualan->tipe_pembayaran_name = $penjualan->tipePembayaran->name; 
+        $penjualan->toko_telp = $penjualan->toko->telp;
         $penjualan->details = $penjualan->details;
         foreach ($penjualan->details as $detail) {
             $detail->name = $detail->produk->name;

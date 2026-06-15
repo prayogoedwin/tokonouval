@@ -54,8 +54,8 @@
 
 <body>
     <div class="header">
-        <h2>Toko Nouval</h2>
-        <p>Alamat Lengkap Toko <br> Telp: -</p>
+        <h2>Toko Nouval {{ $toko->status_toko }}</h2>
+        <p>{{ $toko->alamat }} <br> Telp: {{ $toko->telp }}</p>
     </div>
 
     <table style="width: 100%">
