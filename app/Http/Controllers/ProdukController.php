@@ -66,6 +66,7 @@ class ProdukController extends Controller
                     })->toArray(),
 
                 ]],
+                ['name' => 'batas_bawah', 'value' => 'batas_bawah', 'title' => 'Batas Bawah', 'type' => 'number', 'inform' => true, 'intable' => false],
 
             ],
         ];
@@ -159,6 +160,7 @@ class ProdukController extends Controller
             'harga_beli' => $request->input('harga_beli'),
             'harga_jual' => $request->input('harga_jual'),
             'satuan' => $request->input('satuan'),
+            'batas_bawah' => $request->input('batas_bawah'),
 
             'created_by' => auth()->id(),
         ];
@@ -172,6 +174,8 @@ class ProdukController extends Controller
             'harga_beli' => ['required', 'integer'],
             'harga_jual' => ['required', 'integer'],
             'satuan' => ['required', 'string'],
+            'batas_bawah' => ['required', 'integer'],
+
 
             'created_by' => ['required', 'integer']
         ]);
@@ -259,6 +263,8 @@ class ProdukController extends Controller
             'harga_beli' => $request->input('harga_beli'),
             'harga_jual' => $request->input('harga_jual'),
             'satuan' => $request->input('satuan'),
+            'batas_bawah' => $request->input('batas_bawah'),
+
 
             'created_by' => auth()->id(),
         ];
@@ -272,6 +278,8 @@ class ProdukController extends Controller
             'harga_beli' => ['required', 'integer'],
             'harga_jual' => ['required', 'integer'],
             'satuan' => ['required', 'string'],
+            'batas_bawah' => ['integer'],
+
 
             'created_by' => ['required', 'integer']
         ]);

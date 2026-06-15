@@ -130,6 +130,7 @@ class TokoController extends Controller
             'kode_toko' => $request->input('kode_toko'),
             'pass_toko' => $request->input('pass_toko'),
             'alamat' => $request->input('alamat'),
+            'telp' => $request->input('telp'),
             'tipe_kasir' => $request->input('tipe_kasir'),
             'status_toko' => $request->input('status_toko'),
 
@@ -142,6 +143,7 @@ class TokoController extends Controller
             'kode_toko' => ['required'],
             'pass_toko' => ['required', 'string', 'max:50'],
             'alamat' => ['required', 'string'],
+            'telp' => ['required', 'string'],
             'tipe_kasir' => ['required', 'string', 'max:255'],
             'status_toko' => ['required', 'string'],
 
@@ -194,6 +196,7 @@ class TokoController extends Controller
             'kode_toko' => ['required', 'string'],
             'password' => ['nullable', 'confirmed', Password::defaults()],
             'alamat' => ['required', 'string', 'max:255'],
+            'telp' => ['required', 'string', 'max:255'],
             'tipe_kasir' => ['required', 'string', 'max:255'],
             'status_toko' => ['required', 'string', 'max:255'],
         ]);
@@ -202,6 +205,7 @@ class TokoController extends Controller
             'name' => $request->input('name'),
             'kode_toko' => $request->input('kode_toko'),
             'alamat' => $request->input('alamat'),
+            'telp' => $request->input('telp'),
             'tipe_kasir' => $request->input('tipe_kasir'),
             'status_toko' => $request->input('status_toko'),
 
@@ -223,7 +227,9 @@ class TokoController extends Controller
     //soft delete
     public function destroy(Toko $Toko): RedirectResponse
     {
-        $Toko->update(['deleted_by' => auth()->id(), 'deleted_at' => now()]);
+        $Toko->update(['deleted_by' => auth()->id()]);
+
+        $Toko->delete();
 
 
         return to_route('tokos.index')->with('status', 'Toko deleted successfully.');
