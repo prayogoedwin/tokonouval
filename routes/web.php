@@ -23,6 +23,11 @@ Route::get('dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+
+Route::get('docs/instalasi-printer', function () {
+    return view('docs.instalasiprinter');
+})->name('docs.printer');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('settings/profile', [Settings\ProfileController::class, 'edit'])->name('settings.profile.edit');
     Route::put('settings/profile', [Settings\ProfileController::class, 'update'])->name('settings.profile.update');
@@ -152,6 +157,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('penjualans', [PenjualanController::class, 'store'])->name('penjualans.store')->middleware('permission:create-penjualans');
     Route::get('penjualans/{penjualan}', [PenjualanController::class, 'show'])->name('penjualans.show')->middleware('permission:show-penjualans');
     Route::get('penjualans/{penjualan}/cetaknota', [PenjualanController::class, 'cetakNota'])->name('penjualans.cetaknota')->middleware('permission:kasir');
+    Route::get('penjualans/{penjualan}/printthermal', [PenjualanController::class, 'printThermal'])->name('penjualans.printthermal')->middleware('permission:kasir');
     Route::get('penjualans/{penjualan}/kirimwa', [PenjualanController::class, 'kirimwa'])->name('penjualans.kirimwa')->middleware('permission:kasir');
     Route::get('penjualans/{penjualan}/edit', [PenjualanController::class, 'edit'])->name('penjualans.edit')->middleware('permission:edit-penjualans');
     Route::put('penjualans/{penjualan}', [PenjualanController::class, 'update'])->name('penjualans.update')->middleware('permission:edit-penjualans');

@@ -78,4 +78,9 @@ class DashboardController extends Controller
 
         return view('dashboard', compact('tokos'));
     }
+
+    public function instalasiPrinter()
+    {
+        return view('docs.instalasi');
+    }
 }

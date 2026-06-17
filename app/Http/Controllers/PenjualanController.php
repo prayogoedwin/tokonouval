@@ -45,7 +45,7 @@ class PenjualanController extends Controller
             'title' => 'Penjualan',
             'tablename' => 'penjualans',
             'tableaction' => true,
-            'canCreate'=> false,
+            'canCreate' => false,
             'canEdit' => false,
             'canDownload' => false,
             'columns' => [
@@ -110,7 +110,7 @@ class PenjualanController extends Controller
                         $actions .= '<a href="' . route('penjualans.show', $Penjualan) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">View</a>';
                     }
 
-                    
+
 
                     if (auth()->user()->hasPermission('delete-penjualans')) {
                         $actions .= '<form action="' . route('penjualans.destroy', $Penjualan) . '" method="POST" class="inline" onsubmit="return confirm(\'Are you sure?\')">
@@ -192,7 +192,7 @@ class PenjualanController extends Controller
 
     public function cetakNota(Penjualan $penjualan)
     {
-       
+
 
         // dd($pembelian);
 
@@ -204,6 +204,16 @@ class PenjualanController extends Controller
 
         // Stream untuk melihat di browser, atau download() untuk langsung unduh
         return $pdf->download('Nota-' . $penjualan->no_invoice . '.pdf');
+    }
+
+    public function printThermal(Penjualan $penjualan)
+    {
+
+
+        $toko = $penjualan->toko;
+
+        // Langsung return view HTML biasa, jangan di-render jadi PDF
+        return view('exports.printkecil', compact('penjualan', 'toko'));
     }
 
     public function edit(Penjualan $Penjualan): View

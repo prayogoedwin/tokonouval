@@ -101,4 +101,20 @@ return [
         'active' => 'laporans*',
         'permission' => 'view-laporanpenjualans',
     ],
+    [
+        'title' => 'Docs',
+        'icon' => 'fas-book',
+        'active' => ['docs*'],
+        'permission' => null,
+        'children' => [
+            [
+                'title' => 'Instalasi Printer',
+                'icon' => 'fas-print',
+                'route' => 'docs.printer', 
+                'active' => 'docs/printer*',
+                'permission' => null
+            ],
+        ],
+    ],
+    
 ];
