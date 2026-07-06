@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kategori;
 use App\Models\Penjualan;
 use App\Models\PenjualanDetail;
 use App\Models\Produk;
 use App\Models\TipePembayaran;
 use App\Models\Toko;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class KasirController extends Controller
 {
@@ -141,9 +144,9 @@ class KasirController extends Controller
         }
 
         // penyediain data untuk ditampilkan di modal setelah pembayaran karena tidak bisa langsung dengan relasi
-        $penjualan->penjualan_id = $penjualan->id; 
-        $penjualan->tipe_pembayaran = $penjualan->tipePembayaran; 
-        $penjualan->tipe_pembayaran_name = $penjualan->tipePembayaran->name; 
+        $penjualan->penjualan_id = $penjualan->id;
+        $penjualan->tipe_pembayaran = $penjualan->tipePembayaran;
+        $penjualan->tipe_pembayaran_name = $penjualan->tipePembayaran->name;
         $penjualan->toko_telp = $penjualan->toko->telp;
         $penjualan->details = $penjualan->details;
         foreach ($penjualan->details as $detail) {
@@ -308,9 +311,9 @@ class KasirController extends Controller
         }
 
         // penyediain data untuk ditampilkan di modal setelah pembayaran karena tidak bisa langsung dengan relasi
-        $penjualan->penjualan_id = $penjualan->id; 
-        $penjualan->tipe_pembayaran = $penjualan->tipePembayaran; 
-        $penjualan->tipe_pembayaran_name = $penjualan->tipePembayaran->name; 
+        $penjualan->penjualan_id = $penjualan->id;
+        $penjualan->tipe_pembayaran = $penjualan->tipePembayaran;
+        $penjualan->tipe_pembayaran_name = $penjualan->tipePembayaran->name;
         $penjualan->details = $penjualan->details;
         foreach ($penjualan->details as $detail) {
             $detail->name = $detail->produk->name;
@@ -320,7 +323,179 @@ class KasirController extends Controller
             ->with('status', 'Berhasil Melakukan Transaksi: ')
             ->with('show_payment_modal', true)
             ->with('transaction_data', $penjualan);
+    }
 
+    public function kasir_cekstok(Request $request)
+    {
+
+        if ($request->ajax()) {
+            $produks = Produk::where('produks.deleted_at', null)
+                ->where('produks.toko_id', session('selected_toko_id'))
+                ->join('kategories', 'produks.kategori_id', '=', 'kategories.id')
+                ->select(
+                    'produks.*',
+                    'kategories.name as kategori',
+                );
+
+
+
+            return DataTables::of($produks)
+                ->addColumn('stok', function ($produk) {
+                    // Menghitung stok lewat method model secara dinamis
+                    return $produk->currentStok();
+                })
+                ->make(true); // Tambahkan make(true) di akhir untuk format JSON DataTables
+        }
+
+        $kategories = Kategori::get();
+        $satuans = config('helper.satuans');
+
+        $pagedata = [
+            'title' => 'Cek Stok Produk',
+            'tablename' => 'produks',
+            'tableaction' => false,
+
+            'columns' => [
+                ['name' => 'name', 'value' => 'name',  'title' => 'Nama Produk', 'type' => 'text', 'inform' => true, 'intable' => true],
+                ['name' => 'sku', 'value' => 'sku',  'title' => 'SKU', 'type' => 'text', 'inform' => true, 'intable' => true],
+
+
+                ['name' => 'kategori_id', 'value' => 'kategori', 'title' => 'Kategori', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
+                    // Ambil data kategori dari database
+                    ...$kategories->map(function ($kategori) {
+                        return ['value' => $kategori->id, 'label' => $kategori->name];
+                    })->toArray(),
+
+                ]],
+                ['name' => 'harga_beli', 'value' => 'harga_beli', 'title' => 'Harga Beli', 'type' => 'number', 'inform' => true, 'intable' => true],
+                ['name' => 'harga_jual', 'value' => 'harga_jual', 'title' => 'Harga Jual', 'type' => 'number', 'inform' => true, 'intable' => true],
+                ['name' => 'satuan', 'value' => 'satuan', 'title' => 'Satuan', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
+                    ...collect($satuans)->map(function ($satuan) {
+                        return ['value' => $satuan, 'label' => $satuan];
+                    })->toArray(),
+
+                ]],
+                ['name' => 'stok', 'value' => 'stok', 'title' => 'Stok', 'type' => 'number', 'inform' => false, 'intable' => true],
+
+            ],
+        ];
+
+        return view('kasir.kasironly_cekstok', $pagedata);
+    }
+
+    public function kasir_ceklaporan(Request $request)
+    {
+
+        // 1. Default dates: Start and end of the current month
+        $startdate = Carbon::now()->startOfMonth()->toDateString(); // e.g., 2026-05-01
+        $enddate = Carbon::now()->endOfMonth()->toDateString();     // e.g., 2026-05-31
+
+        // 2. Override if custom date request exists
+        if ($request->has(['startdate', 'enddate']) && $request->startdate != '' && $request->enddate != '') {
+            // It's safer to parse using Carbon to ensure standard Y-m-d formatting
+            $startdate = Carbon::parse($request->startdate)->toDateString();
+            $enddate = Carbon::parse($request->enddate)->toDateString();
+        }
+
+        $totalOmset = 0;
+        $totalPendapatan = 0;
+
+        $penjualandetails = PenjualanDetail::with(['produk.toko'])
+            ->whereHas('penjualan', function ($query) use ($startdate, $enddate) {
+                // Filter based on the parent sale's transaction date
+                $query->whereBetween('created_at', [
+                    $startdate . ' 00:00:00',
+                    $enddate . ' 23:59:59'
+                ])
+                    ->where('deleted_at', null)
+                ;
+            });
+
+        $jumlahTransaksi = $penjualandetails->distinct('penjualan_id')->count('penjualan_id');
+
+
+
+        $penjualandetails = $penjualandetails->get();
+
+        $produks = Produk::where('deleted_at', null)
+            ->withSum(['stoks as total_masuk' => function ($query) {
+                $query->where('tipe', 'IN');
+            }], 'jumlah')
+            ->withSum(['stoks as total_keluar' => function ($query) {
+                $query->where('tipe', 'OUT');
+            }], 'jumlah');
+
+
+        $toko = session('selected_toko_id');
+        $produks->whereHas('toko', function ($query) use ($toko) {
+            $query->where('id', $toko);
+        });
+
+
+
+        $produks = $produks->get();
+
+        $laporan = [];
+        $totalStok = 0;
+        $totalAsset = 0;
+        $stokHabisCount = 0;
+        foreach ($produks as $produk) {
+            $terjual = $penjualandetails->where('produk_id', $produk->id)->sum('jumlah');
+            $harga_beli = $produk->harga_beli;
+            $harga_jual = $produk->harga_jual;
+            $stok_saat_ini = $produk->total_masuk - $produk->total_keluar;
+
+            $totalStok += $stok_saat_ini;
+            $totalAsset += $stok_saat_ini * $produk->harga_beli;
+
+            if ($stok_saat_ini <= 0) {
+                // dd($produk, $stok_saat_ini);
+                $stokHabisCount++;
+            }
+
+            $laporan[] = [
+                'toko' => $produk->toko->name,
+                'produk' => $produk->name,
+                'harga_beli' => $harga_beli,
+                'harga_jual' => $harga_jual,
+                'terjual' => $terjual,
+                'stok_saat_ini' => $stok_saat_ini,
+            ];
+
+
+            $totalOmset += $harga_jual * $terjual;
+            $totalPendapatan += ($harga_jual - $harga_beli) * $terjual;
+        }
+
+        $totalBarangTerjual = $penjualandetails->sum('jumlah');
+
+
+
+
+        // dd($request->all(), $startdate, $enddate);
+
+
+
+        $tokos = Toko::where('deleted_at', null)->get();
+        $pagedata['startdate'] = $startdate;
+        $pagedata['enddate'] = $enddate;
+
+
+
+        $pagedata['totalOmset'] = $totalOmset;
+        $pagedata['totalPendapatan'] = $totalPendapatan;
+        $pagedata['jumlahTransaksi'] = $jumlahTransaksi;
+        $pagedata['totalBarangTerjual'] = $totalBarangTerjual;
+        $pagedata['stokHabisCount'] = $stokHabisCount;
+        $pagedata['totalStok'] = $totalStok;
+        $pagedata['totalAsset'] = $totalAsset;
+
+
+
+        // dd($pagedata);
+
+
+        return view('kasir.kasironly_ceklaporan', compact('tokos'), $pagedata);
     }
 
 

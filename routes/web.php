@@ -140,6 +140,8 @@ Route::middleware(['auth'])->group(function () {
 
         //Route khusus Login kasir
         Route::get('/kasir/ui', [KasirController::class, 'kasir_dashboard'])->name('kasir.kasir_dashboard');
+        Route::get('/kasir/cekstok', [KasirController::class, 'kasir_cekstok'])->name('kasir.kasir_cekstok');
+        Route::get('/kasir/ceklaporan', [KasirController::class, 'kasir_ceklaporan'])->name('kasir.kasir_ceklaporan');
 
 
         Route::post('/kasir/process-payment', [KasirController::class, 'processPayment'])->name('kasir.processpayment')->middleware('permission:kasir');

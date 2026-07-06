@@ -53,5 +53,16 @@ class Produk extends Model
         return $this->hasMany(Stok::class); 
     }
 
+    public function currentStok(): int
+    {
+        // Mengambil semua stok terkait produk ini
+        $stoks = $this->stoks;
+
+        // Menghitung total stok dengan menjumlahkan semua nilai stok
+        $totalStok = $stoks->sum('jumlah');
+
+        return $totalStok;
+    }
+
     
 }
