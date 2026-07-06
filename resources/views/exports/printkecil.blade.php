@@ -122,7 +122,7 @@
                 <td>{{ $detail->produk->name }}</td>
                 <td>{{ $detail->jumlah }} {{ $detail->produk->satuan }}</td>
                 <td>{{ number_format($detail->harga_jual, 0, ',', '.') }}</td>
-                <td class="text-right">{{ number_format($detail->harga_jual, 0, ',', '.') }}</td>
+                <td class="text-right">{{ number_format($detail->harga_jual * $detail->jumlah, 0, ',', '.') }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -153,8 +153,14 @@
         </table>
     </div>
 
-    <div class="footer">
-        <p></p>
+    <div class="footer" style="text-align: center; margin-top: 20px;">
+        <p style="font-size: 11px; margin-bottom: 15px;">
+            Barang yang sudah dibeli tidak dapat dikembalikan kecuali ada perjanjian
+        </p>
+        <p style="font-weight: bold; line-height: 1.5;">
+            TERIMA KASIH <br/> 
+            JUAL SE’ADA NYA BARELA’AN
+        </p>
     </div>
 </body>
 

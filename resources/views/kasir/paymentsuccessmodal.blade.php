@@ -353,11 +353,17 @@
             {
                 type: 'raw',
                 format: 'plain',
-                data: 'Terima Kasih\n'
+                // Teks catatan otomatis turun ke bawah jika melebihi lebar kertas (Word Wrap bawaan printer)
+                data: 'Barang yang sudah dibeli tidak\ndapat dikembalikan kecuali\nada perjanjian\n\n'
+            },
+            {
+                type: 'raw',
+                format: 'plain',
+                data: 'TERIMA KASIH\n'
             }, {
                 type: 'raw',
                 format: 'plain',
-                data: 'Selamat Belanja Kembali\n'
+                data: 'JUAL SE\'ADA NYA BARELA\'AN\n'
             }, {
                 type: 'raw',
                 format: 'plain',
