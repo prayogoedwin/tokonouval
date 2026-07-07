@@ -69,7 +69,8 @@ class PenjualanController extends Controller
                 ]],
                 ['name' => 'total_harus_dibayar', 'value' => 'total_harus_dibayar', 'title' => 'Total', 'type' => 'number', 'inform' => true, 'intable' => true],
                 ['name' => 'diskon_percentage', 'value' => 'diskon_percentage', 'title' => 'Diskon %', 'type' => 'number', 'inform' => true, 'intable' => true],
-                //TODO: add nama kasir
+                ['name' => 'kasir', 'value' => 'kasir', 'title' => 'Kasir', 'type' => 'text', 'inform' => false, 'intable' => true],
+                
 
             ],
         ];
@@ -86,10 +87,12 @@ class PenjualanController extends Controller
             $penjualans = Penjualan::where('penjualans.deleted_at', null)
                 ->join('tokos', 'penjualans.toko_id', '=', 'tokos.id')
                 ->join('tipe_pembayarans', 'penjualans.tipe_pembayaran_id', '=', 'tipe_pembayarans.id')
+                ->join('users', 'penjualans.created_by', '=', 'users.id')
                 ->select(
                     'penjualans.*',
                     'tokos.name as toko',
-                    'tipe_pembayarans.name as tipe_pembayaran'
+                    'tipe_pembayarans.name as tipe_pembayaran',
+                    'users.name as kasir'
                 )
                 ->get();
             // dd($penjualans);
