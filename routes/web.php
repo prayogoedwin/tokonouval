@@ -141,6 +141,8 @@ Route::middleware(['auth'])->group(function () {
         //Route khusus Login kasir
         Route::get('/kasir/ui', [KasirController::class, 'kasir_dashboard'])->name('kasir.kasir_dashboard');
         Route::get('/kasir/cekstok', [KasirController::class, 'kasir_cekstok'])->name('kasir.kasir_cekstok');
+        Route::get('/kasir/cekpenjualan', [KasirController::class, 'kasir_cekpenjualan'])->name('kasir.kasir_cekpenjualan');
+        Route::get('/kasir/cekpenjualan/{penjualan}', [KasirController::class, 'kasir_showpenjualan'])->name('kasir.kasir_showpenjualan');
         Route::get('/kasir/ceklaporan', [KasirController::class, 'kasir_ceklaporan'])->name('kasir.kasir_ceklaporan');
 
 

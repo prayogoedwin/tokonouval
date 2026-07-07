@@ -69,6 +69,7 @@ class PenjualanController extends Controller
                 ]],
                 ['name' => 'total_harus_dibayar', 'value' => 'total_harus_dibayar', 'title' => 'Total', 'type' => 'number', 'inform' => true, 'intable' => true],
                 ['name' => 'diskon_percentage', 'value' => 'diskon_percentage', 'title' => 'Diskon %', 'type' => 'number', 'inform' => true, 'intable' => true],
+                //TODO: add nama kasir
 
             ],
         ];

@@ -128,60 +128,37 @@
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
-                    <span class="text-gray-500 dark:text-gray-400">{{ $title }}</span>
+                    <span class="text-gray-500 dark:text-gray-400">History Penjualan</span>
                 </div>
 
                 <div class="col-lg-6  text-gray-500 px-4 py-2 text-right">
                     <a href="{{ route('kasir.kasir_dashboard') }}">
                         <button class="btn text-blue-600 dark:text-blue-400 hover:underline">{{ __('Kembali') }}</button>
                     </a>
-                   
+
                 </div>
             </div>
-
-
-
 
             <div class="mb-6 flex justify-between items-center">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Produk</h1>
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">History Penjualan</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1"></p>
                 </div>
-                <div class="flex gap-2">
-                    @if(auth()->user()->hasPermission('download-' . $tablename))
-                    @if (($canDownload ?? true) !== false)
-                    <a href="{{ route(strtolower($tablename) . '.export') }}">
-                        <x-button type="secondary">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            {{ __('Download Excel') }}
-                        </x-button>
-                    </a>
-                    @endif
-                    @endif
-                    @if(auth()->user()->hasPermission('create-' . strtolower($tablename)))
-                    @if (($canCreate ?? true) !== false)
-                    <a href="{{ route(strtolower($tablename) . '.create') }}">
-                        <x-button type="primary">{{ __('Buat ' . $title) }}</x-button>
-                    </a>
-                    @endif
-                    @endif
 
-
-                </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden text-gray-800 dark:text-gray-100" >
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden text-gray-800 dark:text-gray-100">
                 <div class="p-4 overflow-x-auto">
-                    <table id="dynamic-table" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-gray-800 dark:text-gray-100">
+                    <table id="dynamic-table" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-900">
                             <tr>
-                                @foreach($columns as $column)
-                                @if($column['intable'])
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ $column['title'] }}</th>
-                                @endif
-                                @endforeach
 
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">No Invoice</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Diskon</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Kembalian</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tipe Pembayaran</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi</th>
 
                             </tr>
                         </thead>
@@ -195,38 +172,45 @@
             <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 
             <script>
-                $columnsdata = [
-                    @foreach($columns as $column)
-                    @if($column["intable"]) {
-                        data: '{{ $column["value"] }}'
-                    },
-                    @endif
-                    @endforeach
-
-
-
-                ];
-
-                console.log('$columnsdata:', $columnsdata);
-
                 $(document).ready(function() {
                     $('#dynamic-table').DataTable({
                         processing: true,
                         serverSide: true,
-                        ajax: '{{ route('kasir.kasir_cekstok') }}',
-                        columns: $columnsdata,
+                        ajax: '{{ route("kasir.kasir_cekpenjualan") }}',
+                        columns: [{
+                                data: 'no_invoice'
+                            },
+                            {
+                                data: 'total'
+                            },
+                            {
+                                data: 'diskon'
+                            },
+                            {
+                                data: 'kembalian'
+                            },
+                            {
+                                data: 'tipe_pembayaran'
+                            },
+                            {
+                                data: 'action',
+                                orderable: false,
+                                searchable: false
+                            }
+                            
+                        ],
                         order: [
                             [0, 'desc']
                         ],
                         language: {
                             search: "_INPUT_",
-                            searchPlaceholder: "Cari " + "Produk",
+                            searchPlaceholder: "Cari " + "Penjualan",
                             lengthMenu: "Perlihatkan _MENU_ data",
-                            info: "Memperlihatkan _START_ sampai _END_ dari _TOTAL_ Produk",
-                            infoEmpty: "tidak ada data Produk ditemukan",
-                            infoFiltered: "(filtered from _MAX_ total Produk)",
-                            zeroRecords: "tidak ada data Produk ditemukan",
-                            emptyTable: "tidak ada Produk tersedia",
+                            info: "Memperlihatkan _START_ sampai _END_ dari _TOTAL_ Penjualan",
+                            infoEmpty: "tidak ada data Penjualan ditemukan",
+                            infoFiltered: "(filtered from _MAX_ total Penjualan)",
+                            zeroRecords: "tidak ada data Penjualan ditemukan",
+                            emptyTable: "tidak ada data Penjualan ditemukan",
                         },
                         dom: '<"flex flex-col md:flex-row justify-between items-center mb-4"lf>rt<"flex flex-col md:flex-row justify-between items-center mt-4"ip>',
                         pageLength: 10,
@@ -244,7 +228,6 @@
                 #dynamic-table {
                     border-collapse: separate !important;
                     border-spacing: 0;
-                    
                 }
 
                 #dynamic-table thead th {

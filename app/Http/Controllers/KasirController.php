@@ -329,7 +329,7 @@ class KasirController extends Controller
     {
 
         if ($request->ajax()) {
-            $produks = Produk::where('produks.deleted_at', null)
+            $produks = Produk::whereNull('produks.deleted_at') // Tip: whereNull is cleaner!
                 ->where('produks.toko_id', session('selected_toko_id'))
                 ->join('kategories', 'produks.kategori_id', '=', 'kategories.id')
                 ->select(
@@ -343,6 +343,10 @@ class KasirController extends Controller
                 ->addColumn('stok', function ($produk) {
                     // Menghitung stok lewat method model secara dinamis
                     return $produk->currentStok();
+                })
+                ->filterColumn('kategori', function ($query, $keyword) {
+                    $sql = "LOWER(kategories.name) LIKE ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
                 })
                 ->make(true); // Tambahkan make(true) di akhir untuk format JSON DataTables
         }
@@ -381,6 +385,59 @@ class KasirController extends Controller
         ];
 
         return view('kasir.kasironly_cekstok', $pagedata);
+    }
+
+    public function kasir_cekpenjualan(Request $request)
+    //bisa juga dibilang history penjualan, history transaksi
+    {
+
+        if ($request->ajax()) {
+            // hanya dari toko yang dipilih di session
+            $penjualans = Penjualan::where('penjualans.deleted_at', null)
+                ->where('penjualans.toko_id', session('selected_toko_id'))
+                ->join('tokos', 'penjualans.toko_id', '=', 'tokos.id')
+                ->join('tipe_pembayarans', 'penjualans.tipe_pembayaran_id', '=', 'tipe_pembayarans.id')
+                ->select(
+                    'penjualans.*',
+                    'tokos.name as toko',
+                    'tipe_pembayarans.name as tipe_pembayaran'
+                )
+                ->get();
+            // dd($penjualans);
+
+            return DataTables::of($penjualans)
+                ->addColumn('total', function ($penjualan) {
+                    return $penjualan->total_harus_dibayar;
+                })
+                ->addColumn('diskon', function ($penjualan) {
+                    return $penjualan->diskon_percentage;
+                })
+                ->addColumn('kembalian', function ($penjualan) {
+                    return $penjualan->kembalian;
+                })
+                ->addColumn('action', function ($penjualan) {
+                    return '<a href="' . route('kasir.kasir_showpenjualan', $penjualan->id) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">Detail</a>';
+                })
+
+                ->make(true);
+        }
+
+
+        
+
+        return view('kasir.kasironly_penjualan');
+    }
+
+    public function kasir_showpenjualan(Penjualan $penjualan)
+    {
+        // Pastikan penjualan ini milik toko yang sedang dipilih
+        if ($penjualan->toko_id != session('selected_toko_id')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $penjualan->load('details.produk', 'tipePembayaran', 'toko');
+
+        return view('kasir.kasironly_showpenjualan', compact('penjualan'));
     }
 
     public function kasir_ceklaporan(Request $request)

@@ -133,6 +133,9 @@
                     <a href="{{ route('kasir.kasir_cekstok') }}">
                         <button class="btn px-2 text-blue-600 dark:text-blue-400 hover:underline">{{ __('Cek Stok') }}</button>
                     </a>
+                    <a href="{{ route('kasir.kasir_cekpenjualan') }}">
+                        <button class="btn px-2 text-blue-600 dark:text-blue-400 hover:underline">{{ __('History Penjualan') }}</button>
+                    </a>
                     <a href="{{ route('kasir.kasir_ceklaporan') }}">
                         <button class="btn px-2 text-blue-600 dark:text-blue-400 hover:underline">{{ __('Laporan') }}</button>
                     </a>

@@ -224,26 +224,19 @@
                     </span>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
+                <div class="p-5">
                     <div class="bg-blue-600 rounded-lg p-5 text-white shadow-sm">
                         <p class="text-blue-100 text-sm font-medium uppercase">Total Omset</p>
                         <h3 class="text-2xl font-bold mt-1">Rp {{ number_format($totalOmset, 0, ',', '.') }}</h3>
                     </div>
-                    <div class="bg-emerald-600 rounded-lg p-5 text-white shadow-sm">
-                        <p class="text-emerald-100 text-sm font-medium uppercase">Total Pendapatan</p>
-                        <h3 class="text-2xl font-bold mt-1">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</h3>
-                    </div>
+                    
                 </div>
-                <h1 class="p-3 text-lg font-bold text-gray-800 dark:text-gray-100">Total Asset</h1>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
+                <div class="p-5">
                     <div class="bg-blue-600 rounded-lg p-5 text-white shadow-sm">
                         <p class="text-blue-100 text-sm font-medium uppercase">Total Stok</p>
                         <h3 class="text-2xl font-bold mt-1">{{ $totalStok }}</h3>
                     </div>
-                    <div class="bg-emerald-600 rounded-lg p-5 text-white shadow-sm">
-                        <p class="text-emerald-100 text-sm font-medium uppercase">Total Aset</p>
-                        <h3 class="text-2xl font-bold mt-1">Rp {{ number_format($totalAsset, 0, ',', '.') }}</h3>
-                    </div>
+                    
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 px-5 pb-5">
