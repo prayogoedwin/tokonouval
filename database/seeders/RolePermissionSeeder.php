@@ -161,7 +161,7 @@ class RolePermissionSeeder extends Seeder
         $kasir1 = User::firstOrCreate(
             ['email' => 'kasirtoko1@example.com'],
             [
-                'name' => 'example Kasir',
+                'name' => 'Kasir A',
                 'password' => Hash::make('password'),
                 'toko_id' => 1,
 
@@ -170,7 +170,7 @@ class RolePermissionSeeder extends Seeder
         $kasir2 = User::firstOrCreate(
             ['email' => 'kasirtoko2@example.com'],
             [
-                'name' => 'example Kasir',
+                'name' => 'Kasir B',
                 'password' => Hash::make('password'),
                 'toko_id' => 2,
 
@@ -179,7 +179,7 @@ class RolePermissionSeeder extends Seeder
         $kasirnull = User::firstOrCreate(
             ['email' => 'kasir@example.com'],
             [
-                'name' => 'example Kasir',
+                'name' => 'Kasir C',
                 'password' => Hash::make('password'),
                 // 'toko_id' => 1,
 
