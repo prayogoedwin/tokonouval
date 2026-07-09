@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ProdukExport;
 use App\Models\Kategori;
 use App\Models\Produk;
+use App\Models\Satuan;
 use App\Models\Stok;
 use App\Models\Toko;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class ProdukController extends Controller
     {
         $tokos = Toko::get();
         $kategories = Kategori::get();
-        $satuans = config('helper.satuans');
+        $satuans = Satuan::get()->pluck('name')->toArray();
 
         //     protected $fillable = [
         //     'toko_id',
