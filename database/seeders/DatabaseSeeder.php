@@ -16,9 +16,9 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
         $this->call(TokoSeeder::class);
         $this->call(RolePermissionSeeder::class);
-        // $this->call(KategoriSeeder::class);
-        // $this->call(ProdukSeeder::class);
-        // $this->call(StokSeeder::class);
+        $this->call(KategoriSeeder::class);
+        $this->call(ProdukSeeder::class);
+        $this->call(StokSeeder::class);
         $this->call(TipePembayaranSeeder::class);
 
     }

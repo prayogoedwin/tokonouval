@@ -9,7 +9,7 @@
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">
             {{ __('Welcome back,') }} {{ auth()->user()->name ?? 'Guest' }}!
         </h1>
-        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 p-5">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6 p-5">
 
             @foreach($tokos as $toko)
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col justify-between">
@@ -50,7 +50,7 @@
                     <div class="space-y-2.5 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
                         @foreach($toko->produk_menipis as $produk)
                         <div class="flex items-center justify-between p-3 rounded-lg bg-rose-50/50 dark:bg-rose-950/10 border border-rose-100 dark:border-rose-950/40 hover:border-rose-200 transition-colors">
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-[180px]">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 ">
                                 {{ $produk->name }}
                             </span>
                             <div class="text-right">

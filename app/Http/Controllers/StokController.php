@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\StokExport;
 use App\Models\Produk;
 use App\Models\Stok;
+use App\Models\Toko;
 use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
@@ -68,26 +69,30 @@ class StokController extends Controller
         if ($request->ajax()) {
             // dd('masuk ajax');
             $query = Stok::where('stoks.deleted_at', null)
-                ->join('produks', 'stoks.produk_id', '=', 'produks.id')
-                ->join('tokos', 'produks.toko_id', '=', 'tokos.id')
-                ->select(
-                    'stoks.*',
-                    'produks.name as produk',
-                    'tokos.name as toko',
-                );
+                ->with(['produk', 'produk.toko'])
+                ->select('stoks.*');
 
 
             // Memeriksa apakah ada parameter produk_id di dalam request
-            if ($request->has('produk_id') && $request->produk_id != '') {
-                $query->where('stoks.produk_id', $request->produk_id);
+            if ($request->filled('produk_id')) {
+                $query->where('produk_id', $request->input('produk_id'));
             }
 
-            $stoks = $query->get();
+            if ($request->filled('toko')) {
+                $query->whereHas('produk.toko', function ($q) use ($request) {
+                    $q->where('id', $request->input('toko'));
+                });
+            }
+
+            $stoks = $query;
 
             return DataTables::of($stoks)
-                ->editColumn('created_at', function ($Stok) {
+                ->editColumn('tanggal', function ($Stok) {
                     // Format tgl-bln-thn jam:menit:detik, misal: 18-05-2026 13:45:00
                     return \Carbon\Carbon::parse($Stok->created_at)->format('d-m-Y H:i:s');
+                })
+                ->addColumn('toko', function ($Stok) {
+                    return $Stok->produk->toko->name ?? '';
                 })
 
 
@@ -103,13 +108,17 @@ class StokController extends Controller
 
                     return $actions;
                 })
+                ->order(function ($query) {
+                    $query->orderBy('id', 'desc');
+                })
                 ->rawColumns(['actions'])
                 ->make(true);
         }
 
         $pagedata = $this->getPagedata();
+        $tokos = Toko::get();
 
-        return view('stoks.index', $pagedata);
+        return view('stoks.index', $pagedata, compact('tokos'));
     }
 
 
@@ -154,7 +163,7 @@ class StokController extends Controller
             $stoks = $query->get();
 
             return DataTables::of($stoks)
-                ->editColumn('created_at', function ($Stok) {
+                ->editColumn('tanggal', function ($Stok) {
                     // Format tgl-bln-thn jam:menit:detik, misal: 18-05-2026 13:45:00
                     return \Carbon\Carbon::parse($Stok->created_at)->format('d-m-Y H:i:s');
                 })

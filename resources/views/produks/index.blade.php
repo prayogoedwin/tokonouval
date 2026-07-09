@@ -30,7 +30,7 @@
             @if(auth()->user()->hasPermission('create-' . strtolower($tablename)))
             @if (($canCreate ?? true) !== false)
             <a href="{{ route(strtolower($tablename) . '.create') }}">
-                <x-button type="primary">{{ __('Create ' . $title) }}</x-button>
+                <x-button type="primary">{{ __('Buat ' . $title) }}</x-button>
             </a>
             @endif
             @endif
@@ -40,44 +40,43 @@
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-
         <!-- Section Wrapper Form Filter -->
         <div class="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/30">
+            
+                <div class="flex flex-col sm:flex-row sm:items-end gap-4 max-w-3xl">
+                    
 
-            <div class="flex flex-col sm:flex-row sm:items-end gap-4 max-w-3xl">
+                    <!-- Toko Select Group -->
+                    <div class="flex-1">
+                        <label for="toko" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
+                            Toko
+                        </label>
+                        <div class="relative">
+                            <select id="toko" name="toko" class="block w-full px-3 py-2 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-500 transition-colors">
+                                <option value="">Semua Toko</option>
+                                @foreach($tokos as $toko)
+                                <option value="{{ $toko->id }}" {{ request('toko') == $toko->id ? 'selected' : '' }}>
+                                    {{ $toko->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
 
 
-                <!-- Toko Select Group -->
-                <div class="flex-1">
-                    <label for="toko" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
-                        Toko
-                    </label>
-                    <div class="relative">
-                        <select id="toko" name="toko" class="block w-full px-3 py-2 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-500 transition-colors">
-                            <option value="">Semua Toko</option>
-                            @foreach($tokos as $toko)
-                            <option value="{{ $toko->id }}" {{ request('toko') == $toko->id ? 'selected' : '' }}>
-                                {{ $toko->name }}
-                            </option>
-                            @endforeach
-                        </select>
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2 pt-2 sm:pt-0">
+                        <button type="submit"
+                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-all cursor-pointer h-[38px]" onclick="tableReload()">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 8.293A1 1 0 013 7.586V4z" />
+                            </svg>
+                            Filter
+                        </button>
+
+                        
                     </div>
                 </div>
-
-
-                <!-- Action Buttons -->
-                <div class="flex items-center gap-2 pt-2 sm:pt-0">
-                    <button type="submit"
-                        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-all cursor-pointer h-[38px]" onclick="tableReload()">
-                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 8.293A1 1 0 013 7.586V4z" />
-                        </svg>
-                        Filter
-                    </button>
-
-
-                </div>
-            </div>
         </div>
 
         <div class="p-4 overflow-x-auto">
@@ -107,6 +106,7 @@
     <script>
         
 
+
         $(document).ready(function() {
             $('#dynamic-table').DataTable({
                 processing: true,
@@ -114,42 +114,50 @@
                 ajax: {
                     url: '{{ route(strtolower($tablename) . ".index") }}',
                     data: function(d) {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        d.produk_id = urlParams.get('produk_id');
-                        d.toko = document.getElementById('toko').value;
+                        d.toko = $('#toko').val();
                     }
                 },
                 columns: [
                     {
-                        data: 'produk.name',
-                        name: 'produk.name'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
-                        data: 'toko',
-                        name: 'toko'
+                        data: 'sku',
+                        name: 'sku'
                     },
                     {
-                        data: 'tipe',
-                        name: 'tipe'
+                        data: 'toko.name',
+                        name: 'toko.name'
                     },
                     {
-                        data: 'jumlah',
-                        name: 'jumlah'
+                        data: 'kategori.name',
+                        name: 'kategori.name'
                     },
                     {
-                        data: 'tanggal',
-                        name: 'tanggal'
+                        data: 'harga_beli',
+                        name: 'harga_beli',
+                    },
+                    {
+                        data: 'harga_jual',
+                        name: 'harga_jual',
+                    },
+                    {
+                        data: 'satuan',
+                        name: 'satuan',
                     },
                     {
                         data: 'actions',
                         name: 'actions',
                         orderable: false,
-                        searchable: false,
-                        
+                        searchable: false
                     }
-                    
+
+
                 ],
-                
+                order: [
+                    [0, 'desc']
+                ],
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Cari " + "{{ $title }}",
@@ -171,20 +179,7 @@
         });
 
         function tableReload() {
-            const table = $('#dynamic-table').DataTable();
-            const urlParams = new URLSearchParams(window.location.search);
-            const tokoId = document.getElementById('toko').value;
-
-            if (tokoId) {
-                urlParams.set('toko', tokoId);
-            } else {
-                urlParams.delete('toko');
-            }
-
-            const newUrl = window.location.pathname + '?' + urlParams.toString();
-            window.history.pushState({}, '', newUrl);
-
-            table.ajax.reload();
+            $('#dynamic-table').DataTable().ajax.reload();
         }
     </script>
 

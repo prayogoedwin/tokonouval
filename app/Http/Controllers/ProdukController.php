@@ -67,6 +67,7 @@ class ProdukController extends Controller
 
                 ]],
                 ['name' => 'batas_bawah', 'value' => 'batas_bawah', 'title' => 'Batas Bawah', 'type' => 'number', 'inform' => true, 'intable' => false],
+                
 
             ],
         ];
@@ -81,20 +82,21 @@ class ProdukController extends Controller
         if ($request->ajax()) {
             // dd('masuk ajax');
             $produks = Produk::where('produks.deleted_at', null)
-                ->join('kategories', 'produks.kategori_id', '=', 'kategories.id')
-                ->join('tokos', 'produks.toko_id', '=', 'tokos.id')
-                ->select(
-                    'produks.*',
-                    'kategories.name as kategori',
-                    'tokos.name as toko'
-                )
-                ->get();
-            // dd($produks);
+                ->with('toko', 'kategori')
+                ->select('produks.*');
+
+
+            if ($request->filled('toko')) {
+                $produks->where('toko_id', $request->input('toko'));
+            }
 
             return DataTables::of($produks)
-                // ->filterColumn('name', function ($query, $keyword) {
-                //     $query->where('produks.name_Produk', 'like', "%{$keyword}%");
-                // })
+                ->addColumn('toko.name', function ($Produk) {
+                    return $Produk->toko->name;
+                })
+                ->addColumn('kategori.name', function ($Produk) {
+                    return $Produk->kategori->name;
+                })
                 // ->filterColumn('produk', function ($query, $keyword) {
                 //     $query->where('produk_produks.name', 'like', "%{$keyword}%");
                 // })
@@ -130,7 +132,9 @@ class ProdukController extends Controller
 
         $pagedata = $this->getPagedata();
 
-        return view('dynamiccrud.index', $pagedata);
+        $tokos = Toko::get();
+
+        return view('produks.index', $pagedata, compact('tokos')    );
     }
 
 
@@ -147,7 +151,7 @@ class ProdukController extends Controller
 
         $pagedata = $this->getPagedata();
 
-        return view('dynamiccrud.create', $pagedata);
+        return view('produks.create', $pagedata);
     }
 
     public function store(Request $request): RedirectResponse
@@ -176,18 +180,28 @@ class ProdukController extends Controller
             'satuan' => ['required', 'string'],
             'batas_bawah' => ['required', 'integer'],
 
-
             'created_by' => ['required', 'integer']
         ]);
 
+        $validate2 = Validator::make($request->all(), [
+            'stok_awal' => ['required', 'integer'],
+        ]);
 
-        if ($validate->fails()) {
-            return back()->withErrors($validate)->withInput();
+
+        if ($validate->fails() || $validate2->fails()) {
+            return back()->withErrors($validate)->withInput()->withErrors($validate2)->withInput();
         }
 
 
 
         $Produk = Produk::create($store_data);
+
+        $stok = Stok::create([
+            'produk_id' => $Produk->id,
+            'tipe' => 'IN',
+            'jumlah' => $request->input('stok_awal'),
+            'created_by' => auth()->id(),
+        ]);
 
 
         return to_route('produks.index')->with('status', 'Produk updated successfully.');

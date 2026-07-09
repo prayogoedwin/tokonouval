@@ -22,7 +22,7 @@
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        
+
         <div class="xl:col-span-2 space-y-6">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
@@ -33,7 +33,7 @@
                 </h2>
 
                 <div class="relative border-l-2 border-gray-200 dark:border-gray-700 ml-3 md:ml-4 space-y-8">
-                    
+
                     <div class="relative pl-6 md:pl-8">
                         <span class="absolute -left-[11px] top-0 flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white font-mono text-xs font-bold ring-4 ring-white dark:ring-gray-800">1</span>
                         <h3 class="text-base font-bold text-gray-900 dark:text-white">Ganti Nama Printer di Windows</h3>
@@ -60,14 +60,24 @@
 
                     <div class="relative pl-6 md:pl-8">
                         <span class="absolute -left-[11px] top-0 flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white font-mono text-xs font-bold ring-4 ring-white dark:ring-gray-800">3</span>
-                        <h3 class="text-base font-bold text-gray-900 dark:text-white">Izinkan Hak Akses Keamanan (Sertifikat)</h3>
+                        <h3 class="text-base font-bold text-gray-900 dark:text-white">Pastikan Aplikasi QZ Tray sudah berjalan</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
-                            Buka kembali halaman kasir/dashboard ini. Saat pertama kali koneksi dibuat, aplikasi QZ Tray di Windows akan memunculkan sebuah kotak dialog konfirmasi keamanan (*Dialog Warning Request*).
+                            Setelah QZ Tray terpasang, jalankan aplikasinya. Biasanya akan muncul ikon QZ Tray di system tray (pojok kanan bawah layar). Jika tidak muncul, coba cari di menu Start dan jalankan QZ Tray.
                         </p>
-                        <div class="mt-3 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 rounded-lg text-xs text-amber-800 dark:text-amber-400 leading-normal">
-                            <span class="font-bold">Penting bagi Kasir:</span> Centang opsi <span class="font-semibold">"Remember this decision"</span> lalu klik tombol <span class="font-semibold text-green-600 dark:text-green-400">Allow / Yes</span>. Setelah dicentang, dialog konfirmasi ini tidak akan mengganggu kasir lagi seterusnya.
-                        </div>
+
                     </div>
+
+                    <div class="relative pl-6 md:pl-8">
+                        <span class="absolute -left-[11px] top-0 flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white font-mono text-xs font-bold ring-4 ring-white dark:ring-gray-800">4</span>
+                        <h3 class="text-base font-bold text-gray-900 dark:text-white">Izinkan Hak Akses Keamanan </h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+                            Buka kembali atau refresh halaman kasir/dashboard ini. Aplikasi QZ Tray di Windows akan selalu memunculkan sebuah kotak dialog konfirmasi keamanan (*Dialog Warning Request*). Allow untuk memberi izin browser berkomunikasi dengan Aplikasi QZ.
+                        </p>
+
+                    </div>
+
+                    
+
 
                 </div>
             </div>
@@ -77,7 +87,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex flex-col justify-between">
                 <div>
                     <h3 class="text-base font-bold text-gray-900 dark:text-white mb-4">Cek Status Koneksi</h3>
-                    
+
                     <div id="statusBox" class="p-4 rounded-xl border flex items-center gap-3 bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700">
                         <div id="statusDot" class="w-3 h-3 rounded-full bg-gray-400 animate-pulse"></div>
                         <div>
@@ -111,20 +121,24 @@
         const statusDesc = document.getElementById('statusDesc');
         const btnTestPrint = document.getElementById('btnTestPrint');
 
-        
+
         const qzCertificate = `{!! str_replace(["\r", "\n"], '\n', config('qztray.certificate')) !!}`;
-        const qzPrivateKey  = `{!! str_replace(["\r", "\n"], '\n', config('qztray.private_key')) !!}`;
+        const qzPrivateKey = `{!! str_replace(["\r", "\n"], '\n', config('qztray.private_key')) !!}`;
 
         qz.security.setSignaturePromise(function(toSign) {
             return function(resolve, reject) {
                 try {
                     var pk = KEYUTIL.getKey(qzPrivateKey);
-                    var sig = new KJUR.crypto.Signature({"alg": "SHA1withRSA"});
+                    var sig = new KJUR.crypto.Signature({
+                        "alg": "SHA1withRSA"
+                    });
                     sig.init(pk);
                     sig.updateString(toSign);
                     var hex = sig.sign();
                     resolve(stob64(hextob64(hex)));
-                } catch (err) { reject(err); }
+                } catch (err) {
+                    reject(err);
+                }
             };
         });
 
@@ -138,7 +152,7 @@
                     statusText.className = "text-sm font-bold text-emerald-800 dark:text-emerald-400";
                     statusText.innerText = "Terhubung Aktif!";
                     statusDesc.innerText = "Siap melakukan cetak instan.";
-                    
+
                     // Aktifkan Tombol Test Print
                     btnTestPrint.disabled = false;
                     btnTestPrint.className = "w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 border border-transparent rounded-md shadow-sm focus:outline-none transition-all duration-150 cursor-pointer";
@@ -156,19 +170,58 @@
         // Trigger Cetak Percobaan
         btnTestPrint.addEventListener('click', function() {
             const config = qz.configs.create("POS 59"); // Menggunakan nama printer target Anda
-            
+
             // Format data text thermal standard 32 char baris
-            let dataCetak = [
-                { type: 'raw', format: 'plain', data: '\x1B\x61\x01' }, // Center
-                { type: 'raw', format: 'plain', data: 'TES KONEKSI POS 59\n' },
-                { type: 'raw', format: 'plain', data: '================================\n' },
-                { type: 'raw', format: 'plain', data: '\x1B\x61\x00' }, // Left
-                { type: 'raw', format: 'plain', data: 'Status Printer : Berhasil Aktif\n' },
-                { type: 'raw', format: 'plain', data: 'Sistem Integrasi: Laravel - QZ\n' },
-                { type: 'raw', format: 'plain', data: '================================\n' },
-                { type: 'raw', format: 'plain', data: '\x1B\x61\x01' },
-                { type: 'raw', format: 'plain', data: 'SIAP DIGUNAKAN BERTRANSAKSI\n\n\n\n' },
-                { type: 'raw', format: 'plain', data: '\x1B\x69' } // Paper cut
+            let dataCetak = [{
+                    type: 'raw',
+                    format: 'plain',
+                    data: '\x1B\x61\x01'
+                }, // Center
+                {
+                    type: 'raw',
+                    format: 'plain',
+                    data: 'TES KONEKSI POS 59\n'
+                },
+                {
+                    type: 'raw',
+                    format: 'plain',
+                    data: '================================\n'
+                },
+                {
+                    type: 'raw',
+                    format: 'plain',
+                    data: '\x1B\x61\x00'
+                }, // Left
+                {
+                    type: 'raw',
+                    format: 'plain',
+                    data: 'Status Printer : Berhasil Aktif\n'
+                },
+                {
+                    type: 'raw',
+                    format: 'plain',
+                    data: 'Sistem Integrasi: Laravel - QZ\n'
+                },
+                {
+                    type: 'raw',
+                    format: 'plain',
+                    data: '================================\n'
+                },
+                {
+                    type: 'raw',
+                    format: 'plain',
+                    data: '\x1B\x61\x01'
+                },
+                {
+                    type: 'raw',
+                    format: 'plain',
+                    data: 'SIAP DIGUNAKAN BERTRANSAKSI\n\n\n\n'
+                },
+                {
+                    type: 'raw',
+                    format: 'plain',
+                    data: '\x1B\x69'
+                } // Paper cut
             ];
 
             qz.print(config, dataCetak).then(() => {
