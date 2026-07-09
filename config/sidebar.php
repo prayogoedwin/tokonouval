@@ -78,7 +78,13 @@ return [
                 'active' => 'kategories*',
                 'permission' => 'view-kategories',
             ],
-            
+            [
+                'title' => 'Satuan',
+                'icon' => 'fas-scale-balanced',
+                'route' => 'satuans.index',
+                'active' => 'satuans*',
+                'permission' => 'view-satuans',
+            ],
         ],
     ],
     [

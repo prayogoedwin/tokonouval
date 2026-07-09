@@ -12,6 +12,12 @@ class SatuanSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $satuans = config('helper.satuans');
+
+        foreach ($satuans as $satuan) {
+            \App\Models\Satuan::create([
+                'name' => $satuan,
+            ]);
+        }
     }
 }
