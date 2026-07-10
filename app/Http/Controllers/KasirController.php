@@ -372,6 +372,7 @@ class KasirController extends Controller
 
                 ]],
                 
+                ['name' => 'harga_jual', 'value' => 'harga_jual', 'title' => 'Harga Jual', 'type' => 'number', 'inform' => true, 'intable' => true],
                 ['name' => 'satuan', 'value' => 'satuan', 'title' => 'Satuan', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
                     ...collect($satuans)->map(function ($satuan) {
                         return ['value' => $satuan, 'label' => $satuan];
@@ -442,9 +443,9 @@ class KasirController extends Controller
     public function kasir_ceklaporan(Request $request)
     {
 
-        // 1. Default dates: Current date
-        $startdate = Carbon::now()->toDateString();
-        $enddate = Carbon::now()->toDateString();
+        // 1. Default dates: Start and end of the current month
+        $startdate = Carbon::now()->startOfMonth()->toDateString(); // e.g., 2026-05-01
+        $enddate = Carbon::now()->endOfMonth()->toDateString();     // e.g., 2026-05-31
 
         // 2. Override if custom date request exists
         if ($request->has(['startdate', 'enddate']) && $request->startdate != '' && $request->enddate != '') {
