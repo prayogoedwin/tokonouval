@@ -371,8 +371,7 @@ class KasirController extends Controller
                     })->toArray(),
 
                 ]],
-                ['name' => 'harga_beli', 'value' => 'harga_beli', 'title' => 'Harga Beli', 'type' => 'number', 'inform' => true, 'intable' => true],
-                ['name' => 'harga_jual', 'value' => 'harga_jual', 'title' => 'Harga Jual', 'type' => 'number', 'inform' => true, 'intable' => true],
+                
                 ['name' => 'satuan', 'value' => 'satuan', 'title' => 'Satuan', 'type' => 'select', 'inform' => true, 'intable' => true, 'options' => [
                     ...collect($satuans)->map(function ($satuan) {
                         return ['value' => $satuan, 'label' => $satuan];
