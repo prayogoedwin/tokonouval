@@ -162,7 +162,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                 <!-- Section Wrapper Form Filter -->
                 <div class="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/30">
-                    <form action="{{ route('laporans.penjualan') }}" method="get" id="filter-form">
+                    <form action="{{ route('kasir.kasir_ceklaporan') }}" method="get" id="filter-form">
                         <div class="flex flex-col sm:flex-row sm:items-end gap-4 max-w-3xl">
                             <!-- Start Date Group -->
                             <div class="flex-1">
