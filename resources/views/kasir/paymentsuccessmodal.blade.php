@@ -64,7 +64,7 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                         </svg>
-                        Print Thermal (58mm)
+                        Print Thermal (80mm)
                     </button>
 
                     <button type="button" id="printInvoiceBtn"
@@ -392,6 +392,18 @@
         } else {
             // Jika nama produk terlalu panjang, potong atau biarkan turun baris
             return leftText.substring(0, maxWidth - rightText.length - 1) + " " + rightText + "\n";
+        }
+    }
+
+    function formatRow80mm(leftText, rightText) {
+        const maxChar = 48; // Standar jumlah karakter untuk printer 80mm font standard
+        const spaceLength = maxChar - leftText.length - rightText.length;
+
+        if (spaceLength > 0) {
+            return leftText + ' '.repeat(spaceLength) + rightText + '\n';
+        } else {
+            // Jika teks terlalu panjang, beri minimal 1 spasi
+            return leftText + ' ' + rightText + '\n';
         }
     }
 
