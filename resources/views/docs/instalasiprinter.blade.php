@@ -169,7 +169,7 @@
 
         // Trigger Cetak Percobaan
         btnTestPrint.addEventListener('click', function() {
-            const config = qz.configs.create("POS 59"); // Menggunakan nama printer target Anda
+            const config = qz.configs.create("POS-80A"); // Menggunakan nama printer target Anda
 
             // Format data text thermal standard 32 char baris
             let dataCetak = [{
@@ -180,7 +180,7 @@
                 {
                     type: 'raw',
                     format: 'plain',
-                    data: 'TES KONEKSI POS 59\n'
+                    data: 'TES KONEKSI POS-80A\n'
                 },
                 {
                     type: 'raw',
@@ -225,9 +225,9 @@
             ];
 
             qz.print(config, dataCetak).then(() => {
-                alert("Perintah cetak percobaan berhasil dikirim ke printer POS 59!");
+                alert("Perintah cetak percobaan berhasil dikirim ke printer POS-80A!");
             }).catch((err) => {
-                alert("Gagal mencetak! Periksa apakah driver printer bernama 'POS 59' sudah terpasang. Detail: " + err.message);
+                alert("Gagal mencetak! Periksa apakah driver printer bernama 'POS-80A' sudah terpasang. Detail: " + err.message);
             });
         });
     </script>
