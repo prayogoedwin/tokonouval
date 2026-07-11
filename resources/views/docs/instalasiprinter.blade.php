@@ -16,7 +16,7 @@
         <div>
             <h4 class="text-sm font-bold text-blue-900 dark:text-blue-300">Informasi Penting Nama Printer</h4>
             <p class="text-xs text-blue-700 dark:text-blue-400 mt-1 leading-relaxed">
-                Sistem POS ini dikonfigurasi khusus untuk menembak nama printer: <span class="px-2 py-0.5 font-mono font-bold bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-800 rounded text-blue-800 dark:text-blue-300">POS 59</span>. Jika nama printer di Windows kasir berbeda, struk tidak akan keluar.
+                Sistem POS ini dikonfigurasi khusus untuk menembak nama printer: <span class="px-2 py-0.5 font-mono font-bold bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-800 rounded text-blue-800 dark:text-blue-300">POS-80A</span>. Jika nama printer di Windows kasir berbeda, struk tidak akan keluar.
             </p>
         </div>
     </div>
@@ -38,7 +38,7 @@
                         <span class="absolute -left-[11px] top-0 flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white font-mono text-xs font-bold ring-4 ring-white dark:ring-gray-800">1</span>
                         <h3 class="text-base font-bold text-gray-900 dark:text-white">Ganti Nama Printer di Windows</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
-                            Buka <span class="font-semibold">Control Panel</span> &rarr; <span class="font-semibold">Devices and Printers</span>. Cari driver printer thermal Anda, klik kanan, pilih <span class="font-semibold">Printer Properties</span>. Pada kolom teks paling atas, ubah namanya menjadi tepat: <code class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-900 rounded font-bold font-mono text-rose-600 dark:text-rose-400">POS 59</code>.
+                            Buka <span class="font-semibold">Control Panel</span> &rarr; <span class="font-semibold">Devices and Printers</span>. Cari driver printer thermal Anda, klik kanan, pilih <span class="font-semibold">Printer Properties</span>. Pada kolom teks paling atas, ubah namanya menjadi tepat: <code class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-900 rounded font-bold font-mono text-rose-600 dark:text-rose-400">POS-80A</code>.
                         </p>
                     </div>
 
@@ -103,7 +103,7 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                         </svg>
-                        Uji Coba Cetak (POS 59)
+                        Uji Coba Cetak (POS-80A)
                     </button>
                 </div>
             </div>
