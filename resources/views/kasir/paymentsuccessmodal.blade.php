@@ -229,7 +229,7 @@
         const metodeBayar = currentTransactionData.tipe_pembayaran_name;
 
         // Inisialisasi konfigurasi printer QZ Tray
-        const config = qz.configs.create("POS 59"); // Sesuaikan nama printer Windows Anda
+        const config = qz.configs.create("POS-80A"); // Sesuaikan nama printer Windows Anda
 
         // --- MULAI STRUKTUR DATA CETAK ESC/POS ---
         let dataCetak = [{
@@ -255,8 +255,8 @@
             {
                 type: 'raw',
                 format: 'plain',
-                data: '--------------------------------\n'
-            }, // 32 Karakter
+                data: '------------------------------------------------\n'
+            }, // Diubah menjadi 48 Karakter untuk 80mm
 
             {
                 type: 'raw',
@@ -276,18 +276,18 @@
             {
                 type: 'raw',
                 format: 'plain',
-                data: '--------------------------------\n'
+                data: '------------------------------------------------\n'
             }
         ];
 
         // --- LOOPING ITEM PRODUK ---
         if (currentTransactionData.details && currentTransactionData.details.length > 0) {
             currentTransactionData.details.forEach(function(detail) {
-                // Ambil nama produk (pastikan relasi produk ter-load dari backend)
+                // Ambil nama produk
                 const namaProduk = detail.produk ? detail.produk.name : 'Produk';
                 const qtyStr = detail.jumlah + 'x';
                 const hargaStr = formatRupiah(detail.harga_jual);
-                const subtotalStr = formatRupiah(detail.harga_jual * detail.jumlah); // atau detail.subtotal jika ada
+                const subtotalStr = formatRupiah(detail.harga_jual * detail.jumlah);
 
                 // Baris 1: Nama Produk
                 dataCetak.push({
@@ -295,8 +295,8 @@
                     format: 'plain',
                     data: namaProduk + '\n'
                 });
-                // Baris 2: Qty x Harga -------- Subtotal (Gunakan helper rata kanan-kiri)
-                const detailRow = formatRow58mm('  ' + qtyStr + ' ' + hargaStr, subtotalStr);
+                // Baris 2: Menggunakan helper rata kanan-kiri yang baru untuk 80mm
+                const detailRow = formatRow80mm('  ' + qtyStr + ' ' + hargaStr, subtotalStr);
                 dataCetak.push({
                     type: 'raw',
                     format: 'plain',
@@ -309,11 +309,11 @@
         dataCetak.push({
             type: 'raw',
             format: 'plain',
-            data: '--------------------------------\n'
+            data: '------------------------------------------------\n'
         }, {
             type: 'raw',
             format: 'plain',
-            data: formatRow58mm('Total:', totalPembelian)
+            data: formatRow80mm('Total:', totalPembelian)
         });
 
         // Jika ada diskon, tampilkan
@@ -322,26 +322,26 @@
             dataCetak.push({
                 type: 'raw',
                 format: 'plain',
-                data: formatRow58mm('Diskon (' + diskonPersen + '):', '-' + diskonNominal)
+                data: formatRow80mm('Diskon (' + diskonPersen + '):', '-' + diskonNominal)
             });
         }
 
         dataCetak.push({
                 type: 'raw',
                 format: 'plain',
-                data: formatRow58mm('Grand Total:', totalHarusBayar)
+                data: formatRow80mm('Grand Total:', totalHarusBayar)
             }, {
                 type: 'raw',
                 format: 'plain',
-                data: formatRow58mm('Bayar (' + metodeBayar + '):', dibayar)
+                data: formatRow80mm('Bayar (' + metodeBayar + '):', dibayar)
             }, {
                 type: 'raw',
                 format: 'plain',
-                data: formatRow58mm('Kembalian:', kembalian)
+                data: formatRow80mm('Kembalian:', kembalian)
             }, {
                 type: 'raw',
                 format: 'plain',
-                data: '--------------------------------\n'
+                data: '------------------------------------------------\n'
             },
 
             // FOOTER
@@ -353,8 +353,7 @@
             {
                 type: 'raw',
                 format: 'plain',
-                // Teks catatan otomatis turun ke bawah jika melebihi lebar kertas (Word Wrap bawaan printer)
-                data: 'Barang yang sudah dibeli tidak\ndapat dikembalikan kecuali\nada perjanjian\n\n'
+                data: 'Barang yang sudah dibeli tidak dapat dikembalikan\nkecuali ada perjanjian\n\n'
             }, {
                 type: 'raw',
                 format: 'plain',
