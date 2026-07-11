@@ -229,7 +229,7 @@
         const metodeBayar = currentTransactionData.tipe_pembayaran_name;
 
         // Inisialisasi konfigurasi printer QZ Tray
-        const config = qz.configs.create("POS-80A"); // Sesuaikan nama printer Windows Anda
+        const config = qz.configs.create("POS-80B"); // Sesuaikan nama printer Windows Anda
 
         // --- MULAI STRUKTUR DATA CETAK ESC/POS ---
         let dataCetak = [{
