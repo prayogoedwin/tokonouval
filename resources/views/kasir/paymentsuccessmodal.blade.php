@@ -118,7 +118,7 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         // 1. Daftarkan Sertifikat dari Config Laravel ke QZ Tray
-       
+
 
         qz.security.setSignaturePromise(function(toSign) {
             return function(resolve, reject) {
@@ -355,8 +355,7 @@
                 format: 'plain',
                 // Teks catatan otomatis turun ke bawah jika melebihi lebar kertas (Word Wrap bawaan printer)
                 data: 'Barang yang sudah dibeli tidak\ndapat dikembalikan kecuali\nada perjanjian\n\n'
-            },
-            {
+            }, {
                 type: 'raw',
                 format: 'plain',
                 data: 'TERIMA KASIH\n'
@@ -402,7 +401,7 @@
         console.log(transaction);
         // Membuka format monospace WhatsApp dengan ```
         let message = "```\n";
-        message += `*TOKO NOUVAL*\n`;
+        message += `*TOKO NAOUVAL*\n`;
         message += `${'='.repeat(32)}\n`;
         message += `Nota: ${transaction.no_invoice}\n`;
         message += `Tgl : ${new Date().toLocaleString('id-ID')}\n`;
@@ -442,6 +441,19 @@
         message += `Metode: ${transaction.tipe_pembayaran_name}\n`;
         message += `${'='.repeat(32)}\n`;
         message += `${new Date().toLocaleTimeString('id-ID')}\n`;
+        message += `${'='.repeat(32)}\n`; // Pembatas sebelum footer
+
+        const centerText = (text) => {
+            const padding = Math.max(0, Math.floor((32 - text.length) / 2));
+            return ' '.repeat(padding) + text;
+        };
+
+        message += `${centerText("Barang yang sudah dibeli tidak")}\n`;
+        message += `${centerText("dapat dikembalikan kecuali")}\n`;
+        message += `${centerText("ada perjanjian")}\n\n`;
+
+        message += `${centerText("TERIMA KASIH")}\n`;
+        message += `${centerText("JUAL SE'ADA NYA BARELA'AN")}\n`;
 
         // Menutup format monospace WhatsApp
         message += "```";

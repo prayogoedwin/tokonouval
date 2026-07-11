@@ -315,6 +315,7 @@ class KasirController extends Controller
         $penjualan->tipe_pembayaran = $penjualan->tipePembayaran;
         $penjualan->tipe_pembayaran_name = $penjualan->tipePembayaran->name;
         $penjualan->details = $penjualan->details;
+        $penjualan->toko_telp = $penjualan->toko->telp;
         foreach ($penjualan->details as $detail) {
             $detail->name = $detail->produk->name;
         }
