@@ -444,9 +444,9 @@ class KasirController extends Controller
     public function kasir_ceklaporan(Request $request)
     {
 
-        // 1. Default dates: Start and end of the current month
-        $startdate = Carbon::now()->startOfMonth()->toDateString(); // e.g., 2026-05-01
-        $enddate = Carbon::now()->endOfMonth()->toDateString();     // e.g., 2026-05-31
+        // 1. Default dates: Today
+        $startdate = Carbon::now()->toDateString();
+        $enddate = Carbon::now()->toDateString();
 
         // 2. Override if custom date request exists
         if ($request->has(['startdate', 'enddate']) && $request->startdate != '' && $request->enddate != '') {
