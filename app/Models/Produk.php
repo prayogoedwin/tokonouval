@@ -34,7 +34,7 @@ class Produk extends Model
         'created_by',
         'updated_by',
         'deleted_by',
-        
+
     ];
 
     use SoftDeletes;
@@ -43,7 +43,7 @@ class Produk extends Model
     {
         return $this->belongsTo(Kategori::class);
     }
-    
+
     public function toko(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Toko::class);
@@ -53,19 +53,21 @@ class Produk extends Model
     public function stoks(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         // Pastikan nama foreign key di tabel stok adalah 'product_id'
-        return $this->hasMany(Stok::class); 
+        return $this->hasMany(Stok::class);
     }
 
     public function currentStok(): int
     {
-        // Mengambil semua stok terkait produk ini
+        // Mengambil semua data stok terkait produk ini
         $stoks = $this->stoks;
 
-        // Menghitung total stok dengan menjumlahkan semua nilai stok
-        $totalStok = $stoks->sum('jumlah');
+        // Menghitung total stok masuk
+        $stokMasuk = $stoks->where('tipe', 'IN')->sum('jumlah');
 
-        return $totalStok;
+        // Menghitung total stok keluar
+        $stokKeluar = $stoks->where('tipe', 'OUT')->sum('jumlah');
+
+        // Mengembalikan hasil pengurangan
+        return $stokMasuk - $stokKeluar;
     }
-
-    
 }
