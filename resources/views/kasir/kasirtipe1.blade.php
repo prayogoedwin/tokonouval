@@ -180,24 +180,32 @@
                 const itemTotal = item.price * item.quantity;
                 subtotal += itemTotal;
                 html += `
-            <div class="flex justify-between items-center p-2 border border-gray-100 dark:border-gray-700 rounded-lg">
-                <div class="flex-1">
-                    <div class="font-medium text-gray-800 dark:text-gray-200">${escapeHtml(item.name)}</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">${formatRupiah(item.price)} / ${item.unit}</div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="adjustQuantity(${idx}, -1)" class="w-6 h-6 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">-</button>
-                    <span class="w-10 text-center text-gray-800 dark:text-gray-200">${item.quantity}</span>
-                    <button onclick="adjustQuantity(${idx}, 1)" class="w-6 h-6 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">+</button>
-                    <button onclick="removeFromCart(${idx})" class="ml-2 text-red-500 hover:text-red-700">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    </button>
-                </div>
-                <div class="ml-4 text-right font-medium text-gray-800 dark:text-gray-200 w-24">
-                    ${formatRupiah(itemTotal)}
-                </div>
-            </div>
-        `;
+    <div class="flex justify-between items-center p-2 border border-gray-100 dark:border-gray-700 rounded-lg">
+        <div class="flex-1">
+            <div class="font-medium text-gray-800 dark:text-gray-200">${escapeHtml(item.name)}</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">${formatRupiah(item.price)} / ${item.unit}</div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="adjustQuantity(${idx}, -1)" class="w-6 h-6 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">-</button>
+            
+            <input 
+                type="number" 
+                min="1" 
+                value="${item.quantity}" 
+                onchange="updateQuantityDirectly(${idx}, this.value)"
+                class="w-12 text-center text-gray-800 dark:text-gray-200 bg-transparent border border-gray-300 dark:border-gray-600 rounded p-0.5 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            >
+            
+            <button onclick="adjustQuantity(${idx}, 1)" class="w-6 h-6 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">+</button>
+            <button onclick="removeFromCart(${idx})" class="ml-2 text-red-500 hover:text-red-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+        </div>
+        <div class="ml-4 text-right font-medium text-gray-800 dark:text-gray-200 w-24">
+            ${formatRupiah(itemTotal)}
+        </div>
+    </div>
+`;
             });
 
             cartContainer.innerHTML = html;
@@ -213,6 +221,19 @@
 
             // Recalculate change if payment is entered
             calculateChange();
+        }
+
+        // Tambahkan fungsi baru ini di bawah fungsi updateCart Anda
+        function updateQuantityDirectly(idx, value) {
+            let newQty = parseInt(value) || 1;
+
+            // Validasi agar kuantitas minimal adalah 1
+            if (newQty < 1) {
+                newQty = 1;
+            }
+
+            cart[idx].quantity = newQty;
+            updateCart(); // Panggil ulang untuk kalkulasi subtotal & total baru
         }
 
         // Adjust quantity
@@ -396,6 +417,6 @@
         // Initial update
         updateCart();
     </script>
-    
+
     @include('kasir.paymentsuccessmodal')
 </x-layouts.app>
