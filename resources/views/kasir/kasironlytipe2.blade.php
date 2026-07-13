@@ -172,6 +172,7 @@
                                 data-name="{{ $produk->name }}"
                                 data-price="{{ $produk->harga_jual }}"
                                 data-harga_beli="{{ $produk->harga_beli }}"
+                                data-stok="{{ $produk->currentStok() }}"
                                 data-unit="{{ $produk->satuan }}">
                                 {{ $produk->name }} - {{ $produk->sku }}
                             </option>
@@ -214,6 +215,7 @@
                                         <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-300">Product</th>
                                         <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">Harga</th>
                                         <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300 w-24">Kuantitas</th>
+                                        <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300">Stok</th>
                                         <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300 w-24">Satuan</th>
                                         <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">Sub Total</th>
                                         <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300 w-16">Aksi</th>
@@ -221,7 +223,7 @@
                                 </thead>
                                 <tbody id="cartTableBody">
                                     <tr>
-                                        <td colspan="7" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                                        <td colspan="8" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
                                             {{ __('Belum ada Item') }}
                                         </td>
                                     </tr>
@@ -495,7 +497,7 @@
             if (cart.length === 0) {
                 cartTableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                        <td colspan="8" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
                             {{ __('No items added yet') }}
                         </td>
                     </tr>
@@ -524,6 +526,7 @@
                                     class="w-6 h-6 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">+</button>
                             </div>
                         </td>
+                        <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">${item.stok}</td>
                         <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">${escapeHtml(item.unit)}</td>
                         <td class="px-4 py-3 text-right font-medium text-gray-800 dark:text-gray-200">${formatRupiah(subTotal)}</td>
                         <td class="px-4 py-3 text-center">
@@ -546,6 +549,10 @@
         // Adjust quantity
         window.adjustQuantity = function(index, delta) {
             if (cart[index]) {
+                if (cart[index].quantity + delta > cart[index].stok) {
+                    alert('Stok tidak cukup untuk menambahkan lebih banyak item ini.');
+                    return;
+                }
                 const newQty = cart[index].quantity + delta;
                 if (newQty <= 0) {
                     removeFromCart(index);
@@ -563,18 +570,29 @@
         };
 
         // Add product to cart
-        function addToCart(id, name, price, harga_beli, unit) {
+        function addToCart(id, name, price, harga_beli, qty, unit, stok) {
             const existing = cart.find(item => item.name === name && item.price === price);
             if (existing) {
-                existing.quantity++;
+                if (existing.quantity + qty > existing.stok) {
+                    alert('Stok tidak cukup untuk menambahkan lebih banyak item ini.');
+                    return;
+                }
+                existing.quantity += qty;
             } else {
+
+                if (qty > stok) {
+                    alert('Stok tidak cukup untuk menambahkan item ini.');
+                }
+                qty = Math.min(qty, stok); // Ensure qty does not exceed stok
+
                 cart.push({
                     id: id,
                     name: name,
                     price: price,
                     harga_beli: harga_beli,
                     unit: unit,
-                    quantity: 1
+                    quantity: qty,
+                    stok: stok
                 });
             }
             updateCartTable();
@@ -592,6 +610,7 @@
             const price = parseInt(selectedOption.dataset.price);
             const harga_beli = parseInt(selectedOption.dataset.harga_beli);
             const unit = selectedOption.dataset.unit;
+            const stok = parseInt(selectedOption.dataset.stok);
             let qty = parseInt(productQty.value);
 
 
@@ -599,9 +618,9 @@
                 qty = 1;
             }
 
-            for (let i = 0; i < qty; i++) {
-                addToCart(id, name, price, harga_beli, unit);
-            }
+            
+            addToCart(id, name, price, harga_beli, qty, unit, stok);
+            
 
             productSelect.value = '';
             productQty.value = '1';
@@ -628,7 +647,7 @@
         // Process payment
         document.getElementById('processPaymentBtn').addEventListener('click', () => {
             if (cart.length === 0) {
-                alert('Cart is empty. Add some products first.');
+                alert('Cart Kosong. Tambahkan beberapa produk terlebih dahulu.');
                 return;
             }
 
@@ -639,7 +658,7 @@
             const paymentMethodName = paymentMethodSelect.options[paymentMethodSelect.selectedIndex]?.dataset.name || '';
 
             if (!paymentMethodId) {
-                alert('Please select a payment method.');
+                alert('Silakan pilih metode pembayaran.');
                 paymentMethodSelect.focus();
                 return;
             }
@@ -650,7 +669,7 @@
                 change
             } = calculateChange();
             if (payment < total) {
-                alert('Insufficient payment. Please enter amount greater than or equal to total.');
+                alert('Pembayaran tidak cukup. Masukkan jumlah yang lebih besar atau sama dengan total.');
                 return;
             }
 
@@ -689,6 +708,7 @@
                     harga_beli: item.harga_beli,
                     quantity: item.quantity,
                     unit: item.unit,
+                    stok: item.stok,
                     total: item.price * item.quantity
                 })))
             };

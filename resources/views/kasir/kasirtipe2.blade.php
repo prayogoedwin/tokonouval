@@ -27,6 +27,7 @@
     </div>
 
     {{-- Row 1: Add Product & Big Total Price --}}
+    {{-- Row 1: Add Product & Big Total Price --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div class="md:col-span-1">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
@@ -41,6 +42,7 @@
                         data-name="{{ $produk->name }}"
                         data-price="{{ $produk->harga_jual }}"
                         data-harga_beli="{{ $produk->harga_beli }}"
+                        data-stok="{{ $produk->currentStok() }}"
                         data-unit="{{ $produk->satuan }}">
                         {{ $produk->name }} - {{ $produk->sku }}
                     </option>
@@ -51,7 +53,7 @@
                         class="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm text-center">
                     <button id="addProductBtn"
                         class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
-                        {{ __('Tambah Ke keranjang') }}
+                        {{ __('Tambah ke keranjang') }}
                     </button>
                 </div>
             </div>
@@ -60,7 +62,7 @@
         <div class="md:col-span-2">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 h-full flex flex-col">
                 <div class="">
-                    <span class="text-gray-600 dark:text-gray-400 uppercase">{{ __('Jumlah Total') }}</span>
+                    <span class="text-gray-600 dark:text-gray-400 uppercase">{{ __('TOTAL HARGA') }}</span>
                     <div class="text-4xl font-bold text-blue-600 dark:text-blue-400 mt-2 text-right" id="bigTotalPrice">
                         Rp 0
                     </div>
@@ -75,7 +77,7 @@
         <div class="lg:col-span-9">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
-                <div class="overflow-x-auto min-h-[400px]">
+                <div class="overflow-x-auto min-h-[450px]">
                     <table class="w-full text-sm">
                         <thead class="bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                             <tr>
@@ -83,22 +85,20 @@
                                 <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-300">Product</th>
                                 <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">Harga</th>
                                 <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300 w-24">Kuantitas</th>
+                                <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300">Stok</th>
                                 <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300 w-24">Satuan</th>
                                 <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">Sub Total</th>
-                                <th class="px-4 py-3 text-center w-16">Aksi</th>
+                                <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300 w-16">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="cartTableBody">
                             <tr>
-                                <td colspan="7" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                                <td colspan="8" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
                                     {{ __('Belum ada Item') }}
                                 </td>
                             </tr>
                         </tbody>
-                        <tfoot id="cartTableFooter" class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 font-medium">
-                            <!-- Dynamic footer will be inserted here -->
 
-                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -116,7 +116,7 @@
                         <span class="font-medium text-gray-800 dark:text-gray-200" id="subtotal">Rp 0</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-600 dark:text-gray-400">{{ __('Diskon') }}</span>
+                        <span class="text-gray-600 dark:text-gray-400">{{ __('Jumlah Diskon') }}</span>
                         <span class="font-medium text-red-600 dark:text-red-400" id="discountAmount">Rp 0</span>
                     </div>
                     <div class="flex justify-between text-lg font-bold pt-2 border-t border-gray-200 dark:border-gray-700">
@@ -179,6 +179,9 @@
             </button>
         </div>
     </div>
+    </div>
+    </main>
+
     <!-- Choices.js CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <!-- Choices.js JS -->
@@ -197,6 +200,10 @@
         .dark .choices__inner {
             border-color: rgb(75 85 99) !important;
             background: rgb(17 24 39) !important;
+        }
+
+        .dark .choices__item--selectable {
+            color: rgb(255 255 255);
         }
 
 
@@ -360,7 +367,7 @@
             if (cart.length === 0) {
                 cartTableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                        <td colspan="8" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
                             {{ __('No items added yet') }}
                         </td>
                     </tr>
@@ -389,6 +396,7 @@
                                     class="w-6 h-6 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">+</button>
                             </div>
                         </td>
+                        <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">${item.stok}</td>
                         <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">${escapeHtml(item.unit)}</td>
                         <td class="px-4 py-3 text-right font-medium text-gray-800 dark:text-gray-200">${formatRupiah(subTotal)}</td>
                         <td class="px-4 py-3 text-center">
@@ -411,6 +419,10 @@
         // Adjust quantity
         window.adjustQuantity = function(index, delta) {
             if (cart[index]) {
+                if (cart[index].quantity + delta > cart[index].stok) {
+                    alert('Stok tidak cukup untuk menambahkan lebih banyak item ini.');
+                    return;
+                }
                 const newQty = cart[index].quantity + delta;
                 if (newQty <= 0) {
                     removeFromCart(index);
@@ -428,18 +440,29 @@
         };
 
         // Add product to cart
-        function addToCart(id, name, price, harga_beli, unit) {
+        function addToCart(id, name, price, harga_beli, qty, unit, stok) {
             const existing = cart.find(item => item.name === name && item.price === price);
             if (existing) {
-                existing.quantity++;
+                if (existing.quantity + qty > existing.stok) {
+                    alert('Stok tidak cukup untuk menambahkan lebih banyak item ini.');
+                    return;
+                }
+                existing.quantity += qty;
             } else {
+
+                if (qty > stok) {
+                    alert('Stok tidak cukup untuk menambahkan item ini.');
+                }
+                qty = Math.min(qty, stok); // Ensure qty does not exceed stok
+
                 cart.push({
                     id: id,
                     name: name,
                     price: price,
                     harga_beli: harga_beli,
                     unit: unit,
-                    quantity: 1
+                    quantity: qty,
+                    stok: stok
                 });
             }
             updateCartTable();
@@ -457,6 +480,7 @@
             const price = parseInt(selectedOption.dataset.price);
             const harga_beli = parseInt(selectedOption.dataset.harga_beli);
             const unit = selectedOption.dataset.unit;
+            const stok = parseInt(selectedOption.dataset.stok);
             let qty = parseInt(productQty.value);
 
 
@@ -464,9 +488,9 @@
                 qty = 1;
             }
 
-            for (let i = 0; i < qty; i++) {
-                addToCart(id, name, price, harga_beli, unit);
-            }
+
+            addToCart(id, name, price, harga_beli, qty, unit, stok);
+
 
             productSelect.value = '';
             productQty.value = '1';
@@ -493,7 +517,7 @@
         // Process payment
         document.getElementById('processPaymentBtn').addEventListener('click', () => {
             if (cart.length === 0) {
-                alert('Cart is empty. Add some products first.');
+                alert('Cart Kosong. Tambahkan beberapa produk terlebih dahulu.');
                 return;
             }
 
@@ -504,7 +528,7 @@
             const paymentMethodName = paymentMethodSelect.options[paymentMethodSelect.selectedIndex]?.dataset.name || '';
 
             if (!paymentMethodId) {
-                alert('Please select a payment method.');
+                alert('Silakan pilih metode pembayaran.');
                 paymentMethodSelect.focus();
                 return;
             }
@@ -515,7 +539,7 @@
                 change
             } = calculateChange();
             if (payment < total) {
-                alert('Insufficient payment. Please enter amount greater than or equal to total.');
+                alert('Pembayaran tidak cukup. Masukkan jumlah yang lebih besar atau sama dengan total.');
                 return;
             }
 
@@ -528,7 +552,7 @@
             // Create a form and submit
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '{{ route("kasir.processpayment") }}';
+            form.action = '{{ route("kasir.kasir_processpayment") }}';
 
             // Add CSRF token
             const csrfInput = document.createElement('input');
@@ -554,6 +578,7 @@
                     harga_beli: item.harga_beli,
                     quantity: item.quantity,
                     unit: item.unit,
+                    stok: item.stok,
                     total: item.price * item.quantity
                 })))
             };

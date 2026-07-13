@@ -237,7 +237,7 @@
                         <input type="text" id="searchProduct" placeholder="Search product..." class="mt-2 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                     </div>
                     <div class="p-4">
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[500px] overflow-y-auto">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[600px] overflow-y-auto">
                             @forelse($produks as $produk)
                             <button type="button"
                                 class="product-item text-left p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200"
@@ -246,10 +246,19 @@
                                 data-price="{{ $produk->harga_jual }}"
                                 data-harga_beli="{{ $produk->harga_beli }}"
                                 data-unit="{{ $produk->satuan }}"
-                                data-id="{{ $loop->index }}">
+                                data-stok="{{ $produk->currentStok() }}"
+                                data-index="{{ $loop->index }}"> {{-- Mengubah data-id ganda menjadi data-index --}}
+
                                 <div class="font-medium text-gray-800 dark:text-gray-200 text-sm">{{ $produk->name }}</div>
                                 <div class="text-blue-600 dark:text-blue-400 font-bold mt-1">Rp {{ number_format($produk->harga_jual, 0, ',', '.') }}</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Satuan: {{ $produk->satuan }}</div>
+
+                                <div class="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    <span>Satuan: {{ $produk->satuan }}</span>
+                                    {{-- Menampilkan Stok Saat Ini --}}
+                                    <span class="font-semibold {{ $produk->currentStok() <= 0 ? 'text-red-500' : 'text-green-600 dark:text-green-400' }}">
+                                        Stok: {{ $produk->currentStok() }}
+                                    </span>
+                                </div>
                             </button>
                             @empty
                             <p class="col-span-full text-center text-gray-500 dark:text-gray-400 py-8">{{ __('No products available.') }}</p>
@@ -307,6 +316,7 @@
         <div class="flex-1">
             <div class="font-medium text-gray-800 dark:text-gray-200">${escapeHtml(item.name)}</div>
             <div class="text-xs text-gray-500 dark:text-gray-400">${formatRupiah(item.price)} / ${item.unit}</div>
+            <div class="text-xs text-amber-600 dark:text-amber-500">Stok: ${item.currentStok}</div>
         </div>
         <div class="flex items-center gap-2">
             <button onclick="adjustQuantity(${idx}, -1)" class="w-6 h-6 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">-</button>
@@ -314,6 +324,7 @@
             <input 
                 type="number" 
                 min="1" 
+                max="${item.currentStok}"
                 value="${item.quantity}" 
                 onchange="updateQuantityDirectly(${idx}, this.value)"
                 class="w-12 text-center text-gray-800 dark:text-gray-200 bg-transparent border border-gray-300 dark:border-gray-600 rounded p-0.5 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -346,22 +357,32 @@
             calculateChange();
         }
 
-        // Tambahkan fungsi baru ini di bawah fungsi updateCart Anda
         function updateQuantityDirectly(idx, value) {
             let newQty = parseInt(value) || 1;
+            const maxStok = cart[idx].currentStok;
 
-            // Validasi agar kuantitas minimal adalah 1
+            // Batasi kuantitas minimal 1
             if (newQty < 1) {
                 newQty = 1;
             }
 
+            // Validasi: Jika input melebihi currentStok, paksa nilainya kembali ke batas maksimal
+            if (newQty > maxStok) {
+                alert(`Maaf, stok maksimal yang tersedia hanya ${maxStok}`);
+                newQty = maxStok;
+            }
+
             cart[idx].quantity = newQty;
-            updateCart(); // Panggil ulang untuk kalkulasi subtotal & total baru
+            updateCart();
         }
 
         // Adjust quantity
         window.adjustQuantity = function(index, delta) {
             if (cart[index]) {
+                if (delta > 0 && cart[index].quantity >= cart[index].currentStok) {
+                    alert(`Maaf, stok maksimal yang tersedia hanya ${cart[index].currentStok}`);
+                    return;
+                }
                 const newQty = cart[index].quantity + delta;
                 if (newQty <= 0) {
                     removeFromCart(index);
@@ -403,9 +424,13 @@
         });
 
         // Add product to cart
-        function addToCart(id, name, price, harga_beli, unit) {
+        function addToCart(id, name, price, harga_beli, unit, currentStok) {
             const existing = cart.find(item => item.name === name && item.price === price);
             if (existing) {
+                if (existing.quantity >= existing.currentStok) {
+                    alert(`Maaf, stok maksimal yang tersedia hanya ${existing.currentStok}`);
+                    return;
+                }
                 existing.quantity++;
             } else {
                 cart.push({
@@ -414,6 +439,7 @@
                     price: price,
                     harga_beli: harga_beli,
                     unit: unit,
+                    currentStok: currentStok,
                     quantity: 1
                 });
             }
@@ -428,7 +454,8 @@
                 const price = parseInt(this.dataset.price);
                 const harga_beli = parseInt(this.dataset.harga_beli);
                 const unit = this.dataset.unit;
-                addToCart(id, name, price, harga_beli, unit);
+                const currentStok = parseInt(this.dataset.stok);
+                addToCart(id, name, price, harga_beli, unit, currentStok);
             });
         });
 
