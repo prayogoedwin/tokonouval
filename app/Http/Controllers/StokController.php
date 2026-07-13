@@ -52,7 +52,7 @@ class StokController extends Controller
 
                 ]],
                 ['name' => 'jumlah', 'value' => 'jumlah',  'title' => 'Jumlah', 'type' => 'number', 'inform' => true, 'intable' => true],
-                ['name' => 'tanggal', 'value' => 'created_at',  'title' => 'Tanggal', 'type' => 'text', 'inform' => false, 'intable' => true],
+                ['name' => 'tanggal', 'value' => 'tanggal',  'title' => 'Tanggal', 'type' => 'text', 'inform' => false, 'intable' => true],
 
 
             ],
@@ -168,7 +168,7 @@ class StokController extends Controller
             $stoks = $query->get();
 
             return DataTables::of($stoks)
-                ->editColumn('tanggal2', function ($Stok) {
+                ->editColumn('tanggal', function ($Stok) {
                     // Format tgl-bln-thn
                     return \Carbon\Carbon::parse($Stok->created_at)->format('d-m-Y');
                 })
