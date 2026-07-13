@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Penjualan extends Model
 {
@@ -26,7 +27,7 @@ class Penjualan extends Model
     //     $table->foreignId('updated_by')->nullable();
     //     $table->foreignId('deleted_by')->nullable();
     // });
-
+    use SoftDeletes;
     protected $fillable = [
         'customer_id',
         'toko_id',

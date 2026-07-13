@@ -236,7 +236,7 @@ class ProdukController extends Controller
         $stok = Stok::create($store_data);
 
 
-        return to_route('stoks.produk', $produk)->with('status', 'Stok updated successfully.');
+        return redirect()->back()->with('status', 'Stok updated successfully.');
     }
 
     public function show(Produk $Produk): View
@@ -245,6 +245,7 @@ class ProdukController extends Controller
         $data = $Produk;
         $data->kategori = Kategori::find($Produk->kategori_id)->name;
         $data->toko = Toko::find($Produk->toko_id)->name;
+        $produk = $data;
 
         $pagedata = $this->getPagedata();
 
@@ -252,7 +253,7 @@ class ProdukController extends Controller
 
         // dd($data, $pagedata);
 
-        return view('dynamiccrud.show', compact('data'), $pagedata);
+        return view('produks.show', compact('data', 'produk'), $pagedata);
     }
 
     public function edit(Produk $Produk): View
