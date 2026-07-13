@@ -170,7 +170,7 @@ class StokController extends Controller
             return DataTables::of($stoks)
                 ->editColumn('tanggal', function ($Stok) {
                     // Format tgl-bln-thn jam:menit:detik, misal: 18-05-2026 13:45:00
-                    return \Carbon\Carbon::parse($Stok->created_at)->format('d-m-Y H:i:s');
+                    return \Carbon\Carbon::parse($Stok->created_at)->format('d-m-Y');
                 })
 
 
