@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Produk extends Model
 {
@@ -35,6 +36,8 @@ class Produk extends Model
         'deleted_by',
         
     ];
+
+    use SoftDeletes;
 
     public function kategori(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

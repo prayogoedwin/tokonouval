@@ -84,15 +84,15 @@
             <table id="dynamic-table" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-900">
                     <tr>
-                        @foreach($columns as $column)
-                        @if($column['intable'])
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ $column['title'] }}</th>
-                        @endif
-                        @endforeach
+                        
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Produk</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Toko</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tipe</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Jumlah</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tanggal</th>
+                        
 
-                        @if($tableaction)
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Aksi') }}</th>
-                        @endif
                     </tr>
                 </thead>
             </table>
@@ -134,11 +134,14 @@
                     },
                     {
                         data: 'jumlah',
-                        name: 'jumlah'
+                        name: 'jumlah',
+
                     },
                     {
                         data: 'tanggal',
-                        name: 'tanggal'
+                        name: 'tanggal',
+                        orderable: true,
+                        searchable: true,
                     },
                     {
                         data: 'actions',

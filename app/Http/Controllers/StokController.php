@@ -89,7 +89,12 @@ class StokController extends Controller
             return DataTables::of($stoks)
                 ->editColumn('tanggal', function ($Stok) {
                     // Format tgl-bln-thn jam:menit:detik, misal: 18-05-2026 13:45:00
-                    return \Carbon\Carbon::parse($Stok->created_at)->format('d-m-Y H:i:s');
+                    return \Carbon\Carbon::parse($Stok->created_at)->format('d-m-Y');
+                })
+                ->filterColumn('tanggal', function ($query, $keyword) {
+                    // Mengubah created_at di MySQL menjadi format 'dd-mm-yyyy' agar cocok dengan ketikan user
+                    $sql = "DATE_FORMAT(stoks.created_at, '%d-%m-%Y') like ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
                 })
                 ->addColumn('toko', function ($Stok) {
                     return $Stok->produk->toko->name ?? '';
