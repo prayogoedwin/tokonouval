@@ -142,6 +142,7 @@ class KasirController extends Controller
                 'created_by' => auth()->user()->id,
             ]);
         }
+        $timezone = 'Asia/Jakarta';
 
         // penyediain data untuk ditampilkan di modal setelah pembayaran karena tidak bisa langsung dengan relasi
         $penjualan->penjualan_id = $penjualan->id;
