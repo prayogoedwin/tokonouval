@@ -426,7 +426,7 @@ class KasirController extends Controller
 
             return DataTables::of($penjualans)
                 ->addColumn('tanggal', function ($penjualan) {
-                    return Carbon::parse($penjualan->created_at)->translatedFormat('d M Y H:i:s');
+                    return $penjualan->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
                 })
                 
                 ->addColumn('tipe_pembayaran', function ($penjualan) {
