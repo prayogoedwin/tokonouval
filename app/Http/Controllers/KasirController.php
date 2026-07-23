@@ -421,33 +421,30 @@ class KasirController extends Controller
                     $startUtc,
                     $endUtc
                 ])
-                ->join('tokos', 'penjualans.toko_id', '=', 'tokos.id')
-                ->join('tipe_pembayarans', 'penjualans.tipe_pembayaran_id', '=', 'tipe_pembayarans.id')
-                ->select(
-                    'penjualans.*',
-                    'tokos.name as toko',
-                    'tipe_pembayarans.name as tipe_pembayaran'
-                );
+                ->with(['details.produk', 'tipePembayaran', 'toko']);
             // dd($penjualans);
 
             return DataTables::of($penjualans)
                 ->addColumn('tanggal', function ($penjualan) {
                     return Carbon::parse($penjualan->created_at)->translatedFormat('d M Y H:i:s');
                 })
-                ->addColumn('total', function ($penjualan) {
-                    return $penjualan->total_harus_dibayar;
+                
+                ->addColumn('tipe_pembayaran', function ($penjualan) {
+                    return $penjualan->tipePembayaran->name ?? 'N/A';
                 })
-                ->addColumn('diskon', function ($penjualan) {
-                    return $penjualan->diskon_percentage;
-                })
-                ->addColumn('kembalian', function ($penjualan) {
-                    return $penjualan->kembalian;
-                })
+                
+                
                 ->addColumn('produks', function ($penjualan) {
                     $produkNames = $penjualan->details->map(function ($detail) {
                         return   '[' . $detail->produk->sku . '] ' . $detail->produk->name . ' - ' . $detail->jumlah . ' ' . $detail->satuan;
                     })->toArray();
                     return implode('<br>', $produkNames);
+                })
+                ->filterColumn('produks', function ($query, $keyword) {
+                    $query->whereHas('details.produk', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%")
+                            ->orWhere('sku', 'like', "%{$keyword}%");
+                    });
                 })
                 ->addColumn('action', function ($penjualan) {
                     return '<a href="' . route('kasir.kasir_showpenjualan', $penjualan->id) . '" class="text-green-600 dark:text-green-400 hover:underline mr-3">Detail</a>';

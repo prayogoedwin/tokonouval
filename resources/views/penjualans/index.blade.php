@@ -153,36 +153,30 @@
                     }
                 },
                 columns: [{
-                        data: 'tanggal',
-                        name: 'tanggal'
+                        data: 'created_at',
+                        
                     },
                     {
                         data: 'no_invoice',
-                        name: 'no_invoice'
                     },
                     {
                         data: 'toko',
-                        name: 'toko'
                     },
                     {
                         data: 'tipe_pembayaran',
-                        name: 'tipe_pembayaran'
+                        
                     },
                     {
                         data: 'total_harus_dibayar',
-                        name: 'total_harus_dibayar',
                     },
                     {
                         data: 'diskon_percentage',
-                        name: 'diskon_percentage',
                     },
                     {
                         data: 'kasir',
-                        name: 'kasir',
                     },
                     {
                         data: 'produks',
-                        name: 'produks',
                     },
                     {
                         data: 'actions',

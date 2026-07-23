@@ -134,6 +134,12 @@ class PenjualanController extends Controller
                     $content = implode('<br>', $produkNames);
                     return '<div style="max-height: 100px; overflow-y: auto; white-space: nowrap;">' . $content . '</div>';
                 })
+                ->filterColumn('produks', function ($query, $keyword) {
+                    $query->whereHas('details.produk', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%")
+                            ->orWhere('sku', 'like', "%{$keyword}%");
+                    });
+                })
 
 
 

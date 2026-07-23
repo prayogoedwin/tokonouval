@@ -255,10 +255,10 @@
                                 data: 'no_invoice'
                             },
                             {
-                                data: 'total'
+                                data: 'total_harus_dibayar'
                             },
                             {
-                                data: 'diskon'
+                                data: 'diskon_percentage'
                             },
                             {
                                 data: 'kembalian'
