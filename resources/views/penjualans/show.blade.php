@@ -56,7 +56,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tanggal Transaksi</label>
-                            <div class="text-md font-semibold text-gray-900 dark:text-gray-100">{{ $penjualan->created_at->format('d F Y H:i') }}</div>
+                            <div class="text-md font-semibold text-gray-900 dark:text-gray-100">{{ $penjualan->created_at->setTimezone('Asia/Jakarta')->format('d F Y H:i') }}</div>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tipe Pembayaran</label>
